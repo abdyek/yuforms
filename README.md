@@ -24,4 +24,4 @@ Requirement analysis is turkish only.
 | Bahar | Final | Cevap Düzenle | Cevap veren kullanıcının cevabını düzenlemesi |
 
 ## Project Plan
-![project plan](https://github.com/abdyek/yuforms/tree/master/assets/readme/image.png?raw=true)
+![project plan](https://github.com/abdyek/yuforms/blob/master/assets/readme/plan.png?raw=true)
