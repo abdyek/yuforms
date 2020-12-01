@@ -1,0 +1,11 @@
+<database name="yuforms" defaultIdMethod="native">
+    <table name="member">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="email" type="varchar" required="true" size="255"/>
+        <column name="first_name" type="varchar" required="true" size="50"/>
+        <column name="last_name" type="varchar" required="true" size="50"/>
+        <column name="confirmed_email" type="boolean" required="true"/>
+        <column name="password_hash" type="varchar" size="60" required="true"/>
+        <column name="sign_up_date_time" type="timestamp" required="true"/>
+    </table>
+</database>

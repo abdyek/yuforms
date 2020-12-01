@@ -3,9 +3,11 @@
     "description": "Open source improvable form web application",
     "require": {
         "izniburak/router": "^2.0",
-        "adhocore/jwt": "^1.0"
+        "adhocore/jwt": "^1.0",
+        "propel/propel": "^2.0@dev"
     },
     "autoload": {
+        "classmap": ["generated-classes/"],
         "psr-4": {
             "Yuforms\\": "app/api"
         }
