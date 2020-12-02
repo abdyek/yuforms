@@ -1,5 +1,0 @@
-<?php
-
-const CONTROLLER = [
-
-];

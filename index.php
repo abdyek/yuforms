@@ -3,6 +3,25 @@
 require 'vendor/autoload.php';
 require 'generated-conf/config.php';
 
-new Yuforms\Core\Model;
-new Yuforms\Controller\Example;
+// api config
+use Yuforms\Config;
 
+// router
+use Buki\Router\Router;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+$router = new Router;
+
+$router->any('api/:string', function($controller) {
+    $className = ucfirst($controller);
+    $filePath = __DIR__ . '/app/api/Controller/' . $className . '.php';
+    if(file_exists($filePath)) {
+        //new $className;
+        new Yuforms\Controller\Example;
+    } else {
+        http_response_code(404);
+    }
+});
+
+$router->run();
