@@ -8,32 +8,32 @@ class Config {
             'POST'=>[
                 'authorization'=>['guest', 'member', 'root'],
                 'required'=>[
-                    'key1'=>[
+                    'name'=>[
                         'type'=>'str', // str, arr, int
                         'limits'=>[
                             'min'=>0,
                             'max'=>10
                         ]
                     ],
-                    'key2'=>[
-                        'type'=>'int', // str, arr, int
+                    'surname'=>[
+                        'type'=>'str', // str, arr, int
                         'limits'=>[
-                            'min'=>20,
+                            'min'=>0,
                             'max'=>30
                         ]
                     ],
-                    'wrapperKey'=>[
-                        'subKey1'=>[
-                            'type'=>'int', // str, arr, int
+                    'other'=>[
+                        'other1'=>[
+                            'type'=>'str', // str, arr, int
                             'limits'=>[
-                                'min'=>20,
+                                'min'=>0,
                                 'max'=>30
                             ]
                         ],
-                        'subKey2'=>[
-                            'type'=>'int', // str, arr, int
+                        'other2'=>[
+                            'type'=>'str', // str, arr, int
                             'limits'=>[
-                                'min'=>20,
+                                'min'=>0,
                                 'max'=>30
                             ]
                         ],

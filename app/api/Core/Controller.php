@@ -9,7 +9,7 @@ class Controller {
         $this->checkMethod();
         $this->checkAuthorization();
         $this->setData();
-        $this->checkRequired($this->data);
+        $this->checkRequiredWrapper();
     }
     private function setConfig() {
         $p = explode('\\', get_class($this));
@@ -59,13 +59,44 @@ class Controller {
                 break;
         }
     }
-    private function checkRequired($data) {
+    private function checkRequiredWrapper() {
+        $areYouOk = $this->checkRequired($this->data, $this->config[$this->method]['required']);
+        if(!$areYouOk) {
+            http_response_code(400);
+            exit();
+        }
+    }
+    private function checkRequired($data, $required) {
         // not complated
         if(!$this->requiredFree) {
-            $this->required = $this->config[$this->method]['required'];
-            $this->response($this->required);
-            $this->response($data);
+            $dataKeys = array_keys($data);
+            foreach($required as $key=>$value) {
+                $keysInValues = array_keys($value);
+                if(!in_array($key, $dataKeys)) {
+                    return false;
+                }
+                if(in_array('type', $keysInValues)) {
+                    if(
+                        ($value['type']=='str' and is_string($data[$key])) or
+                        ($value['type']=='int' and is_int($data[$key])) or
+                        ($value['type']=='arr' and is_array($data[$key]))
+                    ) {
+                        if(!(
+                            ($value['type']=='str' and (strlen($data[$key])>=$value['limits']['min'] and strlen($data[$key])<=$value['limits']['max'])) or
+                            ($value['type']=='int' and (strlen((string)$data[$key])>=$value['limits']['min'] and strlen((string)$data[$key])<=$value['limits']['max'])) or
+                            ($value['type']=='arr' and (count($data[$key])>=$value['limits']['min'] and count($data[$key])<=$value['limits']['max']))
+                        )) {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+                } else {
+                    $this->checkRequired($data[$key], $required[$key]);
+                }
+            }
         }
+        return true;
     }
     private function detectAuthorization() {
         // not complated
