@@ -17,8 +17,8 @@ $router->any('api/:string', function($controller) {
     $className = ucfirst($controller);
     $filePath = __DIR__ . '/app/api/Controller/' . $className . '.php';
     if(file_exists($filePath)) {
-        //new $className;
-        new Yuforms\Controller\Example;
+        $class = 'Yuforms\Controller\\' . $className;
+        new $class;
     } else {
         http_response_code(404);
     }

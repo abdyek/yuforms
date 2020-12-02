@@ -2,7 +2,7 @@
 
 namespace Yuforms\Config;
 
-class Config {
+class Controller {
     const CONTROLLER = [
         'Example'=>[
             'POST'=>[
@@ -51,6 +51,41 @@ class Config {
             ],
             'DELETE'=>[
                 'authorization'=>['guest', 'member', 'root'],
+            ]
+        ],
+        'SignUp'=>[
+            'POST'=>[
+                'authorization'=>['member']
+            ]
+        ],
+        'ConfirmEmail'=>[
+            'POST'=>[
+                'authorization'=>['member']
+            ]
+        ],
+        'Login'=>[
+            'POST'=>[
+                'authorization'=>['member']
+            ]
+        ],
+        'ForgotMyPassword'=>[
+            'POST'=>[
+                'authorization'=>['member']
+            ]
+        ],
+        'ChangeMyPassword'=>[
+            'POST'=>[
+                'authorization'=>['member']
+            ]
+        ],
+        'ChangeMyEmail'=>[
+            'PATCH'=>[
+                'authorization'=>['member']
+            ]
+        ],
+        'LogOut'=>[
+            'POST'=>[
+                'authorization'=>['member']
             ]
         ]
     ];

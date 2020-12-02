@@ -1,6 +1,9 @@
 <?php
 namespace Yuforms\Core;
-use Yuforms\Config\Config as Config;
+
+use Yuforms\Config\Controller as ControllerConfig;
+use Ahc\Jwt\JWT;
+use Yuforms\Config\Jwt as JwtConfig;
 
 class Controller {
     public function __construct() {
@@ -10,11 +13,12 @@ class Controller {
         $this->checkAuthorization();
         $this->setData();
         $this->checkRequiredWrapper();
+        ($this->run)();
     }
     private function setConfig() {
         $p = explode('\\', get_class($this));
         $this->className = end($p);
-        $this->config = Config::CONTROLLER[$this->className];
+        $this->config = ControllerConfig::CONTROLLER[$this->className];
         $this->method = $_SERVER['REQUEST_METHOD'];
         $this->supportedMethods = array_keys($this->config);
     }
@@ -60,45 +64,45 @@ class Controller {
         }
     }
     private function checkRequiredWrapper() {
-        $areYouOk = $this->checkRequired($this->data, $this->config[$this->method]['required']);
-        if(!$areYouOk) {
-            http_response_code(400);
-            exit();
+        if(!$this->requiredFree) {
+            $areYouOk = $this->checkRequired($this->data, $this->config[$this->method]['required']);
+            if(!$areYouOk) {
+                http_response_code(400);
+                exit();
+            }
         }
     }
     private function checkRequired($data, $required) {
-        // not complated
-        if(!$this->requiredFree) {
-            $dataKeys = array_keys($data);
-            foreach($required as $key=>$value) {
-                $keysInValues = array_keys($value);
-                if(!in_array($key, $dataKeys)) {
-                    return false;
-                }
-                if(in_array('type', $keysInValues)) {
-                    if(
-                        ($value['type']=='str' and is_string($data[$key])) or
-                        ($value['type']=='int' and is_int($data[$key])) or
-                        ($value['type']=='arr' and is_array($data[$key]))
-                    ) {
-                        if(!(
-                            ($value['type']=='str' and (strlen($data[$key])>=$value['limits']['min'] and strlen($data[$key])<=$value['limits']['max'])) or
-                            ($value['type']=='int' and (strlen((string)$data[$key])>=$value['limits']['min'] and strlen((string)$data[$key])<=$value['limits']['max'])) or
-                            ($value['type']=='arr' and (count($data[$key])>=$value['limits']['min'] and count($data[$key])<=$value['limits']['max']))
-                        )) {
-                            return false;
-                        }
-                    } else {
+        $dataKeys = array_keys($data);
+        foreach($required as $key=>$value) {
+            $keysInValues = array_keys($value);
+            if(!in_array($key, $dataKeys)) {
+                return false;
+            }
+            if(in_array('type', $keysInValues)) {
+                if(
+                    ($value['type']=='str' and is_string($data[$key])) or
+                    ($value['type']=='int' and is_int($data[$key])) or
+                    ($value['type']=='arr' and is_array($data[$key]))
+                ) {
+                    if(!(
+                        ($value['type']=='str' and (strlen($data[$key])>=$value['limits']['min'] and strlen($data[$key])<=$value['limits']['max'])) or
+                        ($value['type']=='int' and (strlen((string)$data[$key])>=$value['limits']['min'] and strlen((string)$data[$key])<=$value['limits']['max'])) or
+                        ($value['type']=='arr' and (count($data[$key])>=$value['limits']['min'] and count($data[$key])<=$value['limits']['max']))
+                    )) {
                         return false;
                     }
                 } else {
-                    $this->checkRequired($data[$key], $required[$key]);
+                    return false;
                 }
+            } else {
+                $this->checkRequired($data[$key], $required[$key]);
             }
         }
         return true;
     }
     private function detectAuthorization() {
+        //$token   = (new JWT(JwtConfig::SECRET, 'HS512', 1800))->encode(['uid' => 1, 'scopes' => ['user']]));
         // not complated
         // jwt check codes will be here
         $this->who = 'member'; // guest, member, root
