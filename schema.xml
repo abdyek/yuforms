@@ -6,6 +6,7 @@
         <column name="last_name" type="varchar" required="true" size="50"/>
         <column name="confirmed_email" type="boolean" required="true"/>
         <column name="password_hash" type="varchar" size="60" required="true"/>
+        <column name="activation_code" type="varchar" size="6" required="true"/>
         <column name="sign_up_date_time" type="timestamp" required="true"/>
     </table>
 </database>

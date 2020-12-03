@@ -17,6 +17,7 @@ CREATE TABLE `member`
     `last_name` VARCHAR(50) NOT NULL,
     `confirmed_email` TINYINT(1) NOT NULL,
     `password_hash` VARCHAR(60) NOT NULL,
+    `activation_code` VARCHAR(6) NOT NULL,
     `sign_up_date_time` DATETIME NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;

@@ -90,7 +90,16 @@ class Controller {
         ],
         'ConfirmEmail'=>[
             'POST'=>[
-                'authorization'=>['member']
+                'authorization'=>['member'],
+                'required'=>[
+                    'code'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>6,
+                            'max'=>6
+                        ]
+                    ]
+                ]
             ]
         ],
         'Login'=>[
