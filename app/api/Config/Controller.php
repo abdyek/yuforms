@@ -104,7 +104,23 @@ class Controller {
         ],
         'Login'=>[
             'POST'=>[
-                'authorization'=>['member']
+                'authorization'=>['member'],
+                'required'=>[
+                    'email'=>[
+                        'type'=>'email',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>255
+                        ]
+                    ],
+                    'password'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>10,
+                            'max'=>50
+                        ]
+                    ]
+                ]
             ]
         ],
         'ForgotMyPassword'=>[
