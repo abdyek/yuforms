@@ -55,7 +55,7 @@ class Controller {
         ],
         'SignUp'=>[
             'POST'=>[
-                'authorization'=>['member'],
+                'authorization'=>['guest'],
                 'required'=>[
                     'email'=>[
                         'type'=>'email',
@@ -90,8 +90,15 @@ class Controller {
         ],
         'ConfirmEmail'=>[
             'POST'=>[
-                'authorization'=>['member'],
+                'authorization'=>['guest'],
                 'required'=>[
+                    'email'=>[
+                        'type'=>'email',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>255
+                        ]
+                    ],
                     'code'=>[
                         'type'=>'str',
                         'limits'=>[
@@ -104,7 +111,7 @@ class Controller {
         ],
         'Login'=>[
             'POST'=>[
-                'authorization'=>['member'],
+                'authorization'=>['guest'],
                 'required'=>[
                     'email'=>[
                         'type'=>'email',
@@ -125,7 +132,16 @@ class Controller {
         ],
         'ForgotMyPassword'=>[
             'POST'=>[
-                'authorization'=>['member']
+                'authorization'=>['guest'],
+                'required'=>[
+                    'email'=>[
+                        'type'=>'email',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>255
+                        ]
+                    ]
+                ]
             ]
         ],
         'ChangeMyPassword'=>[

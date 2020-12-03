@@ -105,11 +105,23 @@ class Controller {
         return true;
     }
     private function detectAuthorization() {
-        //$token   = (new JWT(JwtConfig::SECRET, 'HS512', 1800))->encode(['uid' => 1, 'scopes' => ['user']]));
-        // not complated
-        // jwt check codes will be here
-        $this->who = 'member'; // guest, member, root
-        // ^ only to try 
+        if(isset($_COOKIE['jwt'])) {
+            try {
+                $payload = (new JWT(JwtConfig::SECRET, JwtConfig::ALGO, 1800))->decode($_COOKIE['jwt']);
+            } catch(Exception $e) {
+                if(isset($_COOKIE['jwt'])) {
+                    unset($_COOKIE['jwt']);
+                    setcookie('jwt', null, -1);
+                }
+            }
+            if(isset($payload['userId'])) {
+                $this->who = $payload['who'];
+                $this->userId = $payload['userId'];
+            }
+        } else {
+            $this->who = 'guest';
+        }
+
     }
     private function emailPatternCheck($email) {
         return filter_var($email, FILTER_VALIDATE_EMAIL);

@@ -8,7 +8,7 @@ use Yuforms\Config\Cookie as CookieConfig;
 
 class Login extends Controller {
     protected function post() {
-        $this->member = \MemberQuery::create()->findOneByEmail($this->data['email']);
+        $this->member = \MemberQuery::create()->filterByConfirmedEmail(true)->findOneByEmail($this->data['email']);
         if($this->member) {
             $hash = $this->member->getPasswordHash();
             if(password_verify($this->data['password'], $hash)) {
