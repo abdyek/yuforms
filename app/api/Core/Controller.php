@@ -73,6 +73,7 @@ class Controller {
         }
     }
     private function checkRequired($data, $required) {
+        if(!$data) return false;
         $dataKeys = array_keys($data);
         foreach($required as $key=>$value) {
             $keysInValues = array_keys($value);
@@ -83,12 +84,14 @@ class Controller {
                 if(
                     ($value['type']=='str' and is_string($data[$key])) or
                     ($value['type']=='int' and is_int($data[$key])) or
-                    ($value['type']=='arr' and is_array($data[$key]))
+                    ($value['type']=='arr' and is_array($data[$key])) or 
+                    ($value['type']=='email' and $this->emailPatternCheck($data[$key]))
                 ) {
                     if(!(
                         ($value['type']=='str' and (strlen($data[$key])>=$value['limits']['min'] and strlen($data[$key])<=$value['limits']['max'])) or
                         ($value['type']=='int' and (strlen((string)$data[$key])>=$value['limits']['min'] and strlen((string)$data[$key])<=$value['limits']['max'])) or
-                        ($value['type']=='arr' and (count($data[$key])>=$value['limits']['min'] and count($data[$key])<=$value['limits']['max']))
+                        ($value['type']=='arr' and (count($data[$key])>=$value['limits']['min'] and count($data[$key])<=$value['limits']['max'])) or
+                        ($value['type']=='email' and (strlen($data[$key])>=$value['limits']['min'] and strlen($data[$key])<=$value['limits']['max']))
                     )) {
                         return false;
                     }
@@ -108,9 +111,15 @@ class Controller {
         $this->who = 'member'; // guest, member, root
         // ^ only to try 
     }
+    private function emailPatternCheck($email) {
+        return filter_var($email, FILTER_VALIDATE_EMAIL);
+    }
     protected function response($data) {
         header("Access-Control-Allow-Origin: *");
         header("Content-Type: application/json; charset=UTF-8");
         echo json_encode($data);
+    }
+    protected function success() {
+        $this->response(['state'=>'success']);
     }
 }

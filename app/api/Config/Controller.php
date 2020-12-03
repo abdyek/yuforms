@@ -9,7 +9,7 @@ class Controller {
                 'authorization'=>['guest', 'member', 'root'],
                 'required'=>[
                     'name'=>[
-                        'type'=>'str', // str, arr, int
+                        'type'=>'str', // str, arr, int, email
                         'limits'=>[
                             'min'=>0,
                             'max'=>10
@@ -55,7 +55,37 @@ class Controller {
         ],
         'SignUp'=>[
             'POST'=>[
-                'authorization'=>['member']
+                'authorization'=>['member'],
+                'required'=>[
+                    'email'=>[
+                        'type'=>'email',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>255
+                        ]
+                    ],
+                    'firstName'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>50
+                        ]
+                    ],
+                    'lastName'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>50
+                        ]
+                    ],
+                    'password'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>10,
+                            'max'=>50
+                        ]
+                    ]
+                ]
             ]
         ],
         'ConfirmEmail'=>[
