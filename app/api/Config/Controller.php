@@ -171,13 +171,45 @@ class Controller {
             ]
         ],
         'ChangeMyPassword'=>[
-            'POST'=>[
-                'authorization'=>['member']
+            'PATCH'=>[
+                'authorization'=>['member'],
+                'required'=>[
+                    'password'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>10,
+                            'max'=>50
+                        ]
+                    ],
+                    'newPassword'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>10,
+                            'max'=>50
+                        ]
+                    ]
+                ]
             ]
         ],
         'ChangeMyEmail'=>[
             'PATCH'=>[
-                'authorization'=>['member']
+                'authorization'=>['member'],
+                'required'=>[
+                    'password'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>10,
+                            'max'=>50
+                        ]
+                    ],
+                    'newEmail'=>[
+                        'type'=>'email',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>255
+                        ]
+                    ]
+                ]
             ]
         ],
         'LogOut'=>[
