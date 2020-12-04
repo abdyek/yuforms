@@ -111,6 +111,13 @@ abstract class Member implements ActiveRecordInterface
     protected $activation_code;
 
     /**
+     * The value for the recovery_code field.
+     *
+     * @var        string|null
+     */
+    protected $recovery_code;
+
+    /**
      * The value for the sign_up_date_time field.
      *
      * @var        DateTime
@@ -431,6 +438,16 @@ abstract class Member implements ActiveRecordInterface
     }
 
     /**
+     * Get the [recovery_code] column value.
+     *
+     * @return string|null
+     */
+    public function getRecoveryCode()
+    {
+        return $this->recovery_code;
+    }
+
+    /**
      * Get the [optionally formatted] temporal [sign_up_date_time] column value.
      *
      *
@@ -599,6 +616,26 @@ abstract class Member implements ActiveRecordInterface
     } // setActivationCode()
 
     /**
+     * Set the value of [recovery_code] column.
+     *
+     * @param string|null $v New value
+     * @return $this|\Member The current object (for fluent API support)
+     */
+    public function setRecoveryCode($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->recovery_code !== $v) {
+            $this->recovery_code = $v;
+            $this->modifiedColumns[MemberTableMap::COL_RECOVERY_CODE] = true;
+        }
+
+        return $this;
+    } // setRecoveryCode()
+
+    /**
      * Sets the value of [sign_up_date_time] column to a normalized version of the date/time value specified.
      *
      * @param  string|integer|\DateTimeInterface $v string, integer (timestamp), or \DateTimeInterface value.
@@ -675,7 +712,10 @@ abstract class Member implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : MemberTableMap::translateFieldName('ActivationCode', TableMap::TYPE_PHPNAME, $indexType)];
             $this->activation_code = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : MemberTableMap::translateFieldName('SignUpDateTime', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : MemberTableMap::translateFieldName('RecoveryCode', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->recovery_code = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : MemberTableMap::translateFieldName('SignUpDateTime', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -688,7 +728,7 @@ abstract class Member implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 8; // 8 = MemberTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 9; // 9 = MemberTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Member'), 0, $e);
@@ -910,6 +950,9 @@ abstract class Member implements ActiveRecordInterface
         if ($this->isColumnModified(MemberTableMap::COL_ACTIVATION_CODE)) {
             $modifiedColumns[':p' . $index++]  = 'activation_code';
         }
+        if ($this->isColumnModified(MemberTableMap::COL_RECOVERY_CODE)) {
+            $modifiedColumns[':p' . $index++]  = 'recovery_code';
+        }
         if ($this->isColumnModified(MemberTableMap::COL_SIGN_UP_DATE_TIME)) {
             $modifiedColumns[':p' . $index++]  = 'sign_up_date_time';
         }
@@ -944,6 +987,9 @@ abstract class Member implements ActiveRecordInterface
                         break;
                     case 'activation_code':
                         $stmt->bindValue($identifier, $this->activation_code, PDO::PARAM_STR);
+                        break;
+                    case 'recovery_code':
+                        $stmt->bindValue($identifier, $this->recovery_code, PDO::PARAM_STR);
                         break;
                     case 'sign_up_date_time':
                         $stmt->bindValue($identifier, $this->sign_up_date_time ? $this->sign_up_date_time->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -1032,6 +1078,9 @@ abstract class Member implements ActiveRecordInterface
                 return $this->getActivationCode();
                 break;
             case 7:
+                return $this->getRecoveryCode();
+                break;
+            case 8:
                 return $this->getSignUpDateTime();
                 break;
             default:
@@ -1070,10 +1119,11 @@ abstract class Member implements ActiveRecordInterface
             $keys[4] => $this->getConfirmedEmail(),
             $keys[5] => $this->getPasswordHash(),
             $keys[6] => $this->getActivationCode(),
-            $keys[7] => $this->getSignUpDateTime(),
+            $keys[7] => $this->getRecoveryCode(),
+            $keys[8] => $this->getSignUpDateTime(),
         );
-        if ($result[$keys[7]] instanceof \DateTimeInterface) {
-            $result[$keys[7]] = $result[$keys[7]]->format('c');
+        if ($result[$keys[8]] instanceof \DateTimeInterface) {
+            $result[$keys[8]] = $result[$keys[8]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1136,6 +1186,9 @@ abstract class Member implements ActiveRecordInterface
                 $this->setActivationCode($value);
                 break;
             case 7:
+                $this->setRecoveryCode($value);
+                break;
+            case 8:
                 $this->setSignUpDateTime($value);
                 break;
         } // switch()
@@ -1186,7 +1239,10 @@ abstract class Member implements ActiveRecordInterface
             $this->setActivationCode($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setSignUpDateTime($arr[$keys[7]]);
+            $this->setRecoveryCode($arr[$keys[7]]);
+        }
+        if (array_key_exists($keys[8], $arr)) {
+            $this->setSignUpDateTime($arr[$keys[8]]);
         }
     }
 
@@ -1249,6 +1305,9 @@ abstract class Member implements ActiveRecordInterface
         }
         if ($this->isColumnModified(MemberTableMap::COL_ACTIVATION_CODE)) {
             $criteria->add(MemberTableMap::COL_ACTIVATION_CODE, $this->activation_code);
+        }
+        if ($this->isColumnModified(MemberTableMap::COL_RECOVERY_CODE)) {
+            $criteria->add(MemberTableMap::COL_RECOVERY_CODE, $this->recovery_code);
         }
         if ($this->isColumnModified(MemberTableMap::COL_SIGN_UP_DATE_TIME)) {
             $criteria->add(MemberTableMap::COL_SIGN_UP_DATE_TIME, $this->sign_up_date_time);
@@ -1345,6 +1404,7 @@ abstract class Member implements ActiveRecordInterface
         $copyObj->setConfirmedEmail($this->getConfirmedEmail());
         $copyObj->setPasswordHash($this->getPasswordHash());
         $copyObj->setActivationCode($this->getActivationCode());
+        $copyObj->setRecoveryCode($this->getRecoveryCode());
         $copyObj->setSignUpDateTime($this->getSignUpDateTime());
         if ($makeNew) {
             $copyObj->setNew(true);
@@ -1388,6 +1448,7 @@ abstract class Member implements ActiveRecordInterface
         $this->confirmed_email = null;
         $this->password_hash = null;
         $this->activation_code = null;
+        $this->recovery_code = null;
         $this->sign_up_date_time = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();

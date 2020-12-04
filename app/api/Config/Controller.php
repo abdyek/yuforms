@@ -142,6 +142,32 @@ class Controller {
                         ]
                     ]
                 ]
+            ],
+            'PATCH'=>[
+                'authorization'=>['guest'],
+                'required'=>[
+                    'email'=>[
+                        'type'=>'email',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>255
+                        ],
+                    ],
+                    'code'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>10,
+                            'max'=>10
+                        ]
+                    ],
+                    'newPassword'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>10,
+                            'max'=>50
+                        ]
+                    ]
+                ]
             ]
         ],
         'ChangeMyPassword'=>[

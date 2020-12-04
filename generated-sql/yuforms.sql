@@ -18,6 +18,7 @@ CREATE TABLE `member`
     `confirmed_email` TINYINT(1) NOT NULL,
     `password_hash` VARCHAR(60) NOT NULL,
     `activation_code` VARCHAR(6) NOT NULL,
+    `recovery_code` VARCHAR(10),
     `sign_up_date_time` DATETIME NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;

@@ -58,7 +58,7 @@ class MemberTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 8;
+    const NUM_COLUMNS = 9;
 
     /**
      * The number of lazy-loaded columns
@@ -68,7 +68,7 @@ class MemberTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 8;
+    const NUM_HYDRATE_COLUMNS = 9;
 
     /**
      * the column name for the id field
@@ -106,6 +106,11 @@ class MemberTableMap extends TableMap
     const COL_ACTIVATION_CODE = 'member.activation_code';
 
     /**
+     * the column name for the recovery_code field
+     */
+    const COL_RECOVERY_CODE = 'member.recovery_code';
+
+    /**
      * the column name for the sign_up_date_time field
      */
     const COL_SIGN_UP_DATE_TIME = 'member.sign_up_date_time';
@@ -122,11 +127,11 @@ class MemberTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Email', 'FirstName', 'LastName', 'ConfirmedEmail', 'PasswordHash', 'ActivationCode', 'SignUpDateTime', ),
-        self::TYPE_CAMELNAME     => array('id', 'email', 'firstName', 'lastName', 'confirmedEmail', 'passwordHash', 'activationCode', 'signUpDateTime', ),
-        self::TYPE_COLNAME       => array(MemberTableMap::COL_ID, MemberTableMap::COL_EMAIL, MemberTableMap::COL_FIRST_NAME, MemberTableMap::COL_LAST_NAME, MemberTableMap::COL_CONFIRMED_EMAIL, MemberTableMap::COL_PASSWORD_HASH, MemberTableMap::COL_ACTIVATION_CODE, MemberTableMap::COL_SIGN_UP_DATE_TIME, ),
-        self::TYPE_FIELDNAME     => array('id', 'email', 'first_name', 'last_name', 'confirmed_email', 'password_hash', 'activation_code', 'sign_up_date_time', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id', 'Email', 'FirstName', 'LastName', 'ConfirmedEmail', 'PasswordHash', 'ActivationCode', 'RecoveryCode', 'SignUpDateTime', ),
+        self::TYPE_CAMELNAME     => array('id', 'email', 'firstName', 'lastName', 'confirmedEmail', 'passwordHash', 'activationCode', 'recoveryCode', 'signUpDateTime', ),
+        self::TYPE_COLNAME       => array(MemberTableMap::COL_ID, MemberTableMap::COL_EMAIL, MemberTableMap::COL_FIRST_NAME, MemberTableMap::COL_LAST_NAME, MemberTableMap::COL_CONFIRMED_EMAIL, MemberTableMap::COL_PASSWORD_HASH, MemberTableMap::COL_ACTIVATION_CODE, MemberTableMap::COL_RECOVERY_CODE, MemberTableMap::COL_SIGN_UP_DATE_TIME, ),
+        self::TYPE_FIELDNAME     => array('id', 'email', 'first_name', 'last_name', 'confirmed_email', 'password_hash', 'activation_code', 'recovery_code', 'sign_up_date_time', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -136,11 +141,11 @@ class MemberTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Email' => 1, 'FirstName' => 2, 'LastName' => 3, 'ConfirmedEmail' => 4, 'PasswordHash' => 5, 'ActivationCode' => 6, 'SignUpDateTime' => 7, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'email' => 1, 'firstName' => 2, 'lastName' => 3, 'confirmedEmail' => 4, 'passwordHash' => 5, 'activationCode' => 6, 'signUpDateTime' => 7, ),
-        self::TYPE_COLNAME       => array(MemberTableMap::COL_ID => 0, MemberTableMap::COL_EMAIL => 1, MemberTableMap::COL_FIRST_NAME => 2, MemberTableMap::COL_LAST_NAME => 3, MemberTableMap::COL_CONFIRMED_EMAIL => 4, MemberTableMap::COL_PASSWORD_HASH => 5, MemberTableMap::COL_ACTIVATION_CODE => 6, MemberTableMap::COL_SIGN_UP_DATE_TIME => 7, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'email' => 1, 'first_name' => 2, 'last_name' => 3, 'confirmed_email' => 4, 'password_hash' => 5, 'activation_code' => 6, 'sign_up_date_time' => 7, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Email' => 1, 'FirstName' => 2, 'LastName' => 3, 'ConfirmedEmail' => 4, 'PasswordHash' => 5, 'ActivationCode' => 6, 'RecoveryCode' => 7, 'SignUpDateTime' => 8, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'email' => 1, 'firstName' => 2, 'lastName' => 3, 'confirmedEmail' => 4, 'passwordHash' => 5, 'activationCode' => 6, 'recoveryCode' => 7, 'signUpDateTime' => 8, ),
+        self::TYPE_COLNAME       => array(MemberTableMap::COL_ID => 0, MemberTableMap::COL_EMAIL => 1, MemberTableMap::COL_FIRST_NAME => 2, MemberTableMap::COL_LAST_NAME => 3, MemberTableMap::COL_CONFIRMED_EMAIL => 4, MemberTableMap::COL_PASSWORD_HASH => 5, MemberTableMap::COL_ACTIVATION_CODE => 6, MemberTableMap::COL_RECOVERY_CODE => 7, MemberTableMap::COL_SIGN_UP_DATE_TIME => 8, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'email' => 1, 'first_name' => 2, 'last_name' => 3, 'confirmed_email' => 4, 'password_hash' => 5, 'activation_code' => 6, 'recovery_code' => 7, 'sign_up_date_time' => 8, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -167,6 +172,7 @@ class MemberTableMap extends TableMap
         $this->addColumn('confirmed_email', 'ConfirmedEmail', 'BOOLEAN', true, 1, null);
         $this->addColumn('password_hash', 'PasswordHash', 'VARCHAR', true, 60, null);
         $this->addColumn('activation_code', 'ActivationCode', 'VARCHAR', true, 6, null);
+        $this->addColumn('recovery_code', 'RecoveryCode', 'VARCHAR', false, 10, null);
         $this->addColumn('sign_up_date_time', 'SignUpDateTime', 'TIMESTAMP', true, null, null);
     } // initialize()
 
@@ -325,6 +331,7 @@ class MemberTableMap extends TableMap
             $criteria->addSelectColumn(MemberTableMap::COL_CONFIRMED_EMAIL);
             $criteria->addSelectColumn(MemberTableMap::COL_PASSWORD_HASH);
             $criteria->addSelectColumn(MemberTableMap::COL_ACTIVATION_CODE);
+            $criteria->addSelectColumn(MemberTableMap::COL_RECOVERY_CODE);
             $criteria->addSelectColumn(MemberTableMap::COL_SIGN_UP_DATE_TIME);
         } else {
             $criteria->addSelectColumn($alias . '.id');
@@ -334,6 +341,7 @@ class MemberTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.confirmed_email');
             $criteria->addSelectColumn($alias . '.password_hash');
             $criteria->addSelectColumn($alias . '.activation_code');
+            $criteria->addSelectColumn($alias . '.recovery_code');
             $criteria->addSelectColumn($alias . '.sign_up_date_time');
         }
     }

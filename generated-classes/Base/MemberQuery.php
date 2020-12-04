@@ -26,6 +26,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMemberQuery orderByConfirmedEmail($order = Criteria::ASC) Order by the confirmed_email column
  * @method     ChildMemberQuery orderByPasswordHash($order = Criteria::ASC) Order by the password_hash column
  * @method     ChildMemberQuery orderByActivationCode($order = Criteria::ASC) Order by the activation_code column
+ * @method     ChildMemberQuery orderByRecoveryCode($order = Criteria::ASC) Order by the recovery_code column
  * @method     ChildMemberQuery orderBySignUpDateTime($order = Criteria::ASC) Order by the sign_up_date_time column
  *
  * @method     ChildMemberQuery groupById() Group by the id column
@@ -35,6 +36,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMemberQuery groupByConfirmedEmail() Group by the confirmed_email column
  * @method     ChildMemberQuery groupByPasswordHash() Group by the password_hash column
  * @method     ChildMemberQuery groupByActivationCode() Group by the activation_code column
+ * @method     ChildMemberQuery groupByRecoveryCode() Group by the recovery_code column
  * @method     ChildMemberQuery groupBySignUpDateTime() Group by the sign_up_date_time column
  *
  * @method     ChildMemberQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -55,6 +57,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMember findOneByConfirmedEmail(boolean $confirmed_email) Return the first ChildMember filtered by the confirmed_email column
  * @method     ChildMember findOneByPasswordHash(string $password_hash) Return the first ChildMember filtered by the password_hash column
  * @method     ChildMember findOneByActivationCode(string $activation_code) Return the first ChildMember filtered by the activation_code column
+ * @method     ChildMember findOneByRecoveryCode(string $recovery_code) Return the first ChildMember filtered by the recovery_code column
  * @method     ChildMember findOneBySignUpDateTime(string $sign_up_date_time) Return the first ChildMember filtered by the sign_up_date_time column *
 
  * @method     ChildMember requirePk($key, ConnectionInterface $con = null) Return the ChildMember by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -67,6 +70,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMember requireOneByConfirmedEmail(boolean $confirmed_email) Return the first ChildMember filtered by the confirmed_email column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildMember requireOneByPasswordHash(string $password_hash) Return the first ChildMember filtered by the password_hash column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildMember requireOneByActivationCode(string $activation_code) Return the first ChildMember filtered by the activation_code column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildMember requireOneByRecoveryCode(string $recovery_code) Return the first ChildMember filtered by the recovery_code column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildMember requireOneBySignUpDateTime(string $sign_up_date_time) Return the first ChildMember filtered by the sign_up_date_time column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildMember[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildMember objects based on current ModelCriteria
@@ -77,6 +81,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMember[]|ObjectCollection findByConfirmedEmail(boolean $confirmed_email) Return ChildMember objects filtered by the confirmed_email column
  * @method     ChildMember[]|ObjectCollection findByPasswordHash(string $password_hash) Return ChildMember objects filtered by the password_hash column
  * @method     ChildMember[]|ObjectCollection findByActivationCode(string $activation_code) Return ChildMember objects filtered by the activation_code column
+ * @method     ChildMember[]|ObjectCollection findByRecoveryCode(string $recovery_code) Return ChildMember objects filtered by the recovery_code column
  * @method     ChildMember[]|ObjectCollection findBySignUpDateTime(string $sign_up_date_time) Return ChildMember objects filtered by the sign_up_date_time column
  * @method     ChildMember[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
@@ -176,7 +181,7 @@ abstract class MemberQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, email, first_name, last_name, confirmed_email, password_hash, activation_code, sign_up_date_time FROM member WHERE id = :p0';
+        $sql = 'SELECT id, email, first_name, last_name, confirmed_email, password_hash, activation_code, recovery_code, sign_up_date_time FROM member WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -457,6 +462,31 @@ abstract class MemberQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(MemberTableMap::COL_ACTIVATION_CODE, $activationCode, $comparison);
+    }
+
+    /**
+     * Filter the query on the recovery_code column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByRecoveryCode('fooValue');   // WHERE recovery_code = 'fooValue'
+     * $query->filterByRecoveryCode('%fooValue%', Criteria::LIKE); // WHERE recovery_code LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $recoveryCode The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildMemberQuery The current query, for fluid interface
+     */
+    public function filterByRecoveryCode($recoveryCode = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($recoveryCode)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(MemberTableMap::COL_RECOVERY_CODE, $recoveryCode, $comparison);
     }
 
     /**
