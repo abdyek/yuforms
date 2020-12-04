@@ -2,6 +2,8 @@
 namespace Yuforms\Controller;
 
 use Yuforms\Core\Controller;
+use Yuforms\Other\Mail;
+use Yuforms\Other\Random;
 
 class ChangeMyEmail extends Controller {
     protected function patch() {
@@ -23,9 +25,12 @@ class ChangeMyEmail extends Controller {
             ]);
             exit();
         }
+        $this->activationCode = Random::activationCode();
         $this->member->setEmail($this->data['newEmail']);
         $this->member->setConfirmedEmail(false);
+        $this->member->setActivationCode($this->activationCode);
         $this->member->save();
+        Mail::sendActivationCode($this->data['newEmail'], $this->activationCode);
         $this->response([
             'state'=>'success',
             'message'=>'your password changed'

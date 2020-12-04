@@ -34,6 +34,6 @@ class SignUp extends Controller {
         $member->save();
     }
     private function sendActivationCode() {
-        Mail::send();
+        Mail::sendActivationCode($this->data['email'], $this->activationCode);
     }
 }

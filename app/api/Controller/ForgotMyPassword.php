@@ -12,7 +12,7 @@ class ForgotMyPassword extends Controller {
             $this->recoveryCode = Random::recoveryCode();
             $member->setRecoveryCode($this->recoveryCode);
             $member->save();
-            Mail::send();
+            Mail::sendRecoveryCode($this->data['email'], $this->recoveryCode);
         }
         $this->response([
             'state'=>'success',
