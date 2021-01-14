@@ -1,10 +1,10 @@
 <?php
-namespace Yuforms\Controller;
+namespace Yuforms\Api\Controller;
 
-use Yuforms\Core\Controller;
-use Yuforms\Other\Time;
-use Yuforms\Other\Mail;
-use Yuforms\Other\Random;
+use Yuforms\Api\Core\Controller;
+use Yuforms\Api\Other\Time;
+use Yuforms\Api\Other\Mail;
+use Yuforms\Api\Other\Random;
 
 class SignUp extends Controller {
     protected function post() {

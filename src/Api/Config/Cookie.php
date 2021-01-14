@@ -1,5 +1,5 @@
 <?php
-namespace Yuforms\Config;
+namespace Yuforms\Api\Config;
 
 class Cookie {
     const SECURE = false;

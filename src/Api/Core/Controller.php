@@ -1,9 +1,9 @@
 <?php
-namespace Yuforms\Core;
+namespace Yuforms\Api\Core;
 
-use Yuforms\Config\Controller as ControllerConfig;
+use Yuforms\Api\Config\Controller as ControllerConfig;
 use Ahc\Jwt\JWT;
-use Yuforms\Config\Jwt as JwtConfig;
+use Yuforms\Api\Config\Jwt as JwtConfig;
 
 class Controller {
     public function __construct() {

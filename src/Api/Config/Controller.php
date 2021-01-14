@@ -1,6 +1,6 @@
 <?php
 
-namespace Yuforms\Config;
+namespace Yuforms\Api\Config;
 
 class Controller {
     const CONTROLLER = [

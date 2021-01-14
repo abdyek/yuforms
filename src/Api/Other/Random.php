@@ -1,5 +1,5 @@
 <?php
-namespace Yuforms\Other;
+namespace Yuforms\Api\Other;
 
 class Random {
     private static $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';

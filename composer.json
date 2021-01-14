@@ -9,7 +9,7 @@
     "autoload": {
         "classmap": ["generated-classes/"],
         "psr-4": {
-            "Yuforms\\": "app/api"
+            "Yuforms\\": "src"
         }
     }
 }

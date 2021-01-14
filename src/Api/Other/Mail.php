@@ -1,5 +1,5 @@
 <?php
-namespace Yuforms\Other;
+namespace Yuforms\Api\Other;
 
 class Mail {
     public static function send($to, $sub, $message) {

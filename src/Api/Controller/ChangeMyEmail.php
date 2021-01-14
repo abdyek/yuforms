@@ -1,9 +1,9 @@
 <?php
-namespace Yuforms\Controller;
+namespace Yuforms\Api\Controller;
 
-use Yuforms\Core\Controller;
-use Yuforms\Other\Mail;
-use Yuforms\Other\Random;
+use Yuforms\Api\Core\Controller;
+use Yuforms\Api\Other\Mail;
+use Yuforms\Api\Other\Random;
 
 class ChangeMyEmail extends Controller {
     protected function patch() {

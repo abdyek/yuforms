@@ -1,5 +1,5 @@
 <?php
-namespace Yuforms\Other;
+namespace Yuforms\Api\Other;
 
 class Time {
     public static function current() {

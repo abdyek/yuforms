@@ -1,10 +1,10 @@
 <?php
-namespace Yuforms\Controller;
+namespace Yuforms\Api\Controller;
 
-use Yuforms\Core\Controller;
+use Yuforms\Api\Core\Controller;
 use Ahc\Jwt\JWT;
-use Yuforms\Config\Jwt as JwtConfig;
-use Yuforms\Config\Cookie as CookieConfig;
+use Yuforms\Api\Config\Jwt as JwtConfig;
+use Yuforms\Api\Config\Cookie as CookieConfig;
 
 class Login extends Controller {
     protected function post() {

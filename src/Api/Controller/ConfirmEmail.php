@@ -1,7 +1,7 @@
 <?php
-namespace Yuforms\Controller;
+namespace Yuforms\Api\Controller;
 
-use Yuforms\Core\Controller;
+use Yuforms\Api\Core\Controller;
 
 class ConfirmEmail extends Controller {
     protected function post() {
