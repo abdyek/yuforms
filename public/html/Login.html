@@ -1,0 +1,24 @@
+<div id="app">
+    <yuforms-header></yuforms-header>
+    <yuforms-main>
+        <yuforms-login>
+            <div class="w3-container w3-teal">
+                <h2>Giriş Yap</h2>
+            </div>
+            <yuforms-container :margin-top="true">
+                <label>E-posta</label>
+                <input class="w3-input" :value="email" @input="changeEmail" :disabled="inputDisabled" type="text">
+                <label>Parola</label>
+                <input class="w3-input" :value="password" @input="changePassword" :disabled="inputDisabled" type="password">
+            </yuforms-container>
+            <yuforms-container>
+                <yuforms-right>
+                    <yuforms-button name="Giriş Yap" :disabled="loginButtonDisabled" margin-top margin-bottom @on-click="login"></yuforms-button>
+                </yuforms-right>
+            </yuforms-container>
+            <yuforms-container>
+                <yuforms-alert :title="alertTitle" :message="alertMessage" :hidden="alertHidden" :color="alertColor"></yuforms-alert>
+            </yuforms-container>
+        </yuforms-login>
+    </yuforms-main>
+</div>

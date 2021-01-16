@@ -4,8 +4,8 @@ require 'vendor/autoload.php';
 require 'generated-conf/config.php';
 
 // website
-use Yuforms\WebSite\Core\Page;
-use Yuforms\WebSite\Config as WebSiteConfig;
+use Yuforms\WebSite\Core\Controller as WebSiteController;
+//use Yuforms\WebSite\Config as WebSiteConfig;
 
 // router
 use Buki\Router\Router;
@@ -32,14 +32,7 @@ $router->get('/', function(){
 });
 
 $router->get('/:slug?', function($slug = 'index'){
-    $keys = array_keys(WebSiteConfig::PAGES);
-    if(in_array($slug, $keys)) {
-        $class = 'Yuforms\WebSite\View\\' . WebSiteConfig::PAGES[$slug]['className'];
-        new $class($slug);
-    } else {
-        http_response_code(404);
-        echo '404';
-    }
+    new WebSiteController($slug);
 });
 
 $router->run();

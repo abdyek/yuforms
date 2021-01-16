@@ -24,5 +24,9 @@ class Config {
             'className'=>'MyForms',
             'title'=>'Formlarım'                // For template, not now
         ],
+        'deneme'=>[
+            'className'=>'Example',
+            'title'=>'Burası Başlık Ehe Ehe'
+        ],
     ];
 }

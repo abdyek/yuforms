@@ -1,3 +1,16 @@
+// global funcs
+
+function validateEmail(email) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
+
+function changePage(uri) {
+    window.location.href="/yuforms"+uri;
+}
+
+// ^ global funcs
+
 Vue.component('yuforms-header-button', {
     props:['name'],
     data: function() {
@@ -23,7 +36,7 @@ Vue.component('yuforms-header', {
                             <div class="w3-right" style="margin-top:20px">\
                                 <yuforms-header-button name="Yeni Form"></yuforms-header-button>
                                 <yuforms-header-button name="Formlarım"></yuforms-header-button>
-                                <yuforms-header-button name="Hesap"></yuforms-header-button>
+                                <yuforms-header-button name="Profil"></yuforms-header-button>
                             </div>\
                         </div>\
                     </div>\
@@ -309,16 +322,49 @@ Vue.component('yuforms-button', {
         marginLeft: {
             type:Boolean,
             default:false
+        },
+        disabled: {
+            type:Boolean,
+            default:false
         }
     },
     template: `
-        <button :class="{'w3-button':true, 'w3-blue':true, 'w3-margin-top':marginTop, 'w3-margin-right':marginRight, 'w3-margin-bottom':marginBottom, 'w3-margin-left':marginLeft}">{{name}}</button>
+        <button :class="{'w3-button':true, 'w3-blue':true, 'w3-margin-top':marginTop, 'w3-margin-right':marginRight, 'w3-margin-bottom':marginBottom, 'w3-margin-left':marginLeft}" @click="$emit('on-click')" :disabled="disabled">{{name}}</button>
     `
 });
 
+Vue.component('yuforms-alert', {
+    props: {
+        title: {
+            type:String,
+            default:"title"
+        },
+        message: {
+            type:String,
+            default:"message"
+        },
+        hidden: {
+            type:Boolean,
+            default:false
+        },
+        color: {
+            type:String,
+            default:"red"
+        },
+    },
+    template: `
+        <div v-if="hidden==false" :class="['w3-panel', 'w3-'+color]">
+          <h3>{{title}}</h3>
+          <p>{{message}}</p>
+        </div>  
+    `
+});
+
+/*
 new Vue({
     el:'#app',
     data: {
         info:"vue is here"
     }
 });
+*/

@@ -6,6 +6,7 @@ use Yuforms\Api\Core\Controller;
 
 class Example extends Controller {
     protected function post() {
+        $this->response($this->data);
         /*
         $currentDateTime = date('Y-m-d H:i:s', time());
         $member = new \Member();

@@ -7,6 +7,7 @@ class Controller {
         'Example'=>[
             'POST'=>[
                 'authorization'=>['guest', 'member', 'root'],
+                    /*
                 'required'=>[
                     'name'=>[
                         'type'=>'str', // str, arr, int, email
@@ -38,7 +39,7 @@ class Controller {
                             ]
                         ],
                     ]
-                ]
+                ]*/
             ],
             'GET'=>[
                 'authorization'=>['guest', 'member', 'root'],

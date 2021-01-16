@@ -5,15 +5,10 @@ use Yuforms\WebSite\Config;
 
 class View {
     public function __construct($slug) {
-        $this->slug = $slug;
-        $this->beforeCreate();
-        $this->createPage();
-        $this->afterCreate();
+        $title = Config::PAGES[$slug]['title'];
+        $body = 'public/html/'.Config::PAGES[$slug]['className'].'.html';
+        $style = Config::PAGES[$slug]['className'];
+        $script = Config::PAGES[$slug]['className'];
+        include 'Template.php';
     }
-    private function createPage() {
-        $path = 'public/'.$this->slug.'.php';
-        include $path;
-    }
-    protected function beforeCreate() {}
-    protected function afterCreate() {}
 }
