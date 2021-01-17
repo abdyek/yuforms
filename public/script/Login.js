@@ -39,6 +39,10 @@ new Vue({
                 this.alertHidden = false;
                 this.alertTitle="Giriş Başarılı";
                 this.alertMessage="Ana sayfaya yönlendirileceksiniz";
+                delete json['state'];
+                delete json['jwt'];
+                let hash = base64FromObject(json);
+                setCookie('user', hash);
                 setTimeout(function() {
                     changePage('/');
                 },1500);

@@ -1,0 +1,58 @@
+<div id="app">
+    <yuforms-header></yuforms-header>
+    <yuforms-main>
+        <yuforms-container>
+            <div class="w3-panel w3-blue">
+                <h3>{{userName}}</h3>
+                <p>{{userEmail}}</p>
+            </div>
+        </yuforms-container>
+        <yuforms-container v-if="responseVisible">
+            <yuforms-alert :title="responseTitle" :message="responseMessage" :color="responseColor"></yuforms-alert>
+        </yuforms-container>
+        <yuforms-row>
+            <yuforms-half>
+                <yuforms-container>
+                    <yuforms-card>
+                        <div class="w3-container w3-green">
+                            <h4>E-posta Değiştir</h4>
+                        </div>
+                        <yuforms-container margin-top>
+                            <label>E-posta</label>
+                            <input class="w3-input" type="email" :value="userEmail" disabled>
+                            <label>Yeni E-posta</label>
+                            <input class="w3-input" type="email" :value="newEmail" @input="inputNewEmail">
+                            <label>Parola</label>
+                            <input class="w3-input" type="password" :value="passwordToChangeEmail" @input="inputPasswordToChangeEmail">
+                            <yuforms-right>
+                                <yuforms-button name="Değiştir" color="green" margin-top margin-bottom @on-click="changeEmail" :disabled="changeEmailButtonDisabled"></yuforms-button>
+                            <yuforms-right>
+                        </yuforms-container>
+                    </yuforms-card>
+                </yuforms-container> 
+            </yuforms-half>
+            <yuforms-half>
+                <yuforms-container>
+                    <yuforms-card>
+                        <div class="w3-container w3-green">
+                            <h4>Parola Değiştir</h4>
+                        </div>
+                        <yuforms-container margin-top>
+                            <label>Yeni Parola</label>
+                            <input class="w3-input" type="password" :value="newPassword" @input="inputNewPassword">
+                            <label>Yeni Parola Tekrar</label>
+                            <input class="w3-input" type="password" :value="newPasswordAgain" @input="inputNewPasswordAgain">
+                            <label>Parola</label>
+                            <input class="w3-input" type="password" :value="passwordToChangePassword" @input="inputPassword">
+                            <yuforms-alert v-if="passwordConsistent==false" non-title message="Parola tekrarı ile uyumsuz" color="yellow"></yuforms-alert>
+                            <yuforms-alert v-if="passwordLengthOK==false" non-title message="Parola 10 ile 50 karakter arasında olmalı" color="yellow"></yuforms-alert>
+                            <yuforms-right>
+                                <yuforms-button name="Değiştir" color="green" margin-top margin-bottom @on-click="changePassword" :disabled="changePasswordButtonDisabled"></yuforms-button>
+                            <yuforms-right>
+                        </yuforms-container>
+                    </yuforms-card>
+                </yuforms-container> 
+            </yuforms-half>
+        </yuforms-row>
+    </yuforms-main>
+</div>

@@ -6,9 +6,9 @@ use Yuforms\WebSite\Config;
 class View {
     public function __construct($slug) {
         $title = Config::PAGES[$slug]['title'];
-        $body = 'public/html/'.Config::PAGES[$slug]['className'].'.html';
-        $style = Config::PAGES[$slug]['className'];
-        $script = Config::PAGES[$slug]['className'];
+        $body = 'public/html/'.Config::PAGES[$slug]['name'].'.html';
+        $style = Config::PAGES[$slug]['name'];
+        $script = Config::PAGES[$slug]['name'];
         include 'Template.php';
     }
 }

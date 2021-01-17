@@ -9,6 +9,50 @@ function changePage(uri) {
     window.location.href="/yuforms"+uri;
 }
 
+function base64FromObject(obj) {
+    let stringified = JSON.stringify(obj);
+    let encodedUTF8 = encode_utf8(stringified);
+    return btoa(encodedUTF8);
+}
+
+function encode_utf8(s) {
+  return unescape(encodeURIComponent(s));
+}
+
+function decode_utf8(s) {
+  return decodeURIComponent(escape(s));
+}
+
+function objectFromBase64(encoded) {
+    let decoded = atob(encoded);
+    let decodedUTF8 = decode_utf8(decoded);
+    return JSON.parse(decodedUTF8);
+}
+
+function setCookie(key, value) {
+    let now = new Date();
+    let time = now.getTime();
+    let expireTime = time + 31556926000;
+    now.setTime(expireTime);
+    document.cookie = key+'='+value+';expires='+now.toUTCString()+';path=/';
+}
+
+function getCookie(cname) {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for(let i = 0; i <ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
 // ^ global funcs
 
 Vue.component('yuforms-header-button', {
@@ -75,6 +119,20 @@ Vue.component('yuforms-container', {
     },
     template: `
         <div :class="{'w3-container':true, 'w3-margin-left': marginLeft, 'w3-margin-right':marginRight, 'w3-margin-top':marginTop, 'w3-margin-bottom':marginBottom, 'w3-card':card, 'w3-light-grey':lightGrey}">
+            <slot></slot>
+        </div>
+    `
+});
+
+Vue.component('yuforms-card', {
+    props:['shadow'],
+    computed: {
+        cls: function() {
+            return (['2', '4'].indexOf(this.shadow)==-1)?'w3-card':'w3-card-'+this.shadow;
+        }
+    },
+    template: `
+        <div :class="cls">
             <slot></slot>
         </div>
     `
@@ -301,11 +359,35 @@ Vue.component('yuforms-right', {
     `
 });
 
+Vue.component('yuforms-center', {
+    template:`
+        <div class="w3-center">
+            <slot></slot>
+        </div>
+    `
+});
+
+Vue.component('yuforms-row', {
+    template:`
+        <div class="w3-row">
+            <slot></slot>
+        </div>
+    `
+});
+
+Vue.component('yuforms-half', {
+    template:`
+        <div class="w3-half">
+            <slot></slot>
+        </div>
+    `
+});
+
 Vue.component('yuforms-button', {
     props: {
         name: {
             type:String,
-            default:"button"
+            default:"name"
         },
         marginTop: {
             type:Boolean,
@@ -326,10 +408,14 @@ Vue.component('yuforms-button', {
         disabled: {
             type:Boolean,
             default:false
+        },
+        color: {
+            type:String,
+            default:"grey"
         }
     },
     template: `
-        <button :class="{'w3-button':true, 'w3-blue':true, 'w3-margin-top':marginTop, 'w3-margin-right':marginRight, 'w3-margin-bottom':marginBottom, 'w3-margin-left':marginLeft}" @click="$emit('on-click')" :disabled="disabled">{{name}}</button>
+        <button :class="[{'w3-button':true, 'w3-margin-top':marginTop, 'w3-margin-right':marginRight, 'w3-margin-bottom':marginBottom, 'w3-margin-left':marginLeft}, 'w3-'+color]" @click="$emit('on-click')" :disabled="disabled">{{name}}</button>
     `
 });
 
@@ -351,10 +437,14 @@ Vue.component('yuforms-alert', {
             type:String,
             default:"red"
         },
+        nonTitle: {
+            type:Boolean,
+            default:false
+        }
     },
     template: `
         <div v-if="hidden==false" :class="['w3-panel', 'w3-'+color]">
-          <h3>{{title}}</h3>
+          <h3 v-if="nonTitle==false">{{title}}</h3>
           <p>{{message}}</p>
         </div>  
     `

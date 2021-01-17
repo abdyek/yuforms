@@ -5,28 +5,32 @@ namespace Yuforms\WebSite;
 class Config {
     const PAGES = [
         'index'=>[
-            'className'=>'Index',
+            'name'=>'Index',
             'title'=>'Ana Sayfa'                // For template, not now
         ],
         'giris-yap'=>[
-            'className'=>'Login',
+            'name'=>'Login',
             'title'=>'Giriş Yap'                // For template, not now
         ],
         'yeni-form'=>[
-            'className'=>'NewForm',
+            'name'=>'NewForm',
             'title'=>'Yeni Form Oluştur'        // For template, not now
         ],
         'form-duzenle'=>[
-            'className'=>'EditForm',
+            'name'=>'EditForm',
             'title'=>'Form Düzenle'             // For template, not now
         ],
         'formlarim'=>[
-            'className'=>'MyForms',
+            'name'=>'MyForms',
             'title'=>'Formlarım'                // For template, not now
         ],
         'deneme'=>[
-            'className'=>'Example',
+            'name'=>'Example',
             'title'=>'Burası Başlık Ehe Ehe'
         ],
+        'profil'=>[
+            'name'=>'Profile',
+            'title'=>'Profilim'
+        ]
     ];
 }
