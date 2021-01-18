@@ -6,31 +6,59 @@ class Config {
     const PAGES = [
         'index'=>[
             'name'=>'Index',
-            'title'=>'Ana Sayfa'                // For template, not now
+            'title'=>'Ana Sayfa',
+            'authorization'=>[
+                'guest'=>true,
+                'member'=>true
+            ]
         ],
         'giris-yap'=>[
             'name'=>'Login',
-            'title'=>'Giriş Yap'                // For template, not now
+            'title'=>'Giriş Yap',
+            'authorization'=>[
+                'guest'=>true,
+                'member'=>'profil'
+            ]
         ],
         'yeni-form'=>[
             'name'=>'NewForm',
-            'title'=>'Yeni Form Oluştur'        // For template, not now
+            'title'=>'Yeni Form Oluştur',
+            'authorization'=>[
+                'guest'=>'giris-yap',
+                'member'=>true
+            ]
         ],
         'form-duzenle'=>[
             'name'=>'EditForm',
-            'title'=>'Form Düzenle'             // For template, not now
+            'title'=>'Form Düzenle',
+            'authorization'=>[
+                'guest'=>'giris-yap',
+                'member'=>true
+            ]
         ],
         'formlarim'=>[
             'name'=>'MyForms',
-            'title'=>'Formlarım'                // For template, not now
+            'title'=>'Formlarım',
+            'authorization'=>[
+                'guest'=>'giris-yap',
+                'member'=>true
+            ]
         ],
         'deneme'=>[
-            'name'=>'Example',
-            'title'=>'Burası Başlık Ehe Ehe'
+            'name'=>'Deneme',
+            'title'=>'Burası Başlık Ehe Ehe',
+            'authorization'=>[
+                'guest'=>true,
+                'member'=>true
+            ]
         ],
         'profil'=>[
             'name'=>'Profile',
-            'title'=>'Profilim'
+            'title'=>'Profilim',
+            'authorization'=>[
+                'guest'=>'giris-yap',
+                'member'=>true
+            ]
         ]
     ];
 }

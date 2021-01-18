@@ -8,7 +8,9 @@ use Yuforms\Api\Config\Jwt as JwtConfig;
 class Controller {
     public function __construct() {
         $this->setConfig();
-        $this->detectAuthorization();
+        $autho = $this->detectAuthorization();
+        $this->who = $autho['who'];
+        $this->userId = $autho['userId'];
         $this->checkMethod();
         $this->checkAuthorization();
         $this->setData();
@@ -104,7 +106,8 @@ class Controller {
         }
         return true;
     }
-    private function detectAuthorization() {
+    // Used in WebSite\Core\Controller
+    public function detectAuthorization() {
         if(isset($_COOKIE['jwt'])) {
             try {
                 $payload = (new JWT(JwtConfig::SECRET, JwtConfig::ALGO, 1800))->decode($_COOKIE['jwt']);
@@ -115,14 +118,20 @@ class Controller {
                 }
             }
             if(isset($payload['userId'])) {
-                $this->who = $payload['who'];
-                $this->userId = $payload['userId'];
+                return [
+                    'who'=>$payload['who'],
+                    'userId'=>$payload['userId']
+                ];
             }
         } else {
-            $this->who = 'guest';
+            return [
+                'who'=>'guest',
+                'userId'=>null
+            ];
         }
-
     }
+    // ^ Used in WebSite\Core\Controller
+
     private function emailPatternCheck($email) {
         return filter_var($email, FILTER_VALIDATE_EMAIL);
     }

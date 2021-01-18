@@ -37,6 +37,8 @@ class Login extends Controller {
         ]);
         setCookie('jwt', $this->token, [
             'secure'=>CookieConfig::SECURE,
+            'path'=>'/',
+            'expires'=>time() + JwtConfig::EXP,
             'httponly'=>CookieConfig::HTTPONLY,
             'samesite'=>CookieConfig::SAMESITE
         ]);
