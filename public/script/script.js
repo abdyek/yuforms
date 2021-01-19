@@ -53,6 +53,21 @@ function getCookie(cname) {
     return "";
 }
 
+function getUserInfo() {
+    const hash = getCookie('user');
+    if(hash=="" || hash=='null') {
+        return false;
+    }
+    const userInfo = objectFromBase64(hash);
+    const keys = ['email', 'firstName', 'id', 'lastName'];
+    for(let i=0;i<keys.length;i++) {
+        if(userInfo[keys[i]]==undefined) {
+            return false;
+        }
+    }
+    return userInfo;
+}
+
 // ^ global funcs
 
 Vue.component('yuforms-header-button', {
@@ -63,11 +78,15 @@ Vue.component('yuforms-header-button', {
         }
     },
     template: `
-        <button v-show="show" class="w3-button w3-medium w3-blue-grey">{{name}}</button>\
+        <button v-show="show" @click="$emit('on-click')" class="w3-button w3-medium w3-blue-grey">{{name}}</button>\
     `
 });
 
 Vue.component('yuforms-header', {
+    beforeCreate() {
+        this.userInfo = getUserInfo();
+        this.guest = (this.userInfo==false)?true:false;
+    },
     template: `\
         <div class="w3-top">\
             <div class="w3-row w3-large w3-light-grey w3-card-2">\
@@ -77,17 +96,25 @@ Vue.component('yuforms-header', {
                             <h1>Yuforms</h1>\
                         </div>\
                         <div class="w3-container w3-cell">\
-                            <div class="w3-right" style="margin-top:20px">\
-                                <yuforms-header-button name="Yeni Form"></yuforms-header-button>
-                                <yuforms-header-button name="Formlarım"></yuforms-header-button>
-                                <yuforms-header-button name="Profil"></yuforms-header-button>
+                            <div v-if="this.guest" class="w3-right" style="margin-top:20px">\
+                                <yuforms-header-button name="Giriş Yap" @on-click="go('giris-yap')"></yuforms-header-button>
+                            </div>\
+                            <div v-else class="w3-right" style="margin-top:20px">\
+                                <yuforms-header-button name="Yeni Form" @on-click="go('yeni-form')"></yuforms-header-button>
+                                <yuforms-header-button name="Formlarım" @on-click="go('formlarim')"></yuforms-header-button>
+                                <yuforms-header-button name="Profil" @on-click="go('profilim')"></yuforms-header-button>
                             </div>\
                         </div>\
                     </div>\
                 </div>\
             </div>\
         </div>\
-    `
+    `,
+    methods: {
+        go: function(slug) {
+            changePage('/'+slug);
+        }
+    }
 });
 
 Vue.component('yuforms-container', {

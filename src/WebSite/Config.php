@@ -17,7 +17,7 @@ class Config {
             'title'=>'Giriş Yap',
             'authorization'=>[
                 'guest'=>true,
-                'member'=>'profil'
+                'member'=>'profilim'
             ]
         ],
         'yeni-form'=>[
@@ -52,7 +52,7 @@ class Config {
                 'member'=>true
             ]
         ],
-        'profil'=>[
+        'profilim'=>[
             'name'=>'Profile',
             'title'=>'Profilim',
             'authorization'=>[
@@ -65,7 +65,7 @@ class Config {
             'title'=>'Kayıt Ol',
             'authorization'=>[
                 'guest'=>true,
-                'member'=>'profil'
+                'member'=>'profilim'
             ]
         ]
     ];

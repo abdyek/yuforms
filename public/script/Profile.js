@@ -17,10 +17,7 @@ new Vue({
         logOutButtonDisabled:false,
     },
     beforeCreate: function() {
-        let hash = getCookie('user');
-        if(hash) {
-            this.userInfo = objectFromBase64(hash);
-        }
+        this.userInfo = getUserInfo();
     },
     computed: {
         userEmail: function() {

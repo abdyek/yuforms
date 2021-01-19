@@ -1,5 +1,26 @@
 # Yuforms
 Yuforms is open source improvable form web application. This application is my final project to graduate from Suleyman Demirel University computer engineering/computer sciense.
+
+## Installation on Localhost
+
+clone this repository
+
+`git clone https://github.com/abdyek/yuforms`
+
+move it xampp or other php server
+
+`mv ./yuforms /opt/lampp/htdocs/yuforms`
+
+change directory
+
+`cd /opt/lampp/htdocs/yuforms`
+
+installation dependency
+
+`composer install`
+
+create database called "yuforms" and import the sql file on mysql server
+
 ## Requirement Analysis
 if the requirements look like poor for you don't worry. There is more idea in my mind to add in the project. I only want hold minimal the scale of this project for now.
 
@@ -36,3 +57,5 @@ if the requirements look like poor for you don't worry. There is more idea in my
 
 ## Project Plan
 ![project plan](https://github.com/abdyek/yuforms/blob/master/assets/readme/plan.png?raw=true)
+
+## Installation on Localhost
