@@ -115,10 +115,14 @@ Vue.component('yuforms-container', {
         'light-grey': {
             type:Boolean,
             default:false
+        },
+        'color':{
+            type:String,
+            default:'none'
         }
     },
     template: `
-        <div :class="{'w3-container':true, 'w3-margin-left': marginLeft, 'w3-margin-right':marginRight, 'w3-margin-top':marginTop, 'w3-margin-bottom':marginBottom, 'w3-card':card, 'w3-light-grey':lightGrey}">
+        <div :class="[{'w3-container':true, 'w3-margin-left': marginLeft, 'w3-margin-right':marginRight, 'w3-margin-top':marginTop, 'w3-margin-bottom':marginBottom, 'w3-card':card, 'w3-light-grey':lightGrey}, 'w3-' + color]">
             <slot></slot>
         </div>
     `

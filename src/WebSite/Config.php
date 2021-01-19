@@ -59,6 +59,14 @@ class Config {
                 'guest'=>'giris-yap',
                 'member'=>true
             ]
+        ],
+        'kayit-ol'=>[
+            'name'=>'Signup',
+            'title'=>'Kayıt Ol',
+            'authorization'=>[
+                'guest'=>true,
+                'member'=>'profil'
+            ]
         ]
     ];
 }

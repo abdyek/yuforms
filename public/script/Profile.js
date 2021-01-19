@@ -162,7 +162,6 @@ new Vue({
                 else return response.json();
             }).then((json)=>{
                 setCookie('user', null);
-                console.log("Çıkış Yapıldı");
                 setTimeout(()=>{
                     changePage('/');
                 }, 1000);
