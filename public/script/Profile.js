@@ -14,6 +14,7 @@ new Vue({
         responseTitle:"",
         responseMessage:"",
         responseColor:"",
+        logOutButtonDisabled:false,
     },
     beforeCreate: function() {
         let hash = getCookie('user');
@@ -148,6 +149,26 @@ new Vue({
         },
         hideReponse: function() {
             this.responseVisible = false;
+        },
+        logOut: function() {
+            this.logOutButtonDisabled=true;
+            fetch('api/logOut', {
+                method: 'POST',
+                header: {
+                    'Content-Type': 'application/json'
+                },
+            }).then((response)=>{
+                if(!response.ok) throw new Error(response.status);
+                else return response.json();
+            }).then((json)=>{
+                setCookie('user', null);
+                console.log("Çıkış Yapıldı");
+                setTimeout(()=>{
+                    changePage('/');
+                }, 1000);
+            }).catch((error)=>{
+
+            });
         }
     }
 });

@@ -3,8 +3,17 @@
     <yuforms-main>
         <yuforms-container>
             <div class="w3-panel w3-blue">
-                <h3>{{userName}}</h3>
-                <p>{{userEmail}}</p>
+                <yuforms-row>
+                    <yuforms-half>
+                        <h3>{{userName}}</h3>
+                        <p>{{userEmail}}</p>
+                    </yuforms-half>
+                    <yuforms-half>
+                        <yuforms-right>
+                            <yuforms-button name="Çıkış Yap" margin-top margin-bottom color="light-blue" @on-click="logOut" :disabled="logOutButtonDisabled"></yuforms-button>
+                        </yuforms-right>
+                    </yuforms-half>
+                </yuforms-row>
             </div>
         </yuforms-container>
         <yuforms-container v-if="responseVisible">
