@@ -57,5 +57,3 @@ if the requirements look like poor for you don't worry. There is more idea in my
 
 ## Project Plan
 ![project plan](https://github.com/abdyek/yuforms/blob/master/assets/readme/plan.png?raw=true)
-
-## Installation on Localhost

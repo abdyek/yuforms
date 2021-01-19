@@ -11,11 +11,20 @@
                 <label>Parola</label>
                 <input class="w3-input" :value="password" @input="changePassword" :disabled="inputDisabled" type="password">
             </yuforms-container>
-            <yuforms-container>
-                <yuforms-right>
-                    <yuforms-button name="Giriş Yap" :disabled="loginButtonDisabled" margin-top margin-bottom @on-click="login"></yuforms-button>
-                </yuforms-right>
-            </yuforms-container>
+            <yuforms-row>
+                <yuforms-half>
+                    <yuforms-container margin-top>
+                        <a href="kayit-ol">Kayıt ol</a>
+                    </yuforms-container>
+                </yuforms-half>
+                <yuforms-half>
+                    <yuforms-container>
+                        <yuforms-right>
+                            <yuforms-button name="Giriş Yap" :disabled="loginButtonDisabled" margin-top margin-bottom @on-click="login"></yuforms-button>
+                        </yuforms-right>
+                    </yuforms-container>
+                </yuforms-half>
+            </yuforms>
             <yuforms-container>
                 <yuforms-alert :title="alertTitle" :message="alertMessage" :hidden="alertHidden" :color="alertColor"></yuforms-alert>
             </yuforms-container>
