@@ -67,6 +67,14 @@ class Config {
                 'guest'=>true,
                 'member'=>'profilim'
             ]
+        ],
+        'eposta-dogrula'=>[
+            'name'=>'ConfirmEmail',
+            'title'=>'E-posta Doğrula',
+            'authorization'=>[
+                'guest'=>true,
+                'member'=>'index'
+            ]
         ]
     ];
 }

@@ -6,13 +6,12 @@ use Yuforms\Api\Core\Controller;
 class ConfirmEmail extends Controller {
     protected function post() {
         $member = \MemberQuery::create()->findOneByEmail($this->data['email']);
-        if($member->getConfirmedEmail()) {
-            http_response_code(403);
+        if($member==null or $member->getConfirmedEmail()) {
+            http_response_code(404);
             exit();
         }
         if($this->data['code']!=$member->getActivationCode()) {
-            http_response_code(403);
-            $this->response('wrong code');
+            http_response_code(401);
             exit();
         }
         $member->setConfirmedEmail(true);

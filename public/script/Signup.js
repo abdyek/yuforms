@@ -79,6 +79,7 @@ new Vue({
                 } else if(json.error=="available email") {
                     this.availableEmailErr();
                 }
+                this.buttonDisabled = false;
             }).catch((error)=>{
                 if(error.message==400) {
                     this.responseTitle = "Başarısız";
@@ -92,6 +93,7 @@ new Vue({
                     this.responseHidden = false;
                     this.redirect('/');
                 }
+                this.buttonDisabled = false;
             });
         },
         success: function() {
