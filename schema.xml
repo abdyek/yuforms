@@ -10,4 +10,98 @@
         <column name="recovery_code" type="varchar" size="10" required="false"/>
         <column name="sign_up_date_time" type="timestamp" required="true"/>
     </table>
+    <table name="form">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="name" type="varchar" size="255" required="true"/>
+        <column name="create_date_time" type="timestamp" required="true"/>
+        <column name="last_edit_date_time" type="timestamp"/>
+        
+        <column name="member_id" type="integer" required="true"/>
+        <foreign-key foreignTable="member">
+            <reference local="member_id" foreign="id" />
+        </foreign-key>
+
+    </table>
+    <table name="share">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="start_date_time" type="timestamp" required="true"/>
+        <column name="stop_date_time" type="timestamp" required="true"/>
+        <column name="session_type" type="varchar" size="20" required="true"/>
+        <column name="submit_count" type="integer" required="true" defaultValue="0" />
+
+        <column name="member_id" type="integer" required="true"/>
+        <column name="form_id" type="integer" required="true"/>
+
+        <foreign-key foreignTable="member">
+            <reference local="member_id" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="form">
+            <reference local="form_id" foreign="id" />
+        </foreign-key>
+
+    </table>
+    <table name="submit">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="response" type="varchar" required="true" size="256" />
+        <column name="multi_response" type="boolean" required="true" defaultValue="false"/>
+        <column name="ip_address" type="varchar" size="15" required="false" />
+
+        <column name="form_item_id" type="integer" required="true"/>
+        <column name="share_id" type="integer" required="true"/>
+        <column name="member_id" type="integer" required="false"/>
+
+        <foreign-key foreignTable="form_item">
+            <reference local="form_item_id" foreign="id" />
+        </foreign-key>
+
+        <foreign-key foreignTable="share">
+            <reference local="share_id" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="member">
+            <reference local="member_id" foreign="id" />
+        </foreign-key>
+
+    </table>
+    <table name="form_item">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+
+        <column name="form_id" type="integer" required="true"/>
+        <column name="question_id" type="integer" required="true"/>
+
+        <foreign-key foreignTable="form">
+            <reference local="form_id" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="question">
+            <reference local="question_id" foreign="id" />
+        </foreign-key>
+
+    </table>
+    <table name="form_component">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="name" type="varchar" size="256" required="true" />
+        <column name="has_options" type="boolean" required="true" defaultValue="false" />
+    </table>
+    <table name="question">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="text" type="varchar" required="true" />
+
+        <column name="form_component_id" type="integer" required="true"/>
+
+        <foreign-key foreignTable="form_component">
+            <reference local="form_component_id" foreign="id" />
+        </foreign-key>
+
+    </table>
+    <table name="option">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="value" type="varchar" required="true" size="256" />
+        <column name="text" type="varchar" required="true" size="256" />
+
+        <column name="question_id" type="integer" required="true"/>
+
+        <foreign-key foreignTable="question">
+            <reference local="question_id" foreign="id" />
+        </foreign-key>
+
+    </table>
 </database>

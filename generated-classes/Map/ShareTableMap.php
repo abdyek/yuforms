@@ -2,8 +2,8 @@
 
 namespace Map;
 
-use \Member;
-use \MemberQuery;
+use \Share;
+use \ShareQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'member' table.
+ * This class defines the structure of the 'share' table.
  *
  *
  *
@@ -25,7 +25,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * ORDER BY clause to know whether it needs to apply SQL to make the ORDER BY case-insensitive
  * (i.e. if it's a text column type).
  */
-class MemberTableMap extends TableMap
+class ShareTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -33,7 +33,7 @@ class MemberTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = '.Map.MemberTableMap';
+    const CLASS_NAME = '.Map.ShareTableMap';
 
     /**
      * The default database name for this class
@@ -43,22 +43,22 @@ class MemberTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'member';
+    const TABLE_NAME = 'share';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\Member';
+    const OM_CLASS = '\\Share';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Member';
+    const CLASS_DEFAULT = 'Share';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 9;
+    const NUM_COLUMNS = 7;
 
     /**
      * The number of lazy-loaded columns
@@ -68,52 +68,42 @@ class MemberTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 9;
+    const NUM_HYDRATE_COLUMNS = 7;
 
     /**
      * the column name for the id field
      */
-    const COL_ID = 'member.id';
+    const COL_ID = 'share.id';
 
     /**
-     * the column name for the email field
+     * the column name for the start_date_time field
      */
-    const COL_EMAIL = 'member.email';
+    const COL_START_DATE_TIME = 'share.start_date_time';
 
     /**
-     * the column name for the first_name field
+     * the column name for the stop_date_time field
      */
-    const COL_FIRST_NAME = 'member.first_name';
+    const COL_STOP_DATE_TIME = 'share.stop_date_time';
 
     /**
-     * the column name for the last_name field
+     * the column name for the session_type field
      */
-    const COL_LAST_NAME = 'member.last_name';
+    const COL_SESSION_TYPE = 'share.session_type';
 
     /**
-     * the column name for the confirmed_email field
+     * the column name for the submit_count field
      */
-    const COL_CONFIRMED_EMAIL = 'member.confirmed_email';
+    const COL_SUBMIT_COUNT = 'share.submit_count';
 
     /**
-     * the column name for the password_hash field
+     * the column name for the member_id field
      */
-    const COL_PASSWORD_HASH = 'member.password_hash';
+    const COL_MEMBER_ID = 'share.member_id';
 
     /**
-     * the column name for the activation_code field
+     * the column name for the form_id field
      */
-    const COL_ACTIVATION_CODE = 'member.activation_code';
-
-    /**
-     * the column name for the recovery_code field
-     */
-    const COL_RECOVERY_CODE = 'member.recovery_code';
-
-    /**
-     * the column name for the sign_up_date_time field
-     */
-    const COL_SIGN_UP_DATE_TIME = 'member.sign_up_date_time';
+    const COL_FORM_ID = 'share.form_id';
 
     /**
      * The default string format for model objects of the related table
@@ -127,11 +117,11 @@ class MemberTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Email', 'FirstName', 'LastName', 'ConfirmedEmail', 'PasswordHash', 'ActivationCode', 'RecoveryCode', 'SignUpDateTime', ),
-        self::TYPE_CAMELNAME     => array('id', 'email', 'firstName', 'lastName', 'confirmedEmail', 'passwordHash', 'activationCode', 'recoveryCode', 'signUpDateTime', ),
-        self::TYPE_COLNAME       => array(MemberTableMap::COL_ID, MemberTableMap::COL_EMAIL, MemberTableMap::COL_FIRST_NAME, MemberTableMap::COL_LAST_NAME, MemberTableMap::COL_CONFIRMED_EMAIL, MemberTableMap::COL_PASSWORD_HASH, MemberTableMap::COL_ACTIVATION_CODE, MemberTableMap::COL_RECOVERY_CODE, MemberTableMap::COL_SIGN_UP_DATE_TIME, ),
-        self::TYPE_FIELDNAME     => array('id', 'email', 'first_name', 'last_name', 'confirmed_email', 'password_hash', 'activation_code', 'recovery_code', 'sign_up_date_time', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
+        self::TYPE_PHPNAME       => array('Id', 'StartDateTime', 'StopDateTime', 'SessionType', 'SubmitCount', 'MemberId', 'FormId', ),
+        self::TYPE_CAMELNAME     => array('id', 'startDateTime', 'stopDateTime', 'sessionType', 'submitCount', 'memberId', 'formId', ),
+        self::TYPE_COLNAME       => array(ShareTableMap::COL_ID, ShareTableMap::COL_START_DATE_TIME, ShareTableMap::COL_STOP_DATE_TIME, ShareTableMap::COL_SESSION_TYPE, ShareTableMap::COL_SUBMIT_COUNT, ShareTableMap::COL_MEMBER_ID, ShareTableMap::COL_FORM_ID, ),
+        self::TYPE_FIELDNAME     => array('id', 'start_date_time', 'stop_date_time', 'session_type', 'submit_count', 'member_id', 'form_id', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -141,11 +131,11 @@ class MemberTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Email' => 1, 'FirstName' => 2, 'LastName' => 3, 'ConfirmedEmail' => 4, 'PasswordHash' => 5, 'ActivationCode' => 6, 'RecoveryCode' => 7, 'SignUpDateTime' => 8, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'email' => 1, 'firstName' => 2, 'lastName' => 3, 'confirmedEmail' => 4, 'passwordHash' => 5, 'activationCode' => 6, 'recoveryCode' => 7, 'signUpDateTime' => 8, ),
-        self::TYPE_COLNAME       => array(MemberTableMap::COL_ID => 0, MemberTableMap::COL_EMAIL => 1, MemberTableMap::COL_FIRST_NAME => 2, MemberTableMap::COL_LAST_NAME => 3, MemberTableMap::COL_CONFIRMED_EMAIL => 4, MemberTableMap::COL_PASSWORD_HASH => 5, MemberTableMap::COL_ACTIVATION_CODE => 6, MemberTableMap::COL_RECOVERY_CODE => 7, MemberTableMap::COL_SIGN_UP_DATE_TIME => 8, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'email' => 1, 'first_name' => 2, 'last_name' => 3, 'confirmed_email' => 4, 'password_hash' => 5, 'activation_code' => 6, 'recovery_code' => 7, 'sign_up_date_time' => 8, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'StartDateTime' => 1, 'StopDateTime' => 2, 'SessionType' => 3, 'SubmitCount' => 4, 'MemberId' => 5, 'FormId' => 6, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'startDateTime' => 1, 'stopDateTime' => 2, 'sessionType' => 3, 'submitCount' => 4, 'memberId' => 5, 'formId' => 6, ),
+        self::TYPE_COLNAME       => array(ShareTableMap::COL_ID => 0, ShareTableMap::COL_START_DATE_TIME => 1, ShareTableMap::COL_STOP_DATE_TIME => 2, ShareTableMap::COL_SESSION_TYPE => 3, ShareTableMap::COL_SUBMIT_COUNT => 4, ShareTableMap::COL_MEMBER_ID => 5, ShareTableMap::COL_FORM_ID => 6, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'start_date_time' => 1, 'stop_date_time' => 2, 'session_type' => 3, 'submit_count' => 4, 'member_id' => 5, 'form_id' => 6, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -156,77 +146,61 @@ class MemberTableMap extends TableMap
     protected $normalizedColumnNameMap = [
 
         'Id' => 'ID',
-        'Member.Id' => 'ID',
+        'Share.Id' => 'ID',
         'id' => 'ID',
-        'member.id' => 'ID',
-        'MemberTableMap::COL_ID' => 'ID',
+        'share.id' => 'ID',
+        'ShareTableMap::COL_ID' => 'ID',
         'COL_ID' => 'ID',
         'id' => 'ID',
-        'member.id' => 'ID',
-        'Email' => 'EMAIL',
-        'Member.Email' => 'EMAIL',
-        'email' => 'EMAIL',
-        'member.email' => 'EMAIL',
-        'MemberTableMap::COL_EMAIL' => 'EMAIL',
-        'COL_EMAIL' => 'EMAIL',
-        'email' => 'EMAIL',
-        'member.email' => 'EMAIL',
-        'FirstName' => 'FIRST_NAME',
-        'Member.FirstName' => 'FIRST_NAME',
-        'firstName' => 'FIRST_NAME',
-        'member.firstName' => 'FIRST_NAME',
-        'MemberTableMap::COL_FIRST_NAME' => 'FIRST_NAME',
-        'COL_FIRST_NAME' => 'FIRST_NAME',
-        'first_name' => 'FIRST_NAME',
-        'member.first_name' => 'FIRST_NAME',
-        'LastName' => 'LAST_NAME',
-        'Member.LastName' => 'LAST_NAME',
-        'lastName' => 'LAST_NAME',
-        'member.lastName' => 'LAST_NAME',
-        'MemberTableMap::COL_LAST_NAME' => 'LAST_NAME',
-        'COL_LAST_NAME' => 'LAST_NAME',
-        'last_name' => 'LAST_NAME',
-        'member.last_name' => 'LAST_NAME',
-        'ConfirmedEmail' => 'CONFIRMED_EMAIL',
-        'Member.ConfirmedEmail' => 'CONFIRMED_EMAIL',
-        'confirmedEmail' => 'CONFIRMED_EMAIL',
-        'member.confirmedEmail' => 'CONFIRMED_EMAIL',
-        'MemberTableMap::COL_CONFIRMED_EMAIL' => 'CONFIRMED_EMAIL',
-        'COL_CONFIRMED_EMAIL' => 'CONFIRMED_EMAIL',
-        'confirmed_email' => 'CONFIRMED_EMAIL',
-        'member.confirmed_email' => 'CONFIRMED_EMAIL',
-        'PasswordHash' => 'PASSWORD_HASH',
-        'Member.PasswordHash' => 'PASSWORD_HASH',
-        'passwordHash' => 'PASSWORD_HASH',
-        'member.passwordHash' => 'PASSWORD_HASH',
-        'MemberTableMap::COL_PASSWORD_HASH' => 'PASSWORD_HASH',
-        'COL_PASSWORD_HASH' => 'PASSWORD_HASH',
-        'password_hash' => 'PASSWORD_HASH',
-        'member.password_hash' => 'PASSWORD_HASH',
-        'ActivationCode' => 'ACTIVATION_CODE',
-        'Member.ActivationCode' => 'ACTIVATION_CODE',
-        'activationCode' => 'ACTIVATION_CODE',
-        'member.activationCode' => 'ACTIVATION_CODE',
-        'MemberTableMap::COL_ACTIVATION_CODE' => 'ACTIVATION_CODE',
-        'COL_ACTIVATION_CODE' => 'ACTIVATION_CODE',
-        'activation_code' => 'ACTIVATION_CODE',
-        'member.activation_code' => 'ACTIVATION_CODE',
-        'RecoveryCode' => 'RECOVERY_CODE',
-        'Member.RecoveryCode' => 'RECOVERY_CODE',
-        'recoveryCode' => 'RECOVERY_CODE',
-        'member.recoveryCode' => 'RECOVERY_CODE',
-        'MemberTableMap::COL_RECOVERY_CODE' => 'RECOVERY_CODE',
-        'COL_RECOVERY_CODE' => 'RECOVERY_CODE',
-        'recovery_code' => 'RECOVERY_CODE',
-        'member.recovery_code' => 'RECOVERY_CODE',
-        'SignUpDateTime' => 'SIGN_UP_DATE_TIME',
-        'Member.SignUpDateTime' => 'SIGN_UP_DATE_TIME',
-        'signUpDateTime' => 'SIGN_UP_DATE_TIME',
-        'member.signUpDateTime' => 'SIGN_UP_DATE_TIME',
-        'MemberTableMap::COL_SIGN_UP_DATE_TIME' => 'SIGN_UP_DATE_TIME',
-        'COL_SIGN_UP_DATE_TIME' => 'SIGN_UP_DATE_TIME',
-        'sign_up_date_time' => 'SIGN_UP_DATE_TIME',
-        'member.sign_up_date_time' => 'SIGN_UP_DATE_TIME',
+        'share.id' => 'ID',
+        'StartDateTime' => 'START_DATE_TIME',
+        'Share.StartDateTime' => 'START_DATE_TIME',
+        'startDateTime' => 'START_DATE_TIME',
+        'share.startDateTime' => 'START_DATE_TIME',
+        'ShareTableMap::COL_START_DATE_TIME' => 'START_DATE_TIME',
+        'COL_START_DATE_TIME' => 'START_DATE_TIME',
+        'start_date_time' => 'START_DATE_TIME',
+        'share.start_date_time' => 'START_DATE_TIME',
+        'StopDateTime' => 'STOP_DATE_TIME',
+        'Share.StopDateTime' => 'STOP_DATE_TIME',
+        'stopDateTime' => 'STOP_DATE_TIME',
+        'share.stopDateTime' => 'STOP_DATE_TIME',
+        'ShareTableMap::COL_STOP_DATE_TIME' => 'STOP_DATE_TIME',
+        'COL_STOP_DATE_TIME' => 'STOP_DATE_TIME',
+        'stop_date_time' => 'STOP_DATE_TIME',
+        'share.stop_date_time' => 'STOP_DATE_TIME',
+        'SessionType' => 'SESSION_TYPE',
+        'Share.SessionType' => 'SESSION_TYPE',
+        'sessionType' => 'SESSION_TYPE',
+        'share.sessionType' => 'SESSION_TYPE',
+        'ShareTableMap::COL_SESSION_TYPE' => 'SESSION_TYPE',
+        'COL_SESSION_TYPE' => 'SESSION_TYPE',
+        'session_type' => 'SESSION_TYPE',
+        'share.session_type' => 'SESSION_TYPE',
+        'SubmitCount' => 'SUBMIT_COUNT',
+        'Share.SubmitCount' => 'SUBMIT_COUNT',
+        'submitCount' => 'SUBMIT_COUNT',
+        'share.submitCount' => 'SUBMIT_COUNT',
+        'ShareTableMap::COL_SUBMIT_COUNT' => 'SUBMIT_COUNT',
+        'COL_SUBMIT_COUNT' => 'SUBMIT_COUNT',
+        'submit_count' => 'SUBMIT_COUNT',
+        'share.submit_count' => 'SUBMIT_COUNT',
+        'MemberId' => 'MEMBER_ID',
+        'Share.MemberId' => 'MEMBER_ID',
+        'memberId' => 'MEMBER_ID',
+        'share.memberId' => 'MEMBER_ID',
+        'ShareTableMap::COL_MEMBER_ID' => 'MEMBER_ID',
+        'COL_MEMBER_ID' => 'MEMBER_ID',
+        'member_id' => 'MEMBER_ID',
+        'share.member_id' => 'MEMBER_ID',
+        'FormId' => 'FORM_ID',
+        'Share.FormId' => 'FORM_ID',
+        'formId' => 'FORM_ID',
+        'share.formId' => 'FORM_ID',
+        'ShareTableMap::COL_FORM_ID' => 'FORM_ID',
+        'COL_FORM_ID' => 'FORM_ID',
+        'form_id' => 'FORM_ID',
+        'share.form_id' => 'FORM_ID',
     ];
 
     /**
@@ -239,22 +213,20 @@ class MemberTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('member');
-        $this->setPhpName('Member');
+        $this->setName('share');
+        $this->setPhpName('Share');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\Member');
+        $this->setClassName('\\Share');
         $this->setPackage('');
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('email', 'Email', 'VARCHAR', true, 255, null);
-        $this->addColumn('first_name', 'FirstName', 'VARCHAR', true, 50, null);
-        $this->addColumn('last_name', 'LastName', 'VARCHAR', true, 50, null);
-        $this->addColumn('confirmed_email', 'ConfirmedEmail', 'BOOLEAN', true, 1, null);
-        $this->addColumn('password_hash', 'PasswordHash', 'VARCHAR', true, 60, null);
-        $this->addColumn('activation_code', 'ActivationCode', 'VARCHAR', true, 6, null);
-        $this->addColumn('recovery_code', 'RecoveryCode', 'VARCHAR', false, 10, null);
-        $this->addColumn('sign_up_date_time', 'SignUpDateTime', 'TIMESTAMP', true, null, null);
+        $this->addColumn('start_date_time', 'StartDateTime', 'TIMESTAMP', true, null, null);
+        $this->addColumn('stop_date_time', 'StopDateTime', 'TIMESTAMP', true, null, null);
+        $this->addColumn('session_type', 'SessionType', 'VARCHAR', true, 20, null);
+        $this->addColumn('submit_count', 'SubmitCount', 'INTEGER', true, null, 0);
+        $this->addForeignKey('member_id', 'MemberId', 'INTEGER', 'member', 'id', true, null, null);
+        $this->addForeignKey('form_id', 'FormId', 'INTEGER', 'form', 'id', true, null, null);
     } // initialize()
 
     /**
@@ -262,24 +234,24 @@ class MemberTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Form', '\\Form', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('Member', '\\Member', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
     0 => ':member_id',
     1 => ':id',
   ),
-), null, null, 'Forms', false);
-        $this->addRelation('Share', '\\Share', RelationMap::ONE_TO_MANY, array (
+), null, null, null, false);
+        $this->addRelation('Form', '\\Form', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
-    0 => ':member_id',
+    0 => ':form_id',
     1 => ':id',
   ),
-), null, null, 'Shares', false);
+), null, null, null, false);
         $this->addRelation('Submit', '\\Submit', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
-    0 => ':member_id',
+    0 => ':share_id',
     1 => ':id',
   ),
 ), null, null, 'Submits', false);
@@ -342,7 +314,7 @@ class MemberTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? MemberTableMap::CLASS_DEFAULT : MemberTableMap::OM_CLASS;
+        return $withPrefix ? ShareTableMap::CLASS_DEFAULT : ShareTableMap::OM_CLASS;
     }
 
     /**
@@ -356,22 +328,22 @@ class MemberTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (Member object, last column rank)
+     * @return array           (Share object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = MemberTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = MemberTableMap::getInstanceFromPool($key))) {
+        $key = ShareTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = ShareTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + MemberTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + ShareTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = MemberTableMap::OM_CLASS;
-            /** @var Member $obj */
+            $cls = ShareTableMap::OM_CLASS;
+            /** @var Share $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            MemberTableMap::addInstanceToPool($obj, $key);
+            ShareTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -394,18 +366,18 @@ class MemberTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = MemberTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = MemberTableMap::getInstanceFromPool($key))) {
+            $key = ShareTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = ShareTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var Member $obj */
+                /** @var Share $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                MemberTableMap::addInstanceToPool($obj, $key);
+                ShareTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -426,25 +398,21 @@ class MemberTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(MemberTableMap::COL_ID);
-            $criteria->addSelectColumn(MemberTableMap::COL_EMAIL);
-            $criteria->addSelectColumn(MemberTableMap::COL_FIRST_NAME);
-            $criteria->addSelectColumn(MemberTableMap::COL_LAST_NAME);
-            $criteria->addSelectColumn(MemberTableMap::COL_CONFIRMED_EMAIL);
-            $criteria->addSelectColumn(MemberTableMap::COL_PASSWORD_HASH);
-            $criteria->addSelectColumn(MemberTableMap::COL_ACTIVATION_CODE);
-            $criteria->addSelectColumn(MemberTableMap::COL_RECOVERY_CODE);
-            $criteria->addSelectColumn(MemberTableMap::COL_SIGN_UP_DATE_TIME);
+            $criteria->addSelectColumn(ShareTableMap::COL_ID);
+            $criteria->addSelectColumn(ShareTableMap::COL_START_DATE_TIME);
+            $criteria->addSelectColumn(ShareTableMap::COL_STOP_DATE_TIME);
+            $criteria->addSelectColumn(ShareTableMap::COL_SESSION_TYPE);
+            $criteria->addSelectColumn(ShareTableMap::COL_SUBMIT_COUNT);
+            $criteria->addSelectColumn(ShareTableMap::COL_MEMBER_ID);
+            $criteria->addSelectColumn(ShareTableMap::COL_FORM_ID);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.email');
-            $criteria->addSelectColumn($alias . '.first_name');
-            $criteria->addSelectColumn($alias . '.last_name');
-            $criteria->addSelectColumn($alias . '.confirmed_email');
-            $criteria->addSelectColumn($alias . '.password_hash');
-            $criteria->addSelectColumn($alias . '.activation_code');
-            $criteria->addSelectColumn($alias . '.recovery_code');
-            $criteria->addSelectColumn($alias . '.sign_up_date_time');
+            $criteria->addSelectColumn($alias . '.start_date_time');
+            $criteria->addSelectColumn($alias . '.stop_date_time');
+            $criteria->addSelectColumn($alias . '.session_type');
+            $criteria->addSelectColumn($alias . '.submit_count');
+            $criteria->addSelectColumn($alias . '.member_id');
+            $criteria->addSelectColumn($alias . '.form_id');
         }
     }
 
@@ -462,25 +430,21 @@ class MemberTableMap extends TableMap
     public static function removeSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->removeSelectColumn(MemberTableMap::COL_ID);
-            $criteria->removeSelectColumn(MemberTableMap::COL_EMAIL);
-            $criteria->removeSelectColumn(MemberTableMap::COL_FIRST_NAME);
-            $criteria->removeSelectColumn(MemberTableMap::COL_LAST_NAME);
-            $criteria->removeSelectColumn(MemberTableMap::COL_CONFIRMED_EMAIL);
-            $criteria->removeSelectColumn(MemberTableMap::COL_PASSWORD_HASH);
-            $criteria->removeSelectColumn(MemberTableMap::COL_ACTIVATION_CODE);
-            $criteria->removeSelectColumn(MemberTableMap::COL_RECOVERY_CODE);
-            $criteria->removeSelectColumn(MemberTableMap::COL_SIGN_UP_DATE_TIME);
+            $criteria->removeSelectColumn(ShareTableMap::COL_ID);
+            $criteria->removeSelectColumn(ShareTableMap::COL_START_DATE_TIME);
+            $criteria->removeSelectColumn(ShareTableMap::COL_STOP_DATE_TIME);
+            $criteria->removeSelectColumn(ShareTableMap::COL_SESSION_TYPE);
+            $criteria->removeSelectColumn(ShareTableMap::COL_SUBMIT_COUNT);
+            $criteria->removeSelectColumn(ShareTableMap::COL_MEMBER_ID);
+            $criteria->removeSelectColumn(ShareTableMap::COL_FORM_ID);
         } else {
             $criteria->removeSelectColumn($alias . '.id');
-            $criteria->removeSelectColumn($alias . '.email');
-            $criteria->removeSelectColumn($alias . '.first_name');
-            $criteria->removeSelectColumn($alias . '.last_name');
-            $criteria->removeSelectColumn($alias . '.confirmed_email');
-            $criteria->removeSelectColumn($alias . '.password_hash');
-            $criteria->removeSelectColumn($alias . '.activation_code');
-            $criteria->removeSelectColumn($alias . '.recovery_code');
-            $criteria->removeSelectColumn($alias . '.sign_up_date_time');
+            $criteria->removeSelectColumn($alias . '.start_date_time');
+            $criteria->removeSelectColumn($alias . '.stop_date_time');
+            $criteria->removeSelectColumn($alias . '.session_type');
+            $criteria->removeSelectColumn($alias . '.submit_count');
+            $criteria->removeSelectColumn($alias . '.member_id');
+            $criteria->removeSelectColumn($alias . '.form_id');
         }
     }
 
@@ -493,7 +457,7 @@ class MemberTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(MemberTableMap::DATABASE_NAME)->getTable(MemberTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(ShareTableMap::DATABASE_NAME)->getTable(ShareTableMap::TABLE_NAME);
     }
 
     /**
@@ -501,16 +465,16 @@ class MemberTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(MemberTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(MemberTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new MemberTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(ShareTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(ShareTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new ShareTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a Member or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a Share or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or Member object or primary key or array of primary keys
+     * @param mixed               $values Criteria or Share object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -521,27 +485,27 @@ class MemberTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(MemberTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ShareTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Member) { // it's a model object
+        } elseif ($values instanceof \Share) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(MemberTableMap::DATABASE_NAME);
-            $criteria->add(MemberTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(ShareTableMap::DATABASE_NAME);
+            $criteria->add(ShareTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = MemberQuery::create()->mergeWith($criteria);
+        $query = ShareQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            MemberTableMap::clearInstancePool();
+            ShareTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                MemberTableMap::removeInstanceFromPool($singleval);
+                ShareTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -549,20 +513,20 @@ class MemberTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the member table.
+     * Deletes all rows from the share table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return MemberQuery::create()->doDeleteAll($con);
+        return ShareQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a Member or Criteria object.
+     * Performs an INSERT on the database, given a Share or Criteria object.
      *
-     * @param mixed               $criteria Criteria or Member object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or Share object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -571,22 +535,22 @@ class MemberTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(MemberTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ShareTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from Member object
+            $criteria = $criteria->buildCriteria(); // build Criteria from Share object
         }
 
-        if ($criteria->containsKey(MemberTableMap::COL_ID) && $criteria->keyContainsValue(MemberTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.MemberTableMap::COL_ID.')');
+        if ($criteria->containsKey(ShareTableMap::COL_ID) && $criteria->keyContainsValue(ShareTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.ShareTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = MemberQuery::create()->mergeWith($criteria);
+        $query = ShareQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -595,7 +559,7 @@ class MemberTableMap extends TableMap
         });
     }
 
-} // MemberTableMap
+} // ShareTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-MemberTableMap::buildTableMap();
+ShareTableMap::buildTableMap();

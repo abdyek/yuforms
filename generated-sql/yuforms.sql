@@ -23,5 +23,154 @@ CREATE TABLE `member`
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
+-- ---------------------------------------------------------------------
+-- form
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `form`;
+
+CREATE TABLE `form`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL,
+    `create_date_time` DATETIME NOT NULL,
+    `last_edit_date_time` DATETIME,
+    `member_id` INTEGER NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `form_fi_672062` (`member_id`),
+    CONSTRAINT `form_fk_672062`
+        FOREIGN KEY (`member_id`)
+        REFERENCES `member` (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- share
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `share`;
+
+CREATE TABLE `share`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `start_date_time` DATETIME NOT NULL,
+    `stop_date_time` DATETIME NOT NULL,
+    `session_type` VARCHAR(20) NOT NULL,
+    `submit_count` INTEGER DEFAULT 0 NOT NULL,
+    `member_id` INTEGER NOT NULL,
+    `form_id` INTEGER NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `share_fi_672062` (`member_id`),
+    INDEX `share_fi_ee8551` (`form_id`),
+    CONSTRAINT `share_fk_672062`
+        FOREIGN KEY (`member_id`)
+        REFERENCES `member` (`id`),
+    CONSTRAINT `share_fk_ee8551`
+        FOREIGN KEY (`form_id`)
+        REFERENCES `form` (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- submit
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `submit`;
+
+CREATE TABLE `submit`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `response` VARCHAR(256) NOT NULL,
+    `multi_response` TINYINT(1) DEFAULT 0 NOT NULL,
+    `ip_address` VARCHAR(15),
+    `form_item_id` INTEGER NOT NULL,
+    `share_id` INTEGER NOT NULL,
+    `member_id` INTEGER,
+    PRIMARY KEY (`id`),
+    INDEX `submit_fi_2b1f8a` (`form_item_id`),
+    INDEX `submit_fi_97be49` (`share_id`),
+    INDEX `submit_fi_672062` (`member_id`),
+    CONSTRAINT `submit_fk_2b1f8a`
+        FOREIGN KEY (`form_item_id`)
+        REFERENCES `form_item` (`id`),
+    CONSTRAINT `submit_fk_97be49`
+        FOREIGN KEY (`share_id`)
+        REFERENCES `share` (`id`),
+    CONSTRAINT `submit_fk_672062`
+        FOREIGN KEY (`member_id`)
+        REFERENCES `member` (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- form_item
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `form_item`;
+
+CREATE TABLE `form_item`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `form_id` INTEGER NOT NULL,
+    `question_id` INTEGER NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `form_item_fi_ee8551` (`form_id`),
+    INDEX `form_item_fi_3ff0cc` (`question_id`),
+    CONSTRAINT `form_item_fk_ee8551`
+        FOREIGN KEY (`form_id`)
+        REFERENCES `form` (`id`),
+    CONSTRAINT `form_item_fk_3ff0cc`
+        FOREIGN KEY (`question_id`)
+        REFERENCES `question` (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- form_component
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `form_component`;
+
+CREATE TABLE `form_component`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(256) NOT NULL,
+    `has_options` TINYINT(1) DEFAULT 0 NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- question
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `question`;
+
+CREATE TABLE `question`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `text` VARCHAR(255) NOT NULL,
+    `form_component_id` INTEGER NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `question_fi_8cc29b` (`form_component_id`),
+    CONSTRAINT `question_fk_8cc29b`
+        FOREIGN KEY (`form_component_id`)
+        REFERENCES `form_component` (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- option
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `option`;
+
+CREATE TABLE `option`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `value` VARCHAR(256) NOT NULL,
+    `text` VARCHAR(256) NOT NULL,
+    `question_id` INTEGER NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `option_fi_3ff0cc` (`question_id`),
+    CONSTRAINT `option_fk_3ff0cc`
+        FOREIGN KEY (`question_id`)
+        REFERENCES `question` (`id`)
+) ENGINE=InnoDB;
+
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

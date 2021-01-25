@@ -3,19 +3,16 @@
 namespace Base;
 
 use \Form as ChildForm;
+use \FormItem as ChildFormItem;
+use \FormItemQuery as ChildFormItemQuery;
 use \FormQuery as ChildFormQuery;
-use \Member as ChildMember;
-use \MemberQuery as ChildMemberQuery;
-use \Share as ChildShare;
-use \ShareQuery as ChildShareQuery;
+use \Question as ChildQuestion;
+use \QuestionQuery as ChildQuestionQuery;
 use \Submit as ChildSubmit;
 use \SubmitQuery as ChildSubmitQuery;
-use \DateTime;
 use \Exception;
 use \PDO;
-use Map\FormTableMap;
-use Map\MemberTableMap;
-use Map\ShareTableMap;
+use Map\FormItemTableMap;
 use Map\SubmitTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -29,21 +26,20 @@ use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
-use Propel\Runtime\Util\PropelDateTime;
 
 /**
- * Base class that represents a row from the 'member' table.
+ * Base class that represents a row from the 'form_item' table.
  *
  *
  *
  * @package    propel.generator..Base
  */
-abstract class Member implements ActiveRecordInterface
+abstract class FormItem implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Map\\MemberTableMap';
+    const TABLE_MAP = '\\Map\\FormItemTableMap';
 
 
     /**
@@ -80,72 +76,28 @@ abstract class Member implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the email field.
+     * The value for the form_id field.
      *
-     * @var        string
+     * @var        int
      */
-    protected $email;
+    protected $form_id;
 
     /**
-     * The value for the first_name field.
+     * The value for the question_id field.
      *
-     * @var        string
+     * @var        int
      */
-    protected $first_name;
+    protected $question_id;
 
     /**
-     * The value for the last_name field.
-     *
-     * @var        string
+     * @var        ChildForm
      */
-    protected $last_name;
+    protected $aForm;
 
     /**
-     * The value for the confirmed_email field.
-     *
-     * @var        boolean
+     * @var        ChildQuestion
      */
-    protected $confirmed_email;
-
-    /**
-     * The value for the password_hash field.
-     *
-     * @var        string
-     */
-    protected $password_hash;
-
-    /**
-     * The value for the activation_code field.
-     *
-     * @var        string
-     */
-    protected $activation_code;
-
-    /**
-     * The value for the recovery_code field.
-     *
-     * @var        string|null
-     */
-    protected $recovery_code;
-
-    /**
-     * The value for the sign_up_date_time field.
-     *
-     * @var        DateTime
-     */
-    protected $sign_up_date_time;
-
-    /**
-     * @var        ObjectCollection|ChildForm[] Collection to store aggregation of ChildForm objects.
-     */
-    protected $collForms;
-    protected $collFormsPartial;
-
-    /**
-     * @var        ObjectCollection|ChildShare[] Collection to store aggregation of ChildShare objects.
-     */
-    protected $collShares;
-    protected $collSharesPartial;
+    protected $aQuestion;
 
     /**
      * @var        ObjectCollection|ChildSubmit[] Collection to store aggregation of ChildSubmit objects.
@@ -163,24 +115,12 @@ abstract class Member implements ActiveRecordInterface
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildForm[]
-     */
-    protected $formsScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildShare[]
-     */
-    protected $sharesScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
      * @var ObjectCollection|ChildSubmit[]
      */
     protected $submitsScheduledForDeletion = null;
 
     /**
-     * Initializes internal state of Base\Member object.
+     * Initializes internal state of Base\FormItem object.
      */
     public function __construct()
     {
@@ -275,9 +215,9 @@ abstract class Member implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>Member</code> instance.  If
-     * <code>obj</code> is an instance of <code>Member</code>, delegates to
-     * <code>equals(Member)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>FormItem</code> instance.  If
+     * <code>obj</code> is an instance of <code>FormItem</code>, delegates to
+     * <code>equals(FormItem)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -415,110 +355,30 @@ abstract class Member implements ActiveRecordInterface
     }
 
     /**
-     * Get the [email] column value.
+     * Get the [form_id] column value.
      *
-     * @return string
+     * @return int
      */
-    public function getEmail()
+    public function getFormId()
     {
-        return $this->email;
+        return $this->form_id;
     }
 
     /**
-     * Get the [first_name] column value.
+     * Get the [question_id] column value.
      *
-     * @return string
+     * @return int
      */
-    public function getFirstName()
+    public function getQuestionId()
     {
-        return $this->first_name;
-    }
-
-    /**
-     * Get the [last_name] column value.
-     *
-     * @return string
-     */
-    public function getLastName()
-    {
-        return $this->last_name;
-    }
-
-    /**
-     * Get the [confirmed_email] column value.
-     *
-     * @return boolean
-     */
-    public function getConfirmedEmail()
-    {
-        return $this->confirmed_email;
-    }
-
-    /**
-     * Get the [confirmed_email] column value.
-     *
-     * @return boolean
-     */
-    public function isConfirmedEmail()
-    {
-        return $this->getConfirmedEmail();
-    }
-
-    /**
-     * Get the [password_hash] column value.
-     *
-     * @return string
-     */
-    public function getPasswordHash()
-    {
-        return $this->password_hash;
-    }
-
-    /**
-     * Get the [activation_code] column value.
-     *
-     * @return string
-     */
-    public function getActivationCode()
-    {
-        return $this->activation_code;
-    }
-
-    /**
-     * Get the [recovery_code] column value.
-     *
-     * @return string|null
-     */
-    public function getRecoveryCode()
-    {
-        return $this->recovery_code;
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [sign_up_date_time] column value.
-     *
-     *
-     * @param string|null $format The date/time format string (either date()-style or strftime()-style).
-     *   If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getSignUpDateTime($format = null)
-    {
-        if ($format === null) {
-            return $this->sign_up_date_time;
-        } else {
-            return $this->sign_up_date_time instanceof \DateTimeInterface ? $this->sign_up_date_time->format($format) : null;
-        }
+        return $this->question_id;
     }
 
     /**
      * Set the value of [id] column.
      *
      * @param int $v New value
-     * @return $this|\Member The current object (for fluent API support)
+     * @return $this|\FormItem The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -528,179 +388,59 @@ abstract class Member implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[MemberTableMap::COL_ID] = true;
+            $this->modifiedColumns[FormItemTableMap::COL_ID] = true;
         }
 
         return $this;
     } // setId()
 
     /**
-     * Set the value of [email] column.
+     * Set the value of [form_id] column.
      *
-     * @param string $v New value
-     * @return $this|\Member The current object (for fluent API support)
+     * @param int $v New value
+     * @return $this|\FormItem The current object (for fluent API support)
      */
-    public function setEmail($v)
+    public function setFormId($v)
     {
         if ($v !== null) {
-            $v = (string) $v;
+            $v = (int) $v;
         }
 
-        if ($this->email !== $v) {
-            $this->email = $v;
-            $this->modifiedColumns[MemberTableMap::COL_EMAIL] = true;
+        if ($this->form_id !== $v) {
+            $this->form_id = $v;
+            $this->modifiedColumns[FormItemTableMap::COL_FORM_ID] = true;
+        }
+
+        if ($this->aForm !== null && $this->aForm->getId() !== $v) {
+            $this->aForm = null;
         }
 
         return $this;
-    } // setEmail()
+    } // setFormId()
 
     /**
-     * Set the value of [first_name] column.
+     * Set the value of [question_id] column.
      *
-     * @param string $v New value
-     * @return $this|\Member The current object (for fluent API support)
+     * @param int $v New value
+     * @return $this|\FormItem The current object (for fluent API support)
      */
-    public function setFirstName($v)
+    public function setQuestionId($v)
     {
         if ($v !== null) {
-            $v = (string) $v;
+            $v = (int) $v;
         }
 
-        if ($this->first_name !== $v) {
-            $this->first_name = $v;
-            $this->modifiedColumns[MemberTableMap::COL_FIRST_NAME] = true;
+        if ($this->question_id !== $v) {
+            $this->question_id = $v;
+            $this->modifiedColumns[FormItemTableMap::COL_QUESTION_ID] = true;
         }
 
-        return $this;
-    } // setFirstName()
-
-    /**
-     * Set the value of [last_name] column.
-     *
-     * @param string $v New value
-     * @return $this|\Member The current object (for fluent API support)
-     */
-    public function setLastName($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->last_name !== $v) {
-            $this->last_name = $v;
-            $this->modifiedColumns[MemberTableMap::COL_LAST_NAME] = true;
+        if ($this->aQuestion !== null && $this->aQuestion->getId() !== $v) {
+            $this->aQuestion = null;
         }
 
         return $this;
-    } // setLastName()
-
-    /**
-     * Sets the value of the [confirmed_email] column.
-     * Non-boolean arguments are converted using the following rules:
-     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
-     *
-     * @param  boolean|integer|string $v The new value
-     * @return $this|\Member The current object (for fluent API support)
-     */
-    public function setConfirmedEmail($v)
-    {
-        if ($v !== null) {
-            if (is_string($v)) {
-                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-            } else {
-                $v = (boolean) $v;
-            }
-        }
-
-        if ($this->confirmed_email !== $v) {
-            $this->confirmed_email = $v;
-            $this->modifiedColumns[MemberTableMap::COL_CONFIRMED_EMAIL] = true;
-        }
-
-        return $this;
-    } // setConfirmedEmail()
-
-    /**
-     * Set the value of [password_hash] column.
-     *
-     * @param string $v New value
-     * @return $this|\Member The current object (for fluent API support)
-     */
-    public function setPasswordHash($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->password_hash !== $v) {
-            $this->password_hash = $v;
-            $this->modifiedColumns[MemberTableMap::COL_PASSWORD_HASH] = true;
-        }
-
-        return $this;
-    } // setPasswordHash()
-
-    /**
-     * Set the value of [activation_code] column.
-     *
-     * @param string $v New value
-     * @return $this|\Member The current object (for fluent API support)
-     */
-    public function setActivationCode($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->activation_code !== $v) {
-            $this->activation_code = $v;
-            $this->modifiedColumns[MemberTableMap::COL_ACTIVATION_CODE] = true;
-        }
-
-        return $this;
-    } // setActivationCode()
-
-    /**
-     * Set the value of [recovery_code] column.
-     *
-     * @param string|null $v New value
-     * @return $this|\Member The current object (for fluent API support)
-     */
-    public function setRecoveryCode($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->recovery_code !== $v) {
-            $this->recovery_code = $v;
-            $this->modifiedColumns[MemberTableMap::COL_RECOVERY_CODE] = true;
-        }
-
-        return $this;
-    } // setRecoveryCode()
-
-    /**
-     * Sets the value of [sign_up_date_time] column to a normalized version of the date/time value specified.
-     *
-     * @param  string|integer|\DateTimeInterface $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\Member The current object (for fluent API support)
-     */
-    public function setSignUpDateTime($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->sign_up_date_time !== null || $dt !== null) {
-            if ($this->sign_up_date_time === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->sign_up_date_time->format("Y-m-d H:i:s.u")) {
-                $this->sign_up_date_time = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[MemberTableMap::COL_SIGN_UP_DATE_TIME] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setSignUpDateTime()
+    } // setQuestionId()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -738,35 +478,14 @@ abstract class Member implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : MemberTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : FormItemTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : MemberTableMap::translateFieldName('Email', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->email = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : FormItemTableMap::translateFieldName('FormId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->form_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : MemberTableMap::translateFieldName('FirstName', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->first_name = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : MemberTableMap::translateFieldName('LastName', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->last_name = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : MemberTableMap::translateFieldName('ConfirmedEmail', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->confirmed_email = (null !== $col) ? (boolean) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : MemberTableMap::translateFieldName('PasswordHash', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->password_hash = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : MemberTableMap::translateFieldName('ActivationCode', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->activation_code = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : MemberTableMap::translateFieldName('RecoveryCode', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->recovery_code = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : MemberTableMap::translateFieldName('SignUpDateTime', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->sign_up_date_time = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : FormItemTableMap::translateFieldName('QuestionId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->question_id = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -775,10 +494,10 @@ abstract class Member implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 9; // 9 = MemberTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 3; // 3 = FormItemTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\Member'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\FormItem'), 0, $e);
         }
     }
 
@@ -797,6 +516,12 @@ abstract class Member implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
+        if ($this->aForm !== null && $this->form_id !== $this->aForm->getId()) {
+            $this->aForm = null;
+        }
+        if ($this->aQuestion !== null && $this->question_id !== $this->aQuestion->getId()) {
+            $this->aQuestion = null;
+        }
     } // ensureConsistency
 
     /**
@@ -820,13 +545,13 @@ abstract class Member implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(MemberTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(FormItemTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildMemberQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildFormItemQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -836,10 +561,8 @@ abstract class Member implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->collForms = null;
-
-            $this->collShares = null;
-
+            $this->aForm = null;
+            $this->aQuestion = null;
             $this->collSubmits = null;
 
         } // if (deep)
@@ -851,8 +574,8 @@ abstract class Member implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see Member::setDeleted()
-     * @see Member::isDeleted()
+     * @see FormItem::setDeleted()
+     * @see FormItem::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -861,11 +584,11 @@ abstract class Member implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(MemberTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(FormItemTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildMemberQuery::create()
+            $deleteQuery = ChildFormItemQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -900,7 +623,7 @@ abstract class Member implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(MemberTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(FormItemTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -919,7 +642,7 @@ abstract class Member implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                MemberTableMap::addInstanceToPool($this);
+                FormItemTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -945,6 +668,25 @@ abstract class Member implements ActiveRecordInterface
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
+            // We call the save method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aForm !== null) {
+                if ($this->aForm->isModified() || $this->aForm->isNew()) {
+                    $affectedRows += $this->aForm->save($con);
+                }
+                $this->setForm($this->aForm);
+            }
+
+            if ($this->aQuestion !== null) {
+                if ($this->aQuestion->isModified() || $this->aQuestion->isNew()) {
+                    $affectedRows += $this->aQuestion->save($con);
+                }
+                $this->setQuestion($this->aQuestion);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -956,46 +698,11 @@ abstract class Member implements ActiveRecordInterface
                 $this->resetModified();
             }
 
-            if ($this->formsScheduledForDeletion !== null) {
-                if (!$this->formsScheduledForDeletion->isEmpty()) {
-                    \FormQuery::create()
-                        ->filterByPrimaryKeys($this->formsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->formsScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collForms !== null) {
-                foreach ($this->collForms as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
-            if ($this->sharesScheduledForDeletion !== null) {
-                if (!$this->sharesScheduledForDeletion->isEmpty()) {
-                    \ShareQuery::create()
-                        ->filterByPrimaryKeys($this->sharesScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->sharesScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collShares !== null) {
-                foreach ($this->collShares as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
             if ($this->submitsScheduledForDeletion !== null) {
                 if (!$this->submitsScheduledForDeletion->isEmpty()) {
-                    foreach ($this->submitsScheduledForDeletion as $submit) {
-                        // need to save related object because we set the relation to null
-                        $submit->save($con);
-                    }
+                    \SubmitQuery::create()
+                        ->filterByPrimaryKeys($this->submitsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
                     $this->submitsScheduledForDeletion = null;
                 }
             }
@@ -1028,42 +735,24 @@ abstract class Member implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[MemberTableMap::COL_ID] = true;
+        $this->modifiedColumns[FormItemTableMap::COL_ID] = true;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . MemberTableMap::COL_ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . FormItemTableMap::COL_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(MemberTableMap::COL_ID)) {
+        if ($this->isColumnModified(FormItemTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(MemberTableMap::COL_EMAIL)) {
-            $modifiedColumns[':p' . $index++]  = 'email';
+        if ($this->isColumnModified(FormItemTableMap::COL_FORM_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'form_id';
         }
-        if ($this->isColumnModified(MemberTableMap::COL_FIRST_NAME)) {
-            $modifiedColumns[':p' . $index++]  = 'first_name';
-        }
-        if ($this->isColumnModified(MemberTableMap::COL_LAST_NAME)) {
-            $modifiedColumns[':p' . $index++]  = 'last_name';
-        }
-        if ($this->isColumnModified(MemberTableMap::COL_CONFIRMED_EMAIL)) {
-            $modifiedColumns[':p' . $index++]  = 'confirmed_email';
-        }
-        if ($this->isColumnModified(MemberTableMap::COL_PASSWORD_HASH)) {
-            $modifiedColumns[':p' . $index++]  = 'password_hash';
-        }
-        if ($this->isColumnModified(MemberTableMap::COL_ACTIVATION_CODE)) {
-            $modifiedColumns[':p' . $index++]  = 'activation_code';
-        }
-        if ($this->isColumnModified(MemberTableMap::COL_RECOVERY_CODE)) {
-            $modifiedColumns[':p' . $index++]  = 'recovery_code';
-        }
-        if ($this->isColumnModified(MemberTableMap::COL_SIGN_UP_DATE_TIME)) {
-            $modifiedColumns[':p' . $index++]  = 'sign_up_date_time';
+        if ($this->isColumnModified(FormItemTableMap::COL_QUESTION_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'question_id';
         }
 
         $sql = sprintf(
-            'INSERT INTO member (%s) VALUES (%s)',
+            'INSERT INTO form_item (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -1075,29 +764,11 @@ abstract class Member implements ActiveRecordInterface
                     case 'id':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'email':
-                        $stmt->bindValue($identifier, $this->email, PDO::PARAM_STR);
+                    case 'form_id':
+                        $stmt->bindValue($identifier, $this->form_id, PDO::PARAM_INT);
                         break;
-                    case 'first_name':
-                        $stmt->bindValue($identifier, $this->first_name, PDO::PARAM_STR);
-                        break;
-                    case 'last_name':
-                        $stmt->bindValue($identifier, $this->last_name, PDO::PARAM_STR);
-                        break;
-                    case 'confirmed_email':
-                        $stmt->bindValue($identifier, (int) $this->confirmed_email, PDO::PARAM_INT);
-                        break;
-                    case 'password_hash':
-                        $stmt->bindValue($identifier, $this->password_hash, PDO::PARAM_STR);
-                        break;
-                    case 'activation_code':
-                        $stmt->bindValue($identifier, $this->activation_code, PDO::PARAM_STR);
-                        break;
-                    case 'recovery_code':
-                        $stmt->bindValue($identifier, $this->recovery_code, PDO::PARAM_STR);
-                        break;
-                    case 'sign_up_date_time':
-                        $stmt->bindValue($identifier, $this->sign_up_date_time ? $this->sign_up_date_time->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
+                    case 'question_id':
+                        $stmt->bindValue($identifier, $this->question_id, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -1145,7 +816,7 @@ abstract class Member implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = MemberTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = FormItemTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -1165,28 +836,10 @@ abstract class Member implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getEmail();
+                return $this->getFormId();
                 break;
             case 2:
-                return $this->getFirstName();
-                break;
-            case 3:
-                return $this->getLastName();
-                break;
-            case 4:
-                return $this->getConfirmedEmail();
-                break;
-            case 5:
-                return $this->getPasswordHash();
-                break;
-            case 6:
-                return $this->getActivationCode();
-                break;
-            case 7:
-                return $this->getRecoveryCode();
-                break;
-            case 8:
-                return $this->getSignUpDateTime();
+                return $this->getQuestionId();
                 break;
             default:
                 return null;
@@ -1212,61 +865,51 @@ abstract class Member implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['Member'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['FormItem'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['Member'][$this->hashCode()] = true;
-        $keys = MemberTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['FormItem'][$this->hashCode()] = true;
+        $keys = FormItemTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getEmail(),
-            $keys[2] => $this->getFirstName(),
-            $keys[3] => $this->getLastName(),
-            $keys[4] => $this->getConfirmedEmail(),
-            $keys[5] => $this->getPasswordHash(),
-            $keys[6] => $this->getActivationCode(),
-            $keys[7] => $this->getRecoveryCode(),
-            $keys[8] => $this->getSignUpDateTime(),
+            $keys[1] => $this->getFormId(),
+            $keys[2] => $this->getQuestionId(),
         );
-        if ($result[$keys[8]] instanceof \DateTimeInterface) {
-            $result[$keys[8]] = $result[$keys[8]]->format('Y-m-d H:i:s.u');
-        }
-
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->collForms) {
+            if (null !== $this->aForm) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'forms';
+                        $key = 'form';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'forms';
+                        $key = 'form';
                         break;
                     default:
-                        $key = 'Forms';
+                        $key = 'Form';
                 }
 
-                $result[$key] = $this->collForms->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                $result[$key] = $this->aForm->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
-            if (null !== $this->collShares) {
+            if (null !== $this->aQuestion) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'shares';
+                        $key = 'question';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'shares';
+                        $key = 'question';
                         break;
                     default:
-                        $key = 'Shares';
+                        $key = 'Question';
                 }
 
-                $result[$key] = $this->collShares->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                $result[$key] = $this->aQuestion->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->collSubmits) {
 
@@ -1297,11 +940,11 @@ abstract class Member implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\Member
+     * @return $this|\FormItem
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = MemberTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = FormItemTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -1312,7 +955,7 @@ abstract class Member implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\Member
+     * @return $this|\FormItem
      */
     public function setByPosition($pos, $value)
     {
@@ -1321,28 +964,10 @@ abstract class Member implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setEmail($value);
+                $this->setFormId($value);
                 break;
             case 2:
-                $this->setFirstName($value);
-                break;
-            case 3:
-                $this->setLastName($value);
-                break;
-            case 4:
-                $this->setConfirmedEmail($value);
-                break;
-            case 5:
-                $this->setPasswordHash($value);
-                break;
-            case 6:
-                $this->setActivationCode($value);
-                break;
-            case 7:
-                $this->setRecoveryCode($value);
-                break;
-            case 8:
-                $this->setSignUpDateTime($value);
+                $this->setQuestionId($value);
                 break;
         } // switch()
 
@@ -1368,34 +993,16 @@ abstract class Member implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = MemberTableMap::getFieldNames($keyType);
+        $keys = FormItemTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setEmail($arr[$keys[1]]);
+            $this->setFormId($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setFirstName($arr[$keys[2]]);
-        }
-        if (array_key_exists($keys[3], $arr)) {
-            $this->setLastName($arr[$keys[3]]);
-        }
-        if (array_key_exists($keys[4], $arr)) {
-            $this->setConfirmedEmail($arr[$keys[4]]);
-        }
-        if (array_key_exists($keys[5], $arr)) {
-            $this->setPasswordHash($arr[$keys[5]]);
-        }
-        if (array_key_exists($keys[6], $arr)) {
-            $this->setActivationCode($arr[$keys[6]]);
-        }
-        if (array_key_exists($keys[7], $arr)) {
-            $this->setRecoveryCode($arr[$keys[7]]);
-        }
-        if (array_key_exists($keys[8], $arr)) {
-            $this->setSignUpDateTime($arr[$keys[8]]);
+            $this->setQuestionId($arr[$keys[2]]);
         }
     }
 
@@ -1416,7 +1023,7 @@ abstract class Member implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\Member The current object, for fluid interface
+     * @return $this|\FormItem The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1436,34 +1043,16 @@ abstract class Member implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(MemberTableMap::DATABASE_NAME);
+        $criteria = new Criteria(FormItemTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(MemberTableMap::COL_ID)) {
-            $criteria->add(MemberTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(FormItemTableMap::COL_ID)) {
+            $criteria->add(FormItemTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(MemberTableMap::COL_EMAIL)) {
-            $criteria->add(MemberTableMap::COL_EMAIL, $this->email);
+        if ($this->isColumnModified(FormItemTableMap::COL_FORM_ID)) {
+            $criteria->add(FormItemTableMap::COL_FORM_ID, $this->form_id);
         }
-        if ($this->isColumnModified(MemberTableMap::COL_FIRST_NAME)) {
-            $criteria->add(MemberTableMap::COL_FIRST_NAME, $this->first_name);
-        }
-        if ($this->isColumnModified(MemberTableMap::COL_LAST_NAME)) {
-            $criteria->add(MemberTableMap::COL_LAST_NAME, $this->last_name);
-        }
-        if ($this->isColumnModified(MemberTableMap::COL_CONFIRMED_EMAIL)) {
-            $criteria->add(MemberTableMap::COL_CONFIRMED_EMAIL, $this->confirmed_email);
-        }
-        if ($this->isColumnModified(MemberTableMap::COL_PASSWORD_HASH)) {
-            $criteria->add(MemberTableMap::COL_PASSWORD_HASH, $this->password_hash);
-        }
-        if ($this->isColumnModified(MemberTableMap::COL_ACTIVATION_CODE)) {
-            $criteria->add(MemberTableMap::COL_ACTIVATION_CODE, $this->activation_code);
-        }
-        if ($this->isColumnModified(MemberTableMap::COL_RECOVERY_CODE)) {
-            $criteria->add(MemberTableMap::COL_RECOVERY_CODE, $this->recovery_code);
-        }
-        if ($this->isColumnModified(MemberTableMap::COL_SIGN_UP_DATE_TIME)) {
-            $criteria->add(MemberTableMap::COL_SIGN_UP_DATE_TIME, $this->sign_up_date_time);
+        if ($this->isColumnModified(FormItemTableMap::COL_QUESTION_ID)) {
+            $criteria->add(FormItemTableMap::COL_QUESTION_ID, $this->question_id);
         }
 
         return $criteria;
@@ -1481,8 +1070,8 @@ abstract class Member implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildMemberQuery::create();
-        $criteria->add(MemberTableMap::COL_ID, $this->id);
+        $criteria = ChildFormItemQuery::create();
+        $criteria->add(FormItemTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1544,38 +1133,20 @@ abstract class Member implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \Member (or compatible) type.
+     * @param      object $copyObj An object of \FormItem (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setEmail($this->getEmail());
-        $copyObj->setFirstName($this->getFirstName());
-        $copyObj->setLastName($this->getLastName());
-        $copyObj->setConfirmedEmail($this->getConfirmedEmail());
-        $copyObj->setPasswordHash($this->getPasswordHash());
-        $copyObj->setActivationCode($this->getActivationCode());
-        $copyObj->setRecoveryCode($this->getRecoveryCode());
-        $copyObj->setSignUpDateTime($this->getSignUpDateTime());
+        $copyObj->setFormId($this->getFormId());
+        $copyObj->setQuestionId($this->getQuestionId());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
-
-            foreach ($this->getForms() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addForm($relObj->copy($deepCopy));
-                }
-            }
-
-            foreach ($this->getShares() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addShare($relObj->copy($deepCopy));
-                }
-            }
 
             foreach ($this->getSubmits() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
@@ -1600,7 +1171,7 @@ abstract class Member implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \Member Clone of current object.
+     * @return \FormItem Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1611,6 +1182,108 @@ abstract class Member implements ActiveRecordInterface
         $this->copyInto($copyObj, $deepCopy);
 
         return $copyObj;
+    }
+
+    /**
+     * Declares an association between this object and a ChildForm object.
+     *
+     * @param  ChildForm $v
+     * @return $this|\FormItem The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setForm(ChildForm $v = null)
+    {
+        if ($v === null) {
+            $this->setFormId(NULL);
+        } else {
+            $this->setFormId($v->getId());
+        }
+
+        $this->aForm = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildForm object, it will not be re-added.
+        if ($v !== null) {
+            $v->addFormItem($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ChildForm object
+     *
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return ChildForm The associated ChildForm object.
+     * @throws PropelException
+     */
+    public function getForm(ConnectionInterface $con = null)
+    {
+        if ($this->aForm === null && ($this->form_id != 0)) {
+            $this->aForm = ChildFormQuery::create()->findPk($this->form_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aForm->addFormItems($this);
+             */
+        }
+
+        return $this->aForm;
+    }
+
+    /**
+     * Declares an association between this object and a ChildQuestion object.
+     *
+     * @param  ChildQuestion $v
+     * @return $this|\FormItem The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setQuestion(ChildQuestion $v = null)
+    {
+        if ($v === null) {
+            $this->setQuestionId(NULL);
+        } else {
+            $this->setQuestionId($v->getId());
+        }
+
+        $this->aQuestion = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildQuestion object, it will not be re-added.
+        if ($v !== null) {
+            $v->addFormItem($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ChildQuestion object
+     *
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return ChildQuestion The associated ChildQuestion object.
+     * @throws PropelException
+     */
+    public function getQuestion(ConnectionInterface $con = null)
+    {
+        if ($this->aQuestion === null && ($this->question_id != 0)) {
+            $this->aQuestion = ChildQuestionQuery::create()->findPk($this->question_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aQuestion->addFormItems($this);
+             */
+        }
+
+        return $this->aQuestion;
     }
 
 
@@ -1624,511 +1297,10 @@ abstract class Member implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
-        if ('Form' === $relationName) {
-            $this->initForms();
-            return;
-        }
-        if ('Share' === $relationName) {
-            $this->initShares();
-            return;
-        }
         if ('Submit' === $relationName) {
             $this->initSubmits();
             return;
         }
-    }
-
-    /**
-     * Clears out the collForms collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addForms()
-     */
-    public function clearForms()
-    {
-        $this->collForms = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Reset is the collForms collection loaded partially.
-     */
-    public function resetPartialForms($v = true)
-    {
-        $this->collFormsPartial = $v;
-    }
-
-    /**
-     * Initializes the collForms collection.
-     *
-     * By default this just sets the collForms collection to an empty array (like clearcollForms());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initForms($overrideExisting = true)
-    {
-        if (null !== $this->collForms && !$overrideExisting) {
-            return;
-        }
-
-        $collectionClassName = FormTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collForms = new $collectionClassName;
-        $this->collForms->setModel('\Form');
-    }
-
-    /**
-     * Gets an array of ChildForm objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildMember is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildForm[] List of ChildForm objects
-     * @throws PropelException
-     */
-    public function getForms(Criteria $criteria = null, ConnectionInterface $con = null)
-    {
-        $partial = $this->collFormsPartial && !$this->isNew();
-        if (null === $this->collForms || null !== $criteria || $partial) {
-            if ($this->isNew()) {
-                // return empty collection
-                if (null === $this->collForms) {
-                    $this->initForms();
-                } else {
-                    $collectionClassName = FormTableMap::getTableMap()->getCollectionClassName();
-
-                    $collForms = new $collectionClassName;
-                    $collForms->setModel('\Form');
-
-                    return $collForms;
-                }
-            } else {
-                $collForms = ChildFormQuery::create(null, $criteria)
-                    ->filterByMember($this)
-                    ->find($con);
-
-                if (null !== $criteria) {
-                    if (false !== $this->collFormsPartial && count($collForms)) {
-                        $this->initForms(false);
-
-                        foreach ($collForms as $obj) {
-                            if (false == $this->collForms->contains($obj)) {
-                                $this->collForms->append($obj);
-                            }
-                        }
-
-                        $this->collFormsPartial = true;
-                    }
-
-                    return $collForms;
-                }
-
-                if ($partial && $this->collForms) {
-                    foreach ($this->collForms as $obj) {
-                        if ($obj->isNew()) {
-                            $collForms[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collForms = $collForms;
-                $this->collFormsPartial = false;
-            }
-        }
-
-        return $this->collForms;
-    }
-
-    /**
-     * Sets a collection of ChildForm objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $forms A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return $this|ChildMember The current object (for fluent API support)
-     */
-    public function setForms(Collection $forms, ConnectionInterface $con = null)
-    {
-        /** @var ChildForm[] $formsToDelete */
-        $formsToDelete = $this->getForms(new Criteria(), $con)->diff($forms);
-
-
-        $this->formsScheduledForDeletion = $formsToDelete;
-
-        foreach ($formsToDelete as $formRemoved) {
-            $formRemoved->setMember(null);
-        }
-
-        $this->collForms = null;
-        foreach ($forms as $form) {
-            $this->addForm($form);
-        }
-
-        $this->collForms = $forms;
-        $this->collFormsPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Form objects.
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related Form objects.
-     * @throws PropelException
-     */
-    public function countForms(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collFormsPartial && !$this->isNew();
-        if (null === $this->collForms || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collForms) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getForms());
-            }
-
-            $query = ChildFormQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByMember($this)
-                ->count($con);
-        }
-
-        return count($this->collForms);
-    }
-
-    /**
-     * Method called to associate a ChildForm object to this object
-     * through the ChildForm foreign key attribute.
-     *
-     * @param  ChildForm $l ChildForm
-     * @return $this|\Member The current object (for fluent API support)
-     */
-    public function addForm(ChildForm $l)
-    {
-        if ($this->collForms === null) {
-            $this->initForms();
-            $this->collFormsPartial = true;
-        }
-
-        if (!$this->collForms->contains($l)) {
-            $this->doAddForm($l);
-
-            if ($this->formsScheduledForDeletion and $this->formsScheduledForDeletion->contains($l)) {
-                $this->formsScheduledForDeletion->remove($this->formsScheduledForDeletion->search($l));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param ChildForm $form The ChildForm object to add.
-     */
-    protected function doAddForm(ChildForm $form)
-    {
-        $this->collForms[]= $form;
-        $form->setMember($this);
-    }
-
-    /**
-     * @param  ChildForm $form The ChildForm object to remove.
-     * @return $this|ChildMember The current object (for fluent API support)
-     */
-    public function removeForm(ChildForm $form)
-    {
-        if ($this->getForms()->contains($form)) {
-            $pos = $this->collForms->search($form);
-            $this->collForms->remove($pos);
-            if (null === $this->formsScheduledForDeletion) {
-                $this->formsScheduledForDeletion = clone $this->collForms;
-                $this->formsScheduledForDeletion->clear();
-            }
-            $this->formsScheduledForDeletion[]= clone $form;
-            $form->setMember(null);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Clears out the collShares collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addShares()
-     */
-    public function clearShares()
-    {
-        $this->collShares = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Reset is the collShares collection loaded partially.
-     */
-    public function resetPartialShares($v = true)
-    {
-        $this->collSharesPartial = $v;
-    }
-
-    /**
-     * Initializes the collShares collection.
-     *
-     * By default this just sets the collShares collection to an empty array (like clearcollShares());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initShares($overrideExisting = true)
-    {
-        if (null !== $this->collShares && !$overrideExisting) {
-            return;
-        }
-
-        $collectionClassName = ShareTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collShares = new $collectionClassName;
-        $this->collShares->setModel('\Share');
-    }
-
-    /**
-     * Gets an array of ChildShare objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildMember is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildShare[] List of ChildShare objects
-     * @throws PropelException
-     */
-    public function getShares(Criteria $criteria = null, ConnectionInterface $con = null)
-    {
-        $partial = $this->collSharesPartial && !$this->isNew();
-        if (null === $this->collShares || null !== $criteria || $partial) {
-            if ($this->isNew()) {
-                // return empty collection
-                if (null === $this->collShares) {
-                    $this->initShares();
-                } else {
-                    $collectionClassName = ShareTableMap::getTableMap()->getCollectionClassName();
-
-                    $collShares = new $collectionClassName;
-                    $collShares->setModel('\Share');
-
-                    return $collShares;
-                }
-            } else {
-                $collShares = ChildShareQuery::create(null, $criteria)
-                    ->filterByMember($this)
-                    ->find($con);
-
-                if (null !== $criteria) {
-                    if (false !== $this->collSharesPartial && count($collShares)) {
-                        $this->initShares(false);
-
-                        foreach ($collShares as $obj) {
-                            if (false == $this->collShares->contains($obj)) {
-                                $this->collShares->append($obj);
-                            }
-                        }
-
-                        $this->collSharesPartial = true;
-                    }
-
-                    return $collShares;
-                }
-
-                if ($partial && $this->collShares) {
-                    foreach ($this->collShares as $obj) {
-                        if ($obj->isNew()) {
-                            $collShares[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collShares = $collShares;
-                $this->collSharesPartial = false;
-            }
-        }
-
-        return $this->collShares;
-    }
-
-    /**
-     * Sets a collection of ChildShare objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $shares A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return $this|ChildMember The current object (for fluent API support)
-     */
-    public function setShares(Collection $shares, ConnectionInterface $con = null)
-    {
-        /** @var ChildShare[] $sharesToDelete */
-        $sharesToDelete = $this->getShares(new Criteria(), $con)->diff($shares);
-
-
-        $this->sharesScheduledForDeletion = $sharesToDelete;
-
-        foreach ($sharesToDelete as $shareRemoved) {
-            $shareRemoved->setMember(null);
-        }
-
-        $this->collShares = null;
-        foreach ($shares as $share) {
-            $this->addShare($share);
-        }
-
-        $this->collShares = $shares;
-        $this->collSharesPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Share objects.
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related Share objects.
-     * @throws PropelException
-     */
-    public function countShares(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collSharesPartial && !$this->isNew();
-        if (null === $this->collShares || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collShares) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getShares());
-            }
-
-            $query = ChildShareQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByMember($this)
-                ->count($con);
-        }
-
-        return count($this->collShares);
-    }
-
-    /**
-     * Method called to associate a ChildShare object to this object
-     * through the ChildShare foreign key attribute.
-     *
-     * @param  ChildShare $l ChildShare
-     * @return $this|\Member The current object (for fluent API support)
-     */
-    public function addShare(ChildShare $l)
-    {
-        if ($this->collShares === null) {
-            $this->initShares();
-            $this->collSharesPartial = true;
-        }
-
-        if (!$this->collShares->contains($l)) {
-            $this->doAddShare($l);
-
-            if ($this->sharesScheduledForDeletion and $this->sharesScheduledForDeletion->contains($l)) {
-                $this->sharesScheduledForDeletion->remove($this->sharesScheduledForDeletion->search($l));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param ChildShare $share The ChildShare object to add.
-     */
-    protected function doAddShare(ChildShare $share)
-    {
-        $this->collShares[]= $share;
-        $share->setMember($this);
-    }
-
-    /**
-     * @param  ChildShare $share The ChildShare object to remove.
-     * @return $this|ChildMember The current object (for fluent API support)
-     */
-    public function removeShare(ChildShare $share)
-    {
-        if ($this->getShares()->contains($share)) {
-            $pos = $this->collShares->search($share);
-            $this->collShares->remove($pos);
-            if (null === $this->sharesScheduledForDeletion) {
-                $this->sharesScheduledForDeletion = clone $this->collShares;
-                $this->sharesScheduledForDeletion->clear();
-            }
-            $this->sharesScheduledForDeletion[]= clone $share;
-            $share->setMember(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Member is new, it will return
-     * an empty collection; or if this Member has previously
-     * been saved, it will retrieve related Shares from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Member.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|ChildShare[] List of ChildShare objects
-     */
-    public function getSharesJoinForm(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
-    {
-        $query = ChildShareQuery::create(null, $criteria);
-        $query->joinWith('Form', $joinBehavior);
-
-        return $this->getShares($query, $con);
     }
 
     /**
@@ -2183,7 +1355,7 @@ abstract class Member implements ActiveRecordInterface
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
      * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildMember is new, it will return
+     * If this ChildFormItem is new, it will return
      * an empty collection or the current collection; the criteria is ignored on a new object.
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
@@ -2209,7 +1381,7 @@ abstract class Member implements ActiveRecordInterface
                 }
             } else {
                 $collSubmits = ChildSubmitQuery::create(null, $criteria)
-                    ->filterByMember($this)
+                    ->filterByFormItem($this)
                     ->find($con);
 
                 if (null !== $criteria) {
@@ -2252,7 +1424,7 @@ abstract class Member implements ActiveRecordInterface
      *
      * @param      Collection $submits A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
-     * @return $this|ChildMember The current object (for fluent API support)
+     * @return $this|ChildFormItem The current object (for fluent API support)
      */
     public function setSubmits(Collection $submits, ConnectionInterface $con = null)
     {
@@ -2263,7 +1435,7 @@ abstract class Member implements ActiveRecordInterface
         $this->submitsScheduledForDeletion = $submitsToDelete;
 
         foreach ($submitsToDelete as $submitRemoved) {
-            $submitRemoved->setMember(null);
+            $submitRemoved->setFormItem(null);
         }
 
         $this->collSubmits = null;
@@ -2304,7 +1476,7 @@ abstract class Member implements ActiveRecordInterface
             }
 
             return $query
-                ->filterByMember($this)
+                ->filterByFormItem($this)
                 ->count($con);
         }
 
@@ -2316,7 +1488,7 @@ abstract class Member implements ActiveRecordInterface
      * through the ChildSubmit foreign key attribute.
      *
      * @param  ChildSubmit $l ChildSubmit
-     * @return $this|\Member The current object (for fluent API support)
+     * @return $this|\FormItem The current object (for fluent API support)
      */
     public function addSubmit(ChildSubmit $l)
     {
@@ -2342,12 +1514,12 @@ abstract class Member implements ActiveRecordInterface
     protected function doAddSubmit(ChildSubmit $submit)
     {
         $this->collSubmits[]= $submit;
-        $submit->setMember($this);
+        $submit->setFormItem($this);
     }
 
     /**
      * @param  ChildSubmit $submit The ChildSubmit object to remove.
-     * @return $this|ChildMember The current object (for fluent API support)
+     * @return $this|ChildFormItem The current object (for fluent API support)
      */
     public function removeSubmit(ChildSubmit $submit)
     {
@@ -2358,8 +1530,8 @@ abstract class Member implements ActiveRecordInterface
                 $this->submitsScheduledForDeletion = clone $this->collSubmits;
                 $this->submitsScheduledForDeletion->clear();
             }
-            $this->submitsScheduledForDeletion[]= $submit;
-            $submit->setMember(null);
+            $this->submitsScheduledForDeletion[]= clone $submit;
+            $submit->setFormItem(null);
         }
 
         return $this;
@@ -2369,38 +1541,13 @@ abstract class Member implements ActiveRecordInterface
     /**
      * If this collection has already been initialized with
      * an identical criteria, it returns the collection.
-     * Otherwise if this Member is new, it will return
-     * an empty collection; or if this Member has previously
+     * Otherwise if this FormItem is new, it will return
+     * an empty collection; or if this FormItem has previously
      * been saved, it will retrieve related Submits from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
-     * actually need in Member.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|ChildSubmit[] List of ChildSubmit objects
-     */
-    public function getSubmitsJoinFormItem(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
-    {
-        $query = ChildSubmitQuery::create(null, $criteria);
-        $query->joinWith('FormItem', $joinBehavior);
-
-        return $this->getSubmits($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Member is new, it will return
-     * an empty collection; or if this Member has previously
-     * been saved, it will retrieve related Submits from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Member.
+     * actually need in FormItem.
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
@@ -2415,6 +1562,31 @@ abstract class Member implements ActiveRecordInterface
         return $this->getSubmits($query, $con);
     }
 
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this FormItem is new, it will return
+     * an empty collection; or if this FormItem has previously
+     * been saved, it will retrieve related Submits from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in FormItem.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildSubmit[] List of ChildSubmit objects
+     */
+    public function getSubmitsJoinMember(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildSubmitQuery::create(null, $criteria);
+        $query->joinWith('Member', $joinBehavior);
+
+        return $this->getSubmits($query, $con);
+    }
+
     /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
@@ -2422,15 +1594,15 @@ abstract class Member implements ActiveRecordInterface
      */
     public function clear()
     {
+        if (null !== $this->aForm) {
+            $this->aForm->removeFormItem($this);
+        }
+        if (null !== $this->aQuestion) {
+            $this->aQuestion->removeFormItem($this);
+        }
         $this->id = null;
-        $this->email = null;
-        $this->first_name = null;
-        $this->last_name = null;
-        $this->confirmed_email = null;
-        $this->password_hash = null;
-        $this->activation_code = null;
-        $this->recovery_code = null;
-        $this->sign_up_date_time = null;
+        $this->form_id = null;
+        $this->question_id = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -2449,16 +1621,6 @@ abstract class Member implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collForms) {
-                foreach ($this->collForms as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
-            if ($this->collShares) {
-                foreach ($this->collShares as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->collSubmits) {
                 foreach ($this->collSubmits as $o) {
                     $o->clearAllReferences($deep);
@@ -2466,9 +1628,9 @@ abstract class Member implements ActiveRecordInterface
             }
         } // if ($deep)
 
-        $this->collForms = null;
-        $this->collShares = null;
         $this->collSubmits = null;
+        $this->aForm = null;
+        $this->aQuestion = null;
     }
 
     /**
@@ -2478,7 +1640,7 @@ abstract class Member implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(MemberTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(FormItemTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

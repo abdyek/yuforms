@@ -3,9 +3,17 @@
 namespace Yuforms\Api\Controller;
 
 use Yuforms\Api\Core\Controller;
+use Yuforms\Api\Other\Time;
 
 class Example extends Controller {
     protected function post() {
+        $query = new \MemberQuery();
+        $member = $query->findPK($this->userId);
+        $form = new \Form();
+        $form->setMember($member);
+        $form->setName("Form ismi");
+        $form->setCreateDateTime(Time::current());
+        $form->save();
         $this->response($this->data);
         /*
         $currentDateTime = date('Y-m-d H:i:s', time());

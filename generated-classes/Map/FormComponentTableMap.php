@@ -2,8 +2,8 @@
 
 namespace Map;
 
-use \Member;
-use \MemberQuery;
+use \FormComponent;
+use \FormComponentQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'member' table.
+ * This class defines the structure of the 'form_component' table.
  *
  *
  *
@@ -25,7 +25,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * ORDER BY clause to know whether it needs to apply SQL to make the ORDER BY case-insensitive
  * (i.e. if it's a text column type).
  */
-class MemberTableMap extends TableMap
+class FormComponentTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -33,7 +33,7 @@ class MemberTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = '.Map.MemberTableMap';
+    const CLASS_NAME = '.Map.FormComponentTableMap';
 
     /**
      * The default database name for this class
@@ -43,22 +43,22 @@ class MemberTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'member';
+    const TABLE_NAME = 'form_component';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\Member';
+    const OM_CLASS = '\\FormComponent';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Member';
+    const CLASS_DEFAULT = 'FormComponent';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 9;
+    const NUM_COLUMNS = 3;
 
     /**
      * The number of lazy-loaded columns
@@ -68,52 +68,22 @@ class MemberTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 9;
+    const NUM_HYDRATE_COLUMNS = 3;
 
     /**
      * the column name for the id field
      */
-    const COL_ID = 'member.id';
+    const COL_ID = 'form_component.id';
 
     /**
-     * the column name for the email field
+     * the column name for the name field
      */
-    const COL_EMAIL = 'member.email';
+    const COL_NAME = 'form_component.name';
 
     /**
-     * the column name for the first_name field
+     * the column name for the has_options field
      */
-    const COL_FIRST_NAME = 'member.first_name';
-
-    /**
-     * the column name for the last_name field
-     */
-    const COL_LAST_NAME = 'member.last_name';
-
-    /**
-     * the column name for the confirmed_email field
-     */
-    const COL_CONFIRMED_EMAIL = 'member.confirmed_email';
-
-    /**
-     * the column name for the password_hash field
-     */
-    const COL_PASSWORD_HASH = 'member.password_hash';
-
-    /**
-     * the column name for the activation_code field
-     */
-    const COL_ACTIVATION_CODE = 'member.activation_code';
-
-    /**
-     * the column name for the recovery_code field
-     */
-    const COL_RECOVERY_CODE = 'member.recovery_code';
-
-    /**
-     * the column name for the sign_up_date_time field
-     */
-    const COL_SIGN_UP_DATE_TIME = 'member.sign_up_date_time';
+    const COL_HAS_OPTIONS = 'form_component.has_options';
 
     /**
      * The default string format for model objects of the related table
@@ -127,11 +97,11 @@ class MemberTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Email', 'FirstName', 'LastName', 'ConfirmedEmail', 'PasswordHash', 'ActivationCode', 'RecoveryCode', 'SignUpDateTime', ),
-        self::TYPE_CAMELNAME     => array('id', 'email', 'firstName', 'lastName', 'confirmedEmail', 'passwordHash', 'activationCode', 'recoveryCode', 'signUpDateTime', ),
-        self::TYPE_COLNAME       => array(MemberTableMap::COL_ID, MemberTableMap::COL_EMAIL, MemberTableMap::COL_FIRST_NAME, MemberTableMap::COL_LAST_NAME, MemberTableMap::COL_CONFIRMED_EMAIL, MemberTableMap::COL_PASSWORD_HASH, MemberTableMap::COL_ACTIVATION_CODE, MemberTableMap::COL_RECOVERY_CODE, MemberTableMap::COL_SIGN_UP_DATE_TIME, ),
-        self::TYPE_FIELDNAME     => array('id', 'email', 'first_name', 'last_name', 'confirmed_email', 'password_hash', 'activation_code', 'recovery_code', 'sign_up_date_time', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'HasOptions', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'hasOptions', ),
+        self::TYPE_COLNAME       => array(FormComponentTableMap::COL_ID, FormComponentTableMap::COL_NAME, FormComponentTableMap::COL_HAS_OPTIONS, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'has_options', ),
+        self::TYPE_NUM           => array(0, 1, 2, )
     );
 
     /**
@@ -141,11 +111,11 @@ class MemberTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Email' => 1, 'FirstName' => 2, 'LastName' => 3, 'ConfirmedEmail' => 4, 'PasswordHash' => 5, 'ActivationCode' => 6, 'RecoveryCode' => 7, 'SignUpDateTime' => 8, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'email' => 1, 'firstName' => 2, 'lastName' => 3, 'confirmedEmail' => 4, 'passwordHash' => 5, 'activationCode' => 6, 'recoveryCode' => 7, 'signUpDateTime' => 8, ),
-        self::TYPE_COLNAME       => array(MemberTableMap::COL_ID => 0, MemberTableMap::COL_EMAIL => 1, MemberTableMap::COL_FIRST_NAME => 2, MemberTableMap::COL_LAST_NAME => 3, MemberTableMap::COL_CONFIRMED_EMAIL => 4, MemberTableMap::COL_PASSWORD_HASH => 5, MemberTableMap::COL_ACTIVATION_CODE => 6, MemberTableMap::COL_RECOVERY_CODE => 7, MemberTableMap::COL_SIGN_UP_DATE_TIME => 8, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'email' => 1, 'first_name' => 2, 'last_name' => 3, 'confirmed_email' => 4, 'password_hash' => 5, 'activation_code' => 6, 'recovery_code' => 7, 'sign_up_date_time' => 8, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'HasOptions' => 2, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'hasOptions' => 2, ),
+        self::TYPE_COLNAME       => array(FormComponentTableMap::COL_ID => 0, FormComponentTableMap::COL_NAME => 1, FormComponentTableMap::COL_HAS_OPTIONS => 2, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'has_options' => 2, ),
+        self::TYPE_NUM           => array(0, 1, 2, )
     );
 
     /**
@@ -156,77 +126,29 @@ class MemberTableMap extends TableMap
     protected $normalizedColumnNameMap = [
 
         'Id' => 'ID',
-        'Member.Id' => 'ID',
+        'FormComponent.Id' => 'ID',
         'id' => 'ID',
-        'member.id' => 'ID',
-        'MemberTableMap::COL_ID' => 'ID',
+        'formComponent.id' => 'ID',
+        'FormComponentTableMap::COL_ID' => 'ID',
         'COL_ID' => 'ID',
         'id' => 'ID',
-        'member.id' => 'ID',
-        'Email' => 'EMAIL',
-        'Member.Email' => 'EMAIL',
-        'email' => 'EMAIL',
-        'member.email' => 'EMAIL',
-        'MemberTableMap::COL_EMAIL' => 'EMAIL',
-        'COL_EMAIL' => 'EMAIL',
-        'email' => 'EMAIL',
-        'member.email' => 'EMAIL',
-        'FirstName' => 'FIRST_NAME',
-        'Member.FirstName' => 'FIRST_NAME',
-        'firstName' => 'FIRST_NAME',
-        'member.firstName' => 'FIRST_NAME',
-        'MemberTableMap::COL_FIRST_NAME' => 'FIRST_NAME',
-        'COL_FIRST_NAME' => 'FIRST_NAME',
-        'first_name' => 'FIRST_NAME',
-        'member.first_name' => 'FIRST_NAME',
-        'LastName' => 'LAST_NAME',
-        'Member.LastName' => 'LAST_NAME',
-        'lastName' => 'LAST_NAME',
-        'member.lastName' => 'LAST_NAME',
-        'MemberTableMap::COL_LAST_NAME' => 'LAST_NAME',
-        'COL_LAST_NAME' => 'LAST_NAME',
-        'last_name' => 'LAST_NAME',
-        'member.last_name' => 'LAST_NAME',
-        'ConfirmedEmail' => 'CONFIRMED_EMAIL',
-        'Member.ConfirmedEmail' => 'CONFIRMED_EMAIL',
-        'confirmedEmail' => 'CONFIRMED_EMAIL',
-        'member.confirmedEmail' => 'CONFIRMED_EMAIL',
-        'MemberTableMap::COL_CONFIRMED_EMAIL' => 'CONFIRMED_EMAIL',
-        'COL_CONFIRMED_EMAIL' => 'CONFIRMED_EMAIL',
-        'confirmed_email' => 'CONFIRMED_EMAIL',
-        'member.confirmed_email' => 'CONFIRMED_EMAIL',
-        'PasswordHash' => 'PASSWORD_HASH',
-        'Member.PasswordHash' => 'PASSWORD_HASH',
-        'passwordHash' => 'PASSWORD_HASH',
-        'member.passwordHash' => 'PASSWORD_HASH',
-        'MemberTableMap::COL_PASSWORD_HASH' => 'PASSWORD_HASH',
-        'COL_PASSWORD_HASH' => 'PASSWORD_HASH',
-        'password_hash' => 'PASSWORD_HASH',
-        'member.password_hash' => 'PASSWORD_HASH',
-        'ActivationCode' => 'ACTIVATION_CODE',
-        'Member.ActivationCode' => 'ACTIVATION_CODE',
-        'activationCode' => 'ACTIVATION_CODE',
-        'member.activationCode' => 'ACTIVATION_CODE',
-        'MemberTableMap::COL_ACTIVATION_CODE' => 'ACTIVATION_CODE',
-        'COL_ACTIVATION_CODE' => 'ACTIVATION_CODE',
-        'activation_code' => 'ACTIVATION_CODE',
-        'member.activation_code' => 'ACTIVATION_CODE',
-        'RecoveryCode' => 'RECOVERY_CODE',
-        'Member.RecoveryCode' => 'RECOVERY_CODE',
-        'recoveryCode' => 'RECOVERY_CODE',
-        'member.recoveryCode' => 'RECOVERY_CODE',
-        'MemberTableMap::COL_RECOVERY_CODE' => 'RECOVERY_CODE',
-        'COL_RECOVERY_CODE' => 'RECOVERY_CODE',
-        'recovery_code' => 'RECOVERY_CODE',
-        'member.recovery_code' => 'RECOVERY_CODE',
-        'SignUpDateTime' => 'SIGN_UP_DATE_TIME',
-        'Member.SignUpDateTime' => 'SIGN_UP_DATE_TIME',
-        'signUpDateTime' => 'SIGN_UP_DATE_TIME',
-        'member.signUpDateTime' => 'SIGN_UP_DATE_TIME',
-        'MemberTableMap::COL_SIGN_UP_DATE_TIME' => 'SIGN_UP_DATE_TIME',
-        'COL_SIGN_UP_DATE_TIME' => 'SIGN_UP_DATE_TIME',
-        'sign_up_date_time' => 'SIGN_UP_DATE_TIME',
-        'member.sign_up_date_time' => 'SIGN_UP_DATE_TIME',
+        'form_component.id' => 'ID',
+        'Name' => 'NAME',
+        'FormComponent.Name' => 'NAME',
+        'name' => 'NAME',
+        'formComponent.name' => 'NAME',
+        'FormComponentTableMap::COL_NAME' => 'NAME',
+        'COL_NAME' => 'NAME',
+        'name' => 'NAME',
+        'form_component.name' => 'NAME',
+        'HasOptions' => 'HAS_OPTIONS',
+        'FormComponent.HasOptions' => 'HAS_OPTIONS',
+        'hasOptions' => 'HAS_OPTIONS',
+        'formComponent.hasOptions' => 'HAS_OPTIONS',
+        'FormComponentTableMap::COL_HAS_OPTIONS' => 'HAS_OPTIONS',
+        'COL_HAS_OPTIONS' => 'HAS_OPTIONS',
+        'has_options' => 'HAS_OPTIONS',
+        'form_component.has_options' => 'HAS_OPTIONS',
     ];
 
     /**
@@ -239,22 +161,16 @@ class MemberTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('member');
-        $this->setPhpName('Member');
+        $this->setName('form_component');
+        $this->setPhpName('FormComponent');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\Member');
+        $this->setClassName('\\FormComponent');
         $this->setPackage('');
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('email', 'Email', 'VARCHAR', true, 255, null);
-        $this->addColumn('first_name', 'FirstName', 'VARCHAR', true, 50, null);
-        $this->addColumn('last_name', 'LastName', 'VARCHAR', true, 50, null);
-        $this->addColumn('confirmed_email', 'ConfirmedEmail', 'BOOLEAN', true, 1, null);
-        $this->addColumn('password_hash', 'PasswordHash', 'VARCHAR', true, 60, null);
-        $this->addColumn('activation_code', 'ActivationCode', 'VARCHAR', true, 6, null);
-        $this->addColumn('recovery_code', 'RecoveryCode', 'VARCHAR', false, 10, null);
-        $this->addColumn('sign_up_date_time', 'SignUpDateTime', 'TIMESTAMP', true, null, null);
+        $this->addColumn('name', 'Name', 'VARCHAR', true, 256, null);
+        $this->addColumn('has_options', 'HasOptions', 'BOOLEAN', true, 1, false);
     } // initialize()
 
     /**
@@ -262,27 +178,13 @@ class MemberTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Form', '\\Form', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('Question', '\\Question', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
-    0 => ':member_id',
+    0 => ':form_component_id',
     1 => ':id',
   ),
-), null, null, 'Forms', false);
-        $this->addRelation('Share', '\\Share', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':member_id',
-    1 => ':id',
-  ),
-), null, null, 'Shares', false);
-        $this->addRelation('Submit', '\\Submit', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':member_id',
-    1 => ':id',
-  ),
-), null, null, 'Submits', false);
+), null, null, 'Questions', false);
     } // buildRelations()
 
     /**
@@ -342,7 +244,7 @@ class MemberTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? MemberTableMap::CLASS_DEFAULT : MemberTableMap::OM_CLASS;
+        return $withPrefix ? FormComponentTableMap::CLASS_DEFAULT : FormComponentTableMap::OM_CLASS;
     }
 
     /**
@@ -356,22 +258,22 @@ class MemberTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (Member object, last column rank)
+     * @return array           (FormComponent object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = MemberTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = MemberTableMap::getInstanceFromPool($key))) {
+        $key = FormComponentTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = FormComponentTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + MemberTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + FormComponentTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = MemberTableMap::OM_CLASS;
-            /** @var Member $obj */
+            $cls = FormComponentTableMap::OM_CLASS;
+            /** @var FormComponent $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            MemberTableMap::addInstanceToPool($obj, $key);
+            FormComponentTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -394,18 +296,18 @@ class MemberTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = MemberTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = MemberTableMap::getInstanceFromPool($key))) {
+            $key = FormComponentTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = FormComponentTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var Member $obj */
+                /** @var FormComponent $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                MemberTableMap::addInstanceToPool($obj, $key);
+                FormComponentTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -426,25 +328,13 @@ class MemberTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(MemberTableMap::COL_ID);
-            $criteria->addSelectColumn(MemberTableMap::COL_EMAIL);
-            $criteria->addSelectColumn(MemberTableMap::COL_FIRST_NAME);
-            $criteria->addSelectColumn(MemberTableMap::COL_LAST_NAME);
-            $criteria->addSelectColumn(MemberTableMap::COL_CONFIRMED_EMAIL);
-            $criteria->addSelectColumn(MemberTableMap::COL_PASSWORD_HASH);
-            $criteria->addSelectColumn(MemberTableMap::COL_ACTIVATION_CODE);
-            $criteria->addSelectColumn(MemberTableMap::COL_RECOVERY_CODE);
-            $criteria->addSelectColumn(MemberTableMap::COL_SIGN_UP_DATE_TIME);
+            $criteria->addSelectColumn(FormComponentTableMap::COL_ID);
+            $criteria->addSelectColumn(FormComponentTableMap::COL_NAME);
+            $criteria->addSelectColumn(FormComponentTableMap::COL_HAS_OPTIONS);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.email');
-            $criteria->addSelectColumn($alias . '.first_name');
-            $criteria->addSelectColumn($alias . '.last_name');
-            $criteria->addSelectColumn($alias . '.confirmed_email');
-            $criteria->addSelectColumn($alias . '.password_hash');
-            $criteria->addSelectColumn($alias . '.activation_code');
-            $criteria->addSelectColumn($alias . '.recovery_code');
-            $criteria->addSelectColumn($alias . '.sign_up_date_time');
+            $criteria->addSelectColumn($alias . '.name');
+            $criteria->addSelectColumn($alias . '.has_options');
         }
     }
 
@@ -462,25 +352,13 @@ class MemberTableMap extends TableMap
     public static function removeSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->removeSelectColumn(MemberTableMap::COL_ID);
-            $criteria->removeSelectColumn(MemberTableMap::COL_EMAIL);
-            $criteria->removeSelectColumn(MemberTableMap::COL_FIRST_NAME);
-            $criteria->removeSelectColumn(MemberTableMap::COL_LAST_NAME);
-            $criteria->removeSelectColumn(MemberTableMap::COL_CONFIRMED_EMAIL);
-            $criteria->removeSelectColumn(MemberTableMap::COL_PASSWORD_HASH);
-            $criteria->removeSelectColumn(MemberTableMap::COL_ACTIVATION_CODE);
-            $criteria->removeSelectColumn(MemberTableMap::COL_RECOVERY_CODE);
-            $criteria->removeSelectColumn(MemberTableMap::COL_SIGN_UP_DATE_TIME);
+            $criteria->removeSelectColumn(FormComponentTableMap::COL_ID);
+            $criteria->removeSelectColumn(FormComponentTableMap::COL_NAME);
+            $criteria->removeSelectColumn(FormComponentTableMap::COL_HAS_OPTIONS);
         } else {
             $criteria->removeSelectColumn($alias . '.id');
-            $criteria->removeSelectColumn($alias . '.email');
-            $criteria->removeSelectColumn($alias . '.first_name');
-            $criteria->removeSelectColumn($alias . '.last_name');
-            $criteria->removeSelectColumn($alias . '.confirmed_email');
-            $criteria->removeSelectColumn($alias . '.password_hash');
-            $criteria->removeSelectColumn($alias . '.activation_code');
-            $criteria->removeSelectColumn($alias . '.recovery_code');
-            $criteria->removeSelectColumn($alias . '.sign_up_date_time');
+            $criteria->removeSelectColumn($alias . '.name');
+            $criteria->removeSelectColumn($alias . '.has_options');
         }
     }
 
@@ -493,7 +371,7 @@ class MemberTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(MemberTableMap::DATABASE_NAME)->getTable(MemberTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(FormComponentTableMap::DATABASE_NAME)->getTable(FormComponentTableMap::TABLE_NAME);
     }
 
     /**
@@ -501,16 +379,16 @@ class MemberTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(MemberTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(MemberTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new MemberTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(FormComponentTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(FormComponentTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new FormComponentTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a Member or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a FormComponent or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or Member object or primary key or array of primary keys
+     * @param mixed               $values Criteria or FormComponent object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -521,27 +399,27 @@ class MemberTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(MemberTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(FormComponentTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Member) { // it's a model object
+        } elseif ($values instanceof \FormComponent) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(MemberTableMap::DATABASE_NAME);
-            $criteria->add(MemberTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(FormComponentTableMap::DATABASE_NAME);
+            $criteria->add(FormComponentTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = MemberQuery::create()->mergeWith($criteria);
+        $query = FormComponentQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            MemberTableMap::clearInstancePool();
+            FormComponentTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                MemberTableMap::removeInstanceFromPool($singleval);
+                FormComponentTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -549,20 +427,20 @@ class MemberTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the member table.
+     * Deletes all rows from the form_component table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return MemberQuery::create()->doDeleteAll($con);
+        return FormComponentQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a Member or Criteria object.
+     * Performs an INSERT on the database, given a FormComponent or Criteria object.
      *
-     * @param mixed               $criteria Criteria or Member object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or FormComponent object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -571,22 +449,22 @@ class MemberTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(MemberTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(FormComponentTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from Member object
+            $criteria = $criteria->buildCriteria(); // build Criteria from FormComponent object
         }
 
-        if ($criteria->containsKey(MemberTableMap::COL_ID) && $criteria->keyContainsValue(MemberTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.MemberTableMap::COL_ID.')');
+        if ($criteria->containsKey(FormComponentTableMap::COL_ID) && $criteria->keyContainsValue(FormComponentTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.FormComponentTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = MemberQuery::create()->mergeWith($criteria);
+        $query = FormComponentQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -595,7 +473,7 @@ class MemberTableMap extends TableMap
         });
     }
 
-} // MemberTableMap
+} // FormComponentTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-MemberTableMap::buildTableMap();
+FormComponentTableMap::buildTableMap();
