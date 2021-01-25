@@ -76,6 +76,9 @@ new Vue({
             }).then((json)=>{
                 if(json.state) {
                     this.success();
+                    setTimeout(()=>{
+                        changePage('/eposta-dogrula');
+                    }, 2000);
                 } else if(json.error=="available email") {
                     this.availableEmailErr();
                 }
@@ -98,7 +101,7 @@ new Vue({
         },
         success: function() {
             this.responseTitle="Başarılı";
-            this.responseMessage="Başarılı bir şekilde kayıt oldunuz.";
+            this.responseMessage="Başarılı bir şekilde kayıt oldunuz. E-posta doğrulama sayfasına yönlendiriliyorsunuz";
             this.responseColor="green";
             this.responseHidden=false;
         },

@@ -34,18 +34,22 @@ new Vue({
                 if(!response.ok) throw new Error(response.status);
                 else return response.json();
             }).then((json)=>{
-                this.inputDisabled = this.loginButtonDisabled = false;
-                this.alertColor = "green";
-                this.alertHidden = false;
-                this.alertTitle="Giriş Başarılı";
-                this.alertMessage="Ana sayfaya yönlendirileceksiniz";
-                delete json['state'];
-                delete json['jwt'];
-                let hash = base64FromObject(json);
-                setCookie('user', hash);
-                setTimeout(function() {
-                    changePage('/');
-                },1500);
+                if(json['state']=='success') {
+                    this.inputDisabled = this.loginButtonDisabled = false;
+                    this.alertColor = "green";
+                    this.alertHidden = false;
+                    this.alertTitle="Giriş Başarılı";
+                    this.alertMessage="Ana sayfaya yönlendirileceksiniz";
+                    delete json['state'];
+                    delete json['jwt'];
+                    let hash = base64FromObject(json);
+                    setCookie('user', hash);
+                    setTimeout(function() {
+                        changePage('/');
+                    },2000);
+                } else if(json['state']=='fail') {
+                    changePage('/eposta-dogrula');
+                }
             }).catch((error)=>{
                 if(error.message==401) {
                     this.inputDisabled = this.loginButtonDisabled = false;

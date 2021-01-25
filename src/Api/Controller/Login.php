@@ -8,10 +8,14 @@ use Yuforms\Api\Config\Cookie as CookieConfig;
 
 class Login extends Controller {
     protected function post() {
-        $this->member = \MemberQuery::create()->filterByConfirmedEmail(true)->findOneByEmail($this->data['email']);
-        if($this->member) {
-            $hash = $this->member->getPasswordHash();
-            if(password_verify($this->data['password'], $hash)) {
+        $this->member = \MemberQuery::create()/*->filterByConfirmedEmail(true)*/->findOneByEmail($this->data['email']);
+        if($this->member==null) {
+            http_response_code(401);
+            exit();
+        }
+        $hash = $this->member->getPasswordHash();
+        if(password_verify($this->data['password'], $hash)) {
+            if($this->member->getConfirmedEmail()) {
                 $this->setToken($this->member->getId());
                 $this->response([
                     'state'=>'success',
@@ -21,11 +25,13 @@ class Login extends Controller {
                     'firstName'=>$this->member->getFirstName(),
                     'lastName'=>$this->member->getLastName()
                 ]);
-                exit();
+            } else {
+                $this->response([
+                    'state'=>'fail',
+                    'message'=>'email not verified'
+                ]);
             }
         }
-        http_response_code(401);
-        exit();
     }
     private function setToken($userId) {
         $jwt = new JWT(JwtConfig::SECRET, JwtConfig::ALGO, JwtConfig::EXP);
