@@ -31,6 +31,8 @@ class Login extends Controller {
                     'message'=>'email not verified'
                 ]);
             }
+        } else {
+            http_response_code(401);
         }
     }
     private function setToken($userId) {
