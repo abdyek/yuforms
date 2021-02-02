@@ -230,53 +230,121 @@ Vue.component('yuforms-form-header', {
     `
 });
 
-Vue.component('yuforms-new-question', {
-    props:['formComponentList'],
-    data: function() {
-        return {
-            clicked:false,
-            selectedValue:"",
-            createButtonShow:false
-        }
+Vue.component('yuforms-questions', {
+    computed: {
+        ...Vuex.mapState([
+            'questions'
+        ])
     },
     methods: {
-        toggleClicked: function() {
-            this.clicked = (this.clicked==false)?true:false;
-        },
-        onChange: function(e) {
-            this.createButtonShow = true;
-            this.selectedValue=e.target.value;
+        ...Vuex.mapActions([
+            'addQuestion'
+        ]),
+        newQuestion: function() {
+            //console.log("new question");
+            this.addQuestion();
         }
     },
     template: `
-        <yuforms-container :card="true" :light-grey="true">
-            <div v-if="clicked==false" class="w3-center w3-margin-top w3-margin-bottom">
-                <button class="w3-button w3-xlarge w3-dark-grey" @click="this.toggleClicked">+</button>
+        <yuforms-container margin-top>
+            <yuforms-question-wrapper v-for="q in questions" :key="q.id" :id="q.id"></yuforms-question-wrapper>
+            <yuforms-new-question-button @on-click="newQuestion"></yuforms-new-question-button>
+        </yuforms-container>
+    `
+});
+
+Vue.component('yuforms-new-question-button', {
+    template: `
+        <yuforms-container :card="true" color="light-grey">
+            <div class="w3-center w3-margin-top w3-margin-bottom">
+                <button class="w3-button w3-xlarge w3-dark-grey" @click="$emit('on-click')">+</button>
             </div>
-            <div v-else>
-                <div class="w3-cell-row">
-                    <div class="w3-cell">
-                        <h3>Yeni Soru</h3>
-                    </div>
-                    <div class="w3-cell">
+        </yuforms-container>
+    `
+});
+
+Vue.component('yuforms-question-wrapper', {
+    props:['id', 'formComponentList'],
+    computed: {
+        ...Vuex.mapState([
+            'questions',
+        ])
+    },
+    data: function() {
+        return {
+            selectedValue:"",
+            createButtonShow:true,
+            createdQuestion: false,
+            question: "Yeni Soru"
+        }
+    },
+    methods: {
+        ...Vuex.mapActions([
+            'createQuestion',
+            'deleteQuestion'
+        ]),
+        onChange: function(e) {
+            this.createButtonShow = true;
+            this.selectedValue=e.target.value;
+        },
+        saveQuestion: function(e) {
+            this.question = e.target.innerText;
+        },
+        createQuestionLocal: function() {
+            this.createdQuestion = true;
+            console.log('localFunc', this.id, this.question);
+            this.createQuestion({
+                id:this.id,
+                questionText:this.question
+            });
+        },
+        cancelQuestion: function() {
+            if(this.questions[this.id].questionText) {
+                this.createQuestionLocal();
+            } else {
+                this.deleteQuestion(this.id);
+            }
+        },
+        deleteQuestionLocal: function() {
+            this.deleteQuestion(this.id);
+        },
+        editQuestion: function() {
+            this.createdQuestion = false;
+        }
+    },
+    template: `
+        <yuforms-container margin-bottom :card="true" :light-grey="true">
+            <div v-if="createdQuestion==false">
+                <yuforms-row>
+                    <yuforms-half>
+                        <h3 contenteditable @blur="saveQuestion">{{question}}</h3>
+                    </yuforms-half>
+                    <yuforms-half>
                         <div class="w3-right">
-                            <button class="w3-button w3-dark-grey" @click="this.toggleClicked">İptal</button>
+                            <yuforms-button margin-bottom color="deep-orange" name="İptal" @on-click="cancelQuestion"></yuforms-button>
                         </div>
-                    </div>
-                </div>
-                <div class="w3-cell-row">
-                    <div class="w3-container w3-cell">
+                    </yuforms-half>
+                </yuforms-row>
+                <yuforms-row>
+                    <yuforms-half>
                         <h5>Tür</h5>
-                    </div>
-                    <div class="w3-container w3-cell">
-                        <div class="w3-right">
+                    </yuforms-half>
+                    <yuforms-half>
+                        <yuforms-right>
                             <select class="w3-select" name="component-type" v-model="selectedValue" >
                                 <option value="" disabled selected>-- Lütfen Seçiniz --</option>
                                 <option v-for="opt in formComponentList" :key="opt.id" :value="opt.value" @click.prevent="onChange">{{opt.name}}</option>
                             </select>
-                        </div>
+                        </yuforms-right>
+                    </yuforms-half>
+                </yuforms-row>
+                <!-- here is optional inputs -->
+                <yuforms-row>
+                    <div class="w3-col">
+                        <yuforms-right>
+                        </yuforms-right>
                     </div>
-                </div>
+                </yuforms-row>
                 <div v-if="selectedValue=='input-text'" class="w3-cell-row">
                     <div class="w3-cell w3-padding-16">
                         <yuforms-basic-input label="Soru"></yuforms-basic-input>
@@ -304,12 +372,48 @@ Vue.component('yuforms-new-question', {
                 <div v-if="createButtonShow" class="w3-cell-row">
                     <div class="w3-cell">
                         <div class="w3-right w3-margin-bottom">
-                            <button class="w3-button w3-black">Oluştur</button>
+                            <yuforms-button color="green" name="Oluştur" @on-click="createQuestionLocal"></yuforms-button>
                         </div>
                     </div>
                 </div>
             </div>
+            <div v-else>
+                <yuforms-question
+                    :read-only="false"
+                    :question="question"
+                    @edit-question="editQuestion"
+                    @delete-question="deleteQuestionLocal"
+                ></yuforms-question>
+            </div>
         </yuforms-container>
+    `
+});
+
+Vue.component('yuforms-question', {
+    props: {
+        'readOnly': {
+            type:Boolean,
+            default:true
+        },
+        question: {
+            type:String,
+            default:'question'
+        }
+    },
+    template: `
+        <div>
+            <yuforms-row>
+                <yuforms-half>
+                    <h3>{{question}}</h3>
+                </yuforms-half>
+                <yuforms-half v-show="readOnly==false">
+                    <yuforms-right>
+                        <yuforms-button color="green" name="Düzenle" @on-click="$emit('edit-question')"></yuforms-button>
+                        <yuforms-button color="red" name="Sil" @on-click="$emit('delete-question')"></yuforms-button>
+                    </yuforms-right>
+                </yuforms-half>
+            </yuforms-row>
+        </div>
     `
 });
 
@@ -329,7 +433,7 @@ Vue.component('yuforms-new-question-select-option-options', {
     methods: {
         tiktik:function(e) {
             this.opts[e.target.name].value=e.target.value;
-            console.log(this.opts[0].value);
+            //console.log(this.opts[0].value);
             let length = this.opts.length;
             if(e.target.name==length-1 && this.opts[length-1].value.length>0) {
                 // add to end

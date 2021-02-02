@@ -14,7 +14,7 @@
     <script src="https://unpkg.com/vuex@3.6.2/dist/vuex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script> 
     <script src="public/script/script.js"></script>
-    <script src="public/script/app/<?php echo $script ?>.js"></script>
     <script src="public/script/store/<?php echo $script ?>.js"></script>
+    <script src="public/script/app/<?php echo $script ?>.js"></script>
 </body>
 </html>

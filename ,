@@ -3,7 +3,7 @@ Vue.use(Vuex);
 const state = {
     formTitle:"Yeni Form",
     questionIndex: 0,
-    questions:[] 
+    questions: [],
 };
 
 const getters = { };
