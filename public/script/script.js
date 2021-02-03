@@ -282,7 +282,7 @@ Vue.component('yuforms-questions', {
 
 Vue.component('yuforms-new-question-button', {
     template: `
-        <yuforms-container :card="true" color="light-grey">
+        <yuforms-container margin-bottom :card="true" color="light-grey">
             <div class="w3-center w3-margin-top w3-margin-bottom">
                 <button class="w3-button w3-xlarge w3-dark-grey" @click="$emit('on-click')">+</button>
             </div>
@@ -538,6 +538,21 @@ Vue.component('yuforms-new-question-select-option-options', {
     `
 });
 
+Vue.component('yuforms-form-create-button', {
+    methods: {
+        ...Vuex.mapActions([
+            'sendForm'
+        ])
+    },
+    template: `
+        <yuforms-container>
+            <yuforms-right>
+                <yuforms-button size="large" color="green" name="Form Oluştur" @on-click="sendForm"></yuforms-button>
+            </yuforms-right>
+        </yuforms-container>
+    `
+});
+
 Vue.component('yuforms-basic-input', {
     props:{
         label:{
@@ -624,10 +639,14 @@ Vue.component('yuforms-button', {
         color: {
             type:String,
             default:"grey"
+        },
+        size: {
+            type:String,
+            default:"medium"
         }
     },
     template: `
-        <button :class="[{'w3-button':true, 'w3-margin-top':marginTop, 'w3-margin-right':marginRight, 'w3-margin-bottom':marginBottom, 'w3-margin-left':marginLeft}, 'w3-'+color]" @click="$emit('on-click')" :disabled="disabled">{{name}}</button>
+        <button :class="[{'w3-button':true, 'w3-margin-top':marginTop, 'w3-margin-right':marginRight, 'w3-margin-bottom':marginBottom, 'w3-margin-left':marginLeft}, 'w3-'+color, 'w3-'+size]" @click="$emit('on-click')" :disabled="disabled">{{name}}</button>
     `
 });
 

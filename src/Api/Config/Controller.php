@@ -217,6 +217,11 @@ class Controller {
             'POST'=>[
                 'authorization'=>['member']
             ]
+        ],
+        'CreateForm'=>[
+            'POST'=>[
+                'authorization'=>['member'],
+            ]
         ]
     ];
 }

@@ -75,6 +75,14 @@ class Config {
                 'guest'=>true,
                 'member'=>'index'
             ]
+        ],
+        'form-paylas'=>[
+            'name'=>'ShareForm',
+            'title'=>'Form Paylaş',
+            'authorization'=>[
+                'guest'=>'giris-yap',
+                'member'=>true
+            ]
         ]
     ];
 }

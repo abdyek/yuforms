@@ -25,22 +25,22 @@ Vue.component('yuforms-form-title', {
     `
 });
 
-Vue.component('yuforms-example', {
-    computed: {
-        ...Vuex.mapState([
-            'questions'
-        ])
-    },
-    template: `
-        <div>
-            <div v-for="q in questions" :key="q.id">
-                {{q.id}} - {{q.questionText}} - {{q.options}}
-            </div>
-        </div>
-    `
-});
-
 new Vue({
     el:'#app',
+    computed: {
+        ...Vuex.mapState([
+            'sent',
+            'formResponseTitle',
+            'formResponseMessage',
+            'formResponseColor',
+            'responseSuccessful'
+        ])
+    },
+    methods: {
+        ...Vuex.mapActions([
+            'goEditForm',
+            'goShareForm'
+        ])
+    },
     store
 });
