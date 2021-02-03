@@ -198,39 +198,41 @@ Vue.component('yuforms-card', {
 Vue.component('yuforms-form-component-input-text',{
     props:['question', 'label'],
     template: `
-        <yuforms-container :card="true" :light-grey="true">
-            <h4>{{question}}</h4>
-            <div class="w3-padding-16">
-                <label>{{label}}</label>
-                <input class="w3-input" type="text">
-            </div> 
-        </yuforms-container>
+        <div class="w3-padding-16">
+            <input class="w3-input" type="text">
+        </div> 
     `
 });
 
 Vue.component('yuforms-form-component-input-checkbox', {
-    props:['question', 'options'],
+    props:['id', 'options'],
+    created: function() {
+        this.optionsCreated = [...this.options];
+        this.optionsCreated.splice(-1, 1);
+    },
     template: `
-        <yuforms-container :card="true" :light-grey="true">
-            <h4>{{question}}</h4>
-            <div class="w3-padding-16" v-for="opt in options" :key="opt.id">
-                <input class="w3-check" type="checkbox" :checked="opt.checked">
-                <label>{{opt.name}}</label>
+        <div>
+            <div class="w3-padding-16" v-for="opt in optionsCreated" :key="opt.id">
+                <input :id="'option' + '-' + id + '-' + opt.id" class="w3-check" type="checkbox" :checked="opt.checked">
+                <label :for="'option' + '-' + id + '-' + opt.id" >{{opt.value}}</label>
             </div> 
-        </yuforms-container>
+        </div>
     `
 });
 
 Vue.component('yuforms-form-component-input-radio', {
-    props:['question', 'options'],
+    props:['id', 'options'],
+    created: function() {
+        this.optionsCreated = [...this.options];
+        this.optionsCreated.splice(-1,1);
+    },
     template: `
-        <yuforms-container :card="true" :light-grey="true">
-            <h4>{{question}}</h4>
-            <div class="w3-padding-16" v-for="opt in options" :key="opt.id">
-                <input class="w3-radio" type="radio" name="gender" :value="opt.value" :checked="opt.checked">
-                <label>{{opt.name}}</label>
+        <div>
+            <div class="w3-padding-16" v-for="opt in optionsCreated" :key="opt.id">
+                <input :id="'option' + '-' + id + '-' + opt.id" class="w3-radio" type="radio" name="gender" :value="opt.value" :checked="opt.checked">
+                <label :for="'option' + '-' + id + '-' + opt.id">{{opt.value}}</label>
             </div>
-        </yuforms-container>
+        </div>
     `
 });
 
@@ -298,7 +300,7 @@ Vue.component('yuforms-question-wrapper', {
     },
     data: function() {
         return {
-            selectedValue:"",
+            formComponentType:"",
             createButtonShow:false,
             createdQuestion: false,
             question: "Yeni Soru"
@@ -308,12 +310,10 @@ Vue.component('yuforms-question-wrapper', {
         ...Vuex.mapActions([
             'createQuestion',
             'deleteQuestion',
-            'resetOptions'
         ]),
         onChange: function(e) {
             this.createButtonShow = true;
-            this.selectedValue=e.target.value;
-            this.resetOptions(this.id);
+            this.formComponentType =e.target.value;
         },
         saveQuestion: function(e) {
             this.question = e.target.innerText;
@@ -358,7 +358,7 @@ Vue.component('yuforms-question-wrapper', {
                     </yuforms-half>
                     <yuforms-half>
                         <yuforms-right>
-                            <select class="w3-select" name="component-type" v-model="selectedValue" >
+                            <select class="w3-select" name="component-type" v-model="formComponentType" >
                                 <option value="" disabled selected>-- Lütfen Seçiniz --</option>
                                 <option v-for="opt in formComponentList" :key="opt.id" :value="opt.value" @click.prevent="onChange">{{opt.name}}</option>
                             </select>
@@ -366,10 +366,10 @@ Vue.component('yuforms-question-wrapper', {
                     </yuforms-half>
                 </yuforms-row>
                 <!-- here is optional inputs -->
-                <div v-if="selectedValue=='input-text'" class="w3-cell-row">
+                <div v-if="formComponentType=='input-text'" class="w3-cell-row">
                     <!-- empty -->
                 </div>
-                <div v-else-if="selectedValue=='input-radio'">
+                <div v-else-if="formComponentType=='input-radio'">
                     <div class="w3-cell-row">
                         <div class="w3-cell">
                             <h6>Seçenekler</h6>
@@ -382,7 +382,7 @@ Vue.component('yuforms-question-wrapper', {
                         </div>
                     </div>
                 </div>
-                <div v-else-if="selectedValue=='input-select'">
+                <div v-else-if="formComponentType=='input-checkbox'">
                     <div class="w3-cell-row">
                         <div class="w3-cell">
                             <h6>Seçenekler</h6>
@@ -406,8 +406,11 @@ Vue.component('yuforms-question-wrapper', {
             </div>
             <div v-else>
                 <yuforms-question
+                    :id="id"
                     :read-only="false"
                     :question="question"
+                    :options="questions[id].options"
+                    :form-component-type="formComponentType"
                     @edit-question="editQuestion"
                     @delete-question="deleteQuestionLocal"
                 ></yuforms-question>
@@ -418,13 +421,23 @@ Vue.component('yuforms-question-wrapper', {
 
 Vue.component('yuforms-question', {
     props: {
-        'readOnly': {
+        id: {
+            type:Number,
+        },
+        readOnly: {
             type:Boolean,
             default:true
         },
         question: {
             type:String,
             default:'question'
+        },
+        formComponentType: {
+            type:String
+        },
+        options: {
+            type:Array,
+            default:[]
         }
     },
     template: `
@@ -439,6 +452,20 @@ Vue.component('yuforms-question', {
                         <yuforms-button color="red" name="Sil" @on-click="$emit('delete-question')"></yuforms-button>
                     </yuforms-right>
                 </yuforms-half>
+            </yuforms-row>
+            <yuforms-row>
+                <div v-if="formComponentType=='input-text'">
+                    <yuforms-form-component-input-text></yuforms-form-component-input-text>
+                </div>
+                <div v-else-if="formComponentType=='input-checkbox'">
+                    <yuforms-form-component-input-checkbox :options="options" :id="id"></yuforms-form-component-input-checkbox>
+                </div>
+                <div v-else-if="formComponentType=='input-radio'">
+                    <yuforms-form-component-input-radio :options="options" :id="id"></yuforms-form-component-input-radio>
+                </div>
+                <div v-else>
+                    error
+                </div>
             </yuforms-row>
         </div>
     `
@@ -455,9 +482,14 @@ Vue.component('yuforms-new-question-select-option-options', {
             'questions'
         ])
     },
+    created: function () {
+        //console.log(this.questions);
+        this.opts = this.questions[this.id].options;
+    },
     data: function() {
         return {
             index:0,
+            /*
             opts: [
                 {
                     id:0,
@@ -465,6 +497,7 @@ Vue.component('yuforms-new-question-select-option-options', {
                     value:"",
                 }
             ],
+            */
             used:false
         }
     },

@@ -7,7 +7,7 @@ const state = {
     formComponentList: [
         { id:0, name:'Kısa Cevap', value:'input-text', checked:false },
         { id:1, name:'Çoktan Seçmeli', value:'input-radio', checked:false },
-        { id:2, name:'Çoklu Seçmeli', value:'input-select', checked:false }
+        { id:2, name:'Çoklu Seçmeli', value:'input-checkbox', checked:false }
     ]
 };
 
@@ -26,7 +26,7 @@ const mutations = {
                 {
                     id:0,
                     placeholder:"Seçenek 1",
-                    value:"",
+                    value:""
                 }
             ]
         });
@@ -41,9 +41,6 @@ const mutations = {
     updateOptions(state, obj) {
         Vue.set(state.questions[obj.id], 'options', obj.options);
     },
-    resetOptions(state, id) {
-        Vue.set(state.questions[id], 'options', [{id:0, placeholder:"Seçenek 1", value:""}]);
-    }
 };
 
 const actions = {
@@ -62,9 +59,6 @@ const actions = {
     updateOptions({commit}, obj) {
         commit('updateOptions', obj);
     },
-    resetOptions({commit}, id) {
-        commit('resetOptions', id);
-    }
 };
 
 const store = new Vuex.Store({
