@@ -3,7 +3,12 @@ Vue.use(Vuex);
 const state = {
     formTitle:"Yeni Form",
     questionIndex: 0,
-    questions:[] 
+    questions:[],
+    formComponentList: [
+        { id:0, name:'Kısa Cevap', value:'input-text', checked:false },
+        { id:1, name:'Çoktan Seçmeli', value:'input-radio', checked:false },
+        { id:2, name:'Çoklu Seçmeli', value:'input-select', checked:false }
+    ]
 };
 
 const getters = { };
@@ -15,16 +20,29 @@ const mutations = {
     addQuestion(state) {
         state.questions.push({
             id:state.questionIndex,
-            questionText:""
+            questionText:"",
+            deleted:false,
+            options: [
+                {
+                    id:0,
+                    placeholder:"Seçenek 1",
+                    value:"",
+                }
+            ]
         });
         state.questionIndex = state.questionIndex + 1;
     },
     createQuestion(state, obj) {
-        console.log('in mutations', obj.id, obj.questionText);
         Vue.set(state.questions[obj.id], 'questionText', obj.questionText);
     },
     deleteQuestion(state, id) {
-        state.questions = state.questions.filter(function(obj) {return obj.id!=id});
+        Vue.set(state.questions[id], 'deleted', true);
+    },
+    updateOptions(state, obj) {
+        Vue.set(state.questions[obj.id], 'options', obj.options);
+    },
+    resetOptions(state, id) {
+        Vue.set(state.questions[id], 'options', [{id:0, placeholder:"Seçenek 1", value:""}]);
     }
 };
 
@@ -40,6 +58,12 @@ const actions = {
     },
     deleteQuestion({commit}, id) {
         commit('deleteQuestion', id);
+    },
+    updateOptions({commit}, obj) {
+        commit('updateOptions', obj);
+    },
+    resetOptions({commit}, id) {
+        commit('resetOptions', id);
     }
 };
 

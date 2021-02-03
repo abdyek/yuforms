@@ -117,6 +117,32 @@ Vue.component('yuforms-header', {
     }
 });
 
+Vue.component('yuforms-div', {
+    props: {
+        'margin-top':{
+            type:Boolean,
+            default:false
+        },
+        'margin-right':{
+            type:Boolean,
+            default:false
+        },
+        'margin-bottom': {
+            type:Boolean,
+            default:false
+        },
+        'margin-left':{
+            type:Boolean,
+            default:false
+        }
+    },
+    template: `
+        <div :class="{'w3-margin-top': marginTop, 'w3-margin-right':marginRight, 'w3-margin-bottom':marginBottom, 'w3-margin-left':marginLeft}">
+            <slot></slot>
+        </div>
+    `
+});
+
 Vue.component('yuforms-container', {
     props:{
         'margin-left':{
@@ -241,13 +267,12 @@ Vue.component('yuforms-questions', {
             'addQuestion'
         ]),
         newQuestion: function() {
-            //console.log("new question");
             this.addQuestion();
         }
     },
     template: `
         <yuforms-container margin-top>
-            <yuforms-question-wrapper v-for="q in questions" :key="q.id" :id="q.id"></yuforms-question-wrapper>
+            <yuforms-question-wrapper v-for="q in questions" :key="q.id" :id="q.id" :deleted="q.deleted" ></yuforms-question-wrapper>
             <yuforms-new-question-button @on-click="newQuestion"></yuforms-new-question-button>
         </yuforms-container>
     `
@@ -264,16 +289,17 @@ Vue.component('yuforms-new-question-button', {
 });
 
 Vue.component('yuforms-question-wrapper', {
-    props:['id', 'formComponentList'],
+    props:['id', 'deleted'],
     computed: {
         ...Vuex.mapState([
             'questions',
+            'formComponentList',
         ])
     },
     data: function() {
         return {
             selectedValue:"",
-            createButtonShow:true,
+            createButtonShow:false,
             createdQuestion: false,
             question: "Yeni Soru"
         }
@@ -281,18 +307,19 @@ Vue.component('yuforms-question-wrapper', {
     methods: {
         ...Vuex.mapActions([
             'createQuestion',
-            'deleteQuestion'
+            'deleteQuestion',
+            'resetOptions'
         ]),
         onChange: function(e) {
             this.createButtonShow = true;
             this.selectedValue=e.target.value;
+            this.resetOptions(this.id);
         },
         saveQuestion: function(e) {
             this.question = e.target.innerText;
         },
         createQuestionLocal: function() {
             this.createdQuestion = true;
-            console.log('localFunc', this.id, this.question);
             this.createQuestion({
                 id:this.id,
                 questionText:this.question
@@ -313,7 +340,7 @@ Vue.component('yuforms-question-wrapper', {
         }
     },
     template: `
-        <yuforms-container margin-bottom :card="true" :light-grey="true">
+        <yuforms-container v-if="deleted==false" margin-bottom :card="true" :light-grey="true">
             <div v-if="createdQuestion==false">
                 <yuforms-row>
                     <yuforms-half>
@@ -339,23 +366,10 @@ Vue.component('yuforms-question-wrapper', {
                     </yuforms-half>
                 </yuforms-row>
                 <!-- here is optional inputs -->
-                <yuforms-row>
-                    <div class="w3-col">
-                        <yuforms-right>
-                        </yuforms-right>
-                    </div>
-                </yuforms-row>
                 <div v-if="selectedValue=='input-text'" class="w3-cell-row">
-                    <div class="w3-cell w3-padding-16">
-                        <yuforms-basic-input label="Soru"></yuforms-basic-input>
-                    </div>
+                    <!-- empty -->
                 </div>
                 <div v-else-if="selectedValue=='input-radio'">
-                    <div  class="w3-cell-row">
-                        <div class="w3-cell w3-padding-16">
-                            <yuforms-basic-input label="Soru"></yuforms-basic-input>
-                        </div>
-                    </div>
                     <div class="w3-cell-row">
                         <div class="w3-cell">
                             <h6>Seçenekler</h6>
@@ -363,7 +377,20 @@ Vue.component('yuforms-question-wrapper', {
                     </div>
                     <div  class="w3-cell-row">
                         <div class="w3-cell w3-padding-16">
-                            <yuforms-new-question-select-option-options>
+                            <yuforms-new-question-select-option-options :id="id">
+                            </yuforms-new-question-select-option-options>
+                        </div>
+                    </div>
+                </div>
+                <div v-else-if="selectedValue=='input-select'">
+                    <div class="w3-cell-row">
+                        <div class="w3-cell">
+                            <h6>Seçenekler</h6>
+                        </div>
+                    </div>
+                    <div  class="w3-cell-row">
+                        <div class="w3-cell w3-padding-16">
+                            <yuforms-new-question-select-option-options :id="id">
                             </yuforms-new-question-select-option-options>
                         </div>
                     </div>
@@ -418,6 +445,16 @@ Vue.component('yuforms-question', {
 });
 
 Vue.component('yuforms-new-question-select-option-options', {
+    props: {
+        id: {
+            type:Number
+        }
+    },
+    computed: {
+        ...Vuex.mapState([
+            'questions'
+        ])
+    },
     data: function() {
         return {
             index:0,
@@ -427,13 +464,16 @@ Vue.component('yuforms-new-question-select-option-options', {
                     placeholder:"Seçenek 1",
                     value:"",
                 }
-            ]
+            ],
+            used:false
         }
     },
     methods: {
-        tiktik:function(e) {
+        ...Vuex.mapActions([
+            'updateOptions'
+        ]),
+        input:function(e) {
             this.opts[e.target.name].value=e.target.value;
-            //console.log(this.opts[0].value);
             let length = this.opts.length;
             if(e.target.name==length-1 && this.opts[length-1].value.length>0) {
                 // add to end
@@ -452,11 +492,15 @@ Vue.component('yuforms-new-question-select-option-options', {
                 newArr.splice(-1,1);
                 this.opts = newArr;
             }
+            this.updateOptions({
+                id:this.id,
+                options:this.opts
+            })
         }
     },
     template: `
         <div>
-            <input :key="opt.id" :name="opt.id" v-for="opt in opts" class="w3-input" type="text" :value="opt.value" @input.prevent="tiktik" :placeholder="opt.placeholder">
+            <input :key="opt.id" :name="opt.id" v-for="opt in this.questions[id].options" class="w3-input" type="text" :value="opt.value" @input.prevent="input" :placeholder="opt.placeholder">
         </div>
     `
 });

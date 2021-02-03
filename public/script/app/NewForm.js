@@ -34,7 +34,7 @@ Vue.component('yuforms-example', {
     template: `
         <div>
             <div v-for="q in questions" :key="q.id">
-                {{q.id}} - {{q.questionText}}
+                {{q.id}} - {{q.questionText}} - {{q.options}}
             </div>
         </div>
     `
