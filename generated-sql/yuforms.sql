@@ -130,7 +130,8 @@ DROP TABLE IF EXISTS `form_component`;
 CREATE TABLE `form_component`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(256) NOT NULL,
+    `title` VARCHAR(256) NOT NULL,
+    `form_component_name` VARCHAR(256) NOT NULL,
     `has_options` TINYINT(1) DEFAULT 0 NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;

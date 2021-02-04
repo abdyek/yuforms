@@ -68,12 +68,12 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     \FormQuery|\QuestionQuery|\SubmitQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
- * @method     ChildFormItem findOne(ConnectionInterface $con = null) Return the first ChildFormItem matching the query
+ * @method     ChildFormItem|null findOne(ConnectionInterface $con = null) Return the first ChildFormItem matching the query
  * @method     ChildFormItem findOneOrCreate(ConnectionInterface $con = null) Return the first ChildFormItem matching the query, or a new ChildFormItem object populated from the query conditions when no match is found
  *
- * @method     ChildFormItem findOneById(int $id) Return the first ChildFormItem filtered by the id column
- * @method     ChildFormItem findOneByFormId(int $form_id) Return the first ChildFormItem filtered by the form_id column
- * @method     ChildFormItem findOneByQuestionId(int $question_id) Return the first ChildFormItem filtered by the question_id column *
+ * @method     ChildFormItem|null findOneById(int $id) Return the first ChildFormItem filtered by the id column
+ * @method     ChildFormItem|null findOneByFormId(int $form_id) Return the first ChildFormItem filtered by the form_id column
+ * @method     ChildFormItem|null findOneByQuestionId(int $question_id) Return the first ChildFormItem filtered by the question_id column *
 
  * @method     ChildFormItem requirePk($key, ConnectionInterface $con = null) Return the ChildFormItem by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFormItem requireOne(ConnectionInterface $con = null) Return the first ChildFormItem matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found

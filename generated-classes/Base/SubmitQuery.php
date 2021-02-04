@@ -76,16 +76,16 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     \FormItemQuery|\ShareQuery|\MemberQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
- * @method     ChildSubmit findOne(ConnectionInterface $con = null) Return the first ChildSubmit matching the query
+ * @method     ChildSubmit|null findOne(ConnectionInterface $con = null) Return the first ChildSubmit matching the query
  * @method     ChildSubmit findOneOrCreate(ConnectionInterface $con = null) Return the first ChildSubmit matching the query, or a new ChildSubmit object populated from the query conditions when no match is found
  *
- * @method     ChildSubmit findOneById(int $id) Return the first ChildSubmit filtered by the id column
- * @method     ChildSubmit findOneByResponse(string $response) Return the first ChildSubmit filtered by the response column
- * @method     ChildSubmit findOneByMultiResponse(boolean $multi_response) Return the first ChildSubmit filtered by the multi_response column
- * @method     ChildSubmit findOneByIpAddress(string $ip_address) Return the first ChildSubmit filtered by the ip_address column
- * @method     ChildSubmit findOneByFormItemId(int $form_item_id) Return the first ChildSubmit filtered by the form_item_id column
- * @method     ChildSubmit findOneByShareId(int $share_id) Return the first ChildSubmit filtered by the share_id column
- * @method     ChildSubmit findOneByMemberId(int $member_id) Return the first ChildSubmit filtered by the member_id column *
+ * @method     ChildSubmit|null findOneById(int $id) Return the first ChildSubmit filtered by the id column
+ * @method     ChildSubmit|null findOneByResponse(string $response) Return the first ChildSubmit filtered by the response column
+ * @method     ChildSubmit|null findOneByMultiResponse(boolean $multi_response) Return the first ChildSubmit filtered by the multi_response column
+ * @method     ChildSubmit|null findOneByIpAddress(string $ip_address) Return the first ChildSubmit filtered by the ip_address column
+ * @method     ChildSubmit|null findOneByFormItemId(int $form_item_id) Return the first ChildSubmit filtered by the form_item_id column
+ * @method     ChildSubmit|null findOneByShareId(int $share_id) Return the first ChildSubmit filtered by the share_id column
+ * @method     ChildSubmit|null findOneByMemberId(int $member_id) Return the first ChildSubmit filtered by the member_id column *
 
  * @method     ChildSubmit requirePk($key, ConnectionInterface $con = null) Return the ChildSubmit by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildSubmit requireOne(ConnectionInterface $con = null) Return the first ChildSubmit matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found

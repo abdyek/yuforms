@@ -76,16 +76,16 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     \MemberQuery|\FormQuery|\SubmitQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
- * @method     ChildShare findOne(ConnectionInterface $con = null) Return the first ChildShare matching the query
+ * @method     ChildShare|null findOne(ConnectionInterface $con = null) Return the first ChildShare matching the query
  * @method     ChildShare findOneOrCreate(ConnectionInterface $con = null) Return the first ChildShare matching the query, or a new ChildShare object populated from the query conditions when no match is found
  *
- * @method     ChildShare findOneById(int $id) Return the first ChildShare filtered by the id column
- * @method     ChildShare findOneByStartDateTime(string $start_date_time) Return the first ChildShare filtered by the start_date_time column
- * @method     ChildShare findOneByStopDateTime(string $stop_date_time) Return the first ChildShare filtered by the stop_date_time column
- * @method     ChildShare findOneBySessionType(string $session_type) Return the first ChildShare filtered by the session_type column
- * @method     ChildShare findOneBySubmitCount(int $submit_count) Return the first ChildShare filtered by the submit_count column
- * @method     ChildShare findOneByMemberId(int $member_id) Return the first ChildShare filtered by the member_id column
- * @method     ChildShare findOneByFormId(int $form_id) Return the first ChildShare filtered by the form_id column *
+ * @method     ChildShare|null findOneById(int $id) Return the first ChildShare filtered by the id column
+ * @method     ChildShare|null findOneByStartDateTime(string $start_date_time) Return the first ChildShare filtered by the start_date_time column
+ * @method     ChildShare|null findOneByStopDateTime(string $stop_date_time) Return the first ChildShare filtered by the stop_date_time column
+ * @method     ChildShare|null findOneBySessionType(string $session_type) Return the first ChildShare filtered by the session_type column
+ * @method     ChildShare|null findOneBySubmitCount(int $submit_count) Return the first ChildShare filtered by the submit_count column
+ * @method     ChildShare|null findOneByMemberId(int $member_id) Return the first ChildShare filtered by the member_id column
+ * @method     ChildShare|null findOneByFormId(int $form_id) Return the first ChildShare filtered by the form_id column *
 
  * @method     ChildShare requirePk($key, ConnectionInterface $con = null) Return the ChildShare by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildShare requireOne(ConnectionInterface $con = null) Return the first ChildShare matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found

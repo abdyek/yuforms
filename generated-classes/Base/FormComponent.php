@@ -72,11 +72,18 @@ abstract class FormComponent implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the name field.
+     * The value for the title field.
      *
      * @var        string
      */
-    protected $name;
+    protected $title;
+
+    /**
+     * The value for the form_component_name field.
+     *
+     * @var        string
+     */
+    protected $form_component_name;
 
     /**
      * The value for the has_options field.
@@ -355,13 +362,23 @@ abstract class FormComponent implements ActiveRecordInterface
     }
 
     /**
-     * Get the [name] column value.
+     * Get the [title] column value.
      *
      * @return string
      */
-    public function getName()
+    public function getTitle()
     {
-        return $this->name;
+        return $this->title;
+    }
+
+    /**
+     * Get the [form_component_name] column value.
+     *
+     * @return string
+     */
+    public function getFormComponentName()
+    {
+        return $this->form_component_name;
     }
 
     /**
@@ -405,24 +422,44 @@ abstract class FormComponent implements ActiveRecordInterface
     } // setId()
 
     /**
-     * Set the value of [name] column.
+     * Set the value of [title] column.
      *
      * @param string $v New value
      * @return $this|\FormComponent The current object (for fluent API support)
      */
-    public function setName($v)
+    public function setTitle($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->name !== $v) {
-            $this->name = $v;
-            $this->modifiedColumns[FormComponentTableMap::COL_NAME] = true;
+        if ($this->title !== $v) {
+            $this->title = $v;
+            $this->modifiedColumns[FormComponentTableMap::COL_TITLE] = true;
         }
 
         return $this;
-    } // setName()
+    } // setTitle()
+
+    /**
+     * Set the value of [form_component_name] column.
+     *
+     * @param string $v New value
+     * @return $this|\FormComponent The current object (for fluent API support)
+     */
+    public function setFormComponentName($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->form_component_name !== $v) {
+            $this->form_component_name = $v;
+            $this->modifiedColumns[FormComponentTableMap::COL_FORM_COMPONENT_NAME] = true;
+        }
+
+        return $this;
+    } // setFormComponentName()
 
     /**
      * Sets the value of the [has_options] column.
@@ -495,10 +532,13 @@ abstract class FormComponent implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : FormComponentTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : FormComponentTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->name = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : FormComponentTableMap::translateFieldName('Title', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->title = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : FormComponentTableMap::translateFieldName('HasOptions', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : FormComponentTableMap::translateFieldName('FormComponentName', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->form_component_name = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : FormComponentTableMap::translateFieldName('HasOptions', TableMap::TYPE_PHPNAME, $indexType)];
             $this->has_options = (null !== $col) ? (boolean) $col : null;
             $this->resetModified();
 
@@ -508,7 +548,7 @@ abstract class FormComponent implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 3; // 3 = FormComponentTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = FormComponentTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\FormComponent'), 0, $e);
@@ -731,8 +771,11 @@ abstract class FormComponent implements ActiveRecordInterface
         if ($this->isColumnModified(FormComponentTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(FormComponentTableMap::COL_NAME)) {
-            $modifiedColumns[':p' . $index++]  = 'name';
+        if ($this->isColumnModified(FormComponentTableMap::COL_TITLE)) {
+            $modifiedColumns[':p' . $index++]  = 'title';
+        }
+        if ($this->isColumnModified(FormComponentTableMap::COL_FORM_COMPONENT_NAME)) {
+            $modifiedColumns[':p' . $index++]  = 'form_component_name';
         }
         if ($this->isColumnModified(FormComponentTableMap::COL_HAS_OPTIONS)) {
             $modifiedColumns[':p' . $index++]  = 'has_options';
@@ -751,8 +794,11 @@ abstract class FormComponent implements ActiveRecordInterface
                     case 'id':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'name':
-                        $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
+                    case 'title':
+                        $stmt->bindValue($identifier, $this->title, PDO::PARAM_STR);
+                        break;
+                    case 'form_component_name':
+                        $stmt->bindValue($identifier, $this->form_component_name, PDO::PARAM_STR);
                         break;
                     case 'has_options':
                         $stmt->bindValue($identifier, (int) $this->has_options, PDO::PARAM_INT);
@@ -823,9 +869,12 @@ abstract class FormComponent implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getName();
+                return $this->getTitle();
                 break;
             case 2:
+                return $this->getFormComponentName();
+                break;
+            case 3:
                 return $this->getHasOptions();
                 break;
             default:
@@ -859,8 +908,9 @@ abstract class FormComponent implements ActiveRecordInterface
         $keys = FormComponentTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getName(),
-            $keys[2] => $this->getHasOptions(),
+            $keys[1] => $this->getTitle(),
+            $keys[2] => $this->getFormComponentName(),
+            $keys[3] => $this->getHasOptions(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -921,9 +971,12 @@ abstract class FormComponent implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setName($value);
+                $this->setTitle($value);
                 break;
             case 2:
+                $this->setFormComponentName($value);
+                break;
+            case 3:
                 $this->setHasOptions($value);
                 break;
         } // switch()
@@ -956,10 +1009,13 @@ abstract class FormComponent implements ActiveRecordInterface
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setName($arr[$keys[1]]);
+            $this->setTitle($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setHasOptions($arr[$keys[2]]);
+            $this->setFormComponentName($arr[$keys[2]]);
+        }
+        if (array_key_exists($keys[3], $arr)) {
+            $this->setHasOptions($arr[$keys[3]]);
         }
     }
 
@@ -1005,8 +1061,11 @@ abstract class FormComponent implements ActiveRecordInterface
         if ($this->isColumnModified(FormComponentTableMap::COL_ID)) {
             $criteria->add(FormComponentTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(FormComponentTableMap::COL_NAME)) {
-            $criteria->add(FormComponentTableMap::COL_NAME, $this->name);
+        if ($this->isColumnModified(FormComponentTableMap::COL_TITLE)) {
+            $criteria->add(FormComponentTableMap::COL_TITLE, $this->title);
+        }
+        if ($this->isColumnModified(FormComponentTableMap::COL_FORM_COMPONENT_NAME)) {
+            $criteria->add(FormComponentTableMap::COL_FORM_COMPONENT_NAME, $this->form_component_name);
         }
         if ($this->isColumnModified(FormComponentTableMap::COL_HAS_OPTIONS)) {
             $criteria->add(FormComponentTableMap::COL_HAS_OPTIONS, $this->has_options);
@@ -1097,7 +1156,8 @@ abstract class FormComponent implements ActiveRecordInterface
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setName($this->getName());
+        $copyObj->setTitle($this->getTitle());
+        $copyObj->setFormComponentName($this->getFormComponentName());
         $copyObj->setHasOptions($this->getHasOptions());
 
         if ($deepCopy) {
@@ -1400,7 +1460,8 @@ abstract class FormComponent implements ActiveRecordInterface
     public function clear()
     {
         $this->id = null;
-        $this->name = null;
+        $this->title = null;
+        $this->form_component_name = null;
         $this->has_options = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();

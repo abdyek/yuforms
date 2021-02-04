@@ -7,9 +7,12 @@ use Yuforms\Api\Other\Time;
 
 class Example extends Controller {
     protected function post() {
+        $this->response($this->data);
+        /*
         $this->response([
             'formSlug'=>'thisIsFormSlug'
         ]);
+         */
         /*
         $query = new \MemberQuery();
         $member = $query->findPK($this->userId);

@@ -310,10 +310,15 @@ Vue.component('yuforms-question-wrapper', {
         ...Vuex.mapActions([
             'createQuestion',
             'deleteQuestion',
+            'changeFormComponentType'
         ]),
         onChange: function(e) {
             this.createButtonShow = true;
-            this.formComponentType =e.target.value;
+            this.formComponentType = e.target.value;
+            this.changeFormComponentType({
+                id:this.id,
+                formComponentType: this.formComponentType
+            })
         },
         saveQuestion: function(e) {
             this.question = e.target.innerText;

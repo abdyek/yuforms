@@ -218,7 +218,7 @@ class Controller {
                 'authorization'=>['member']
             ]
         ],
-        'CreateForm'=>[
+        'NewForm'=>[
             'POST'=>[
                 'authorization'=>['member'],
             ]

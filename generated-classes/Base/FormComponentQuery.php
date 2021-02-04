@@ -21,11 +21,13 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  * @method     ChildFormComponentQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     ChildFormComponentQuery orderByName($order = Criteria::ASC) Order by the name column
+ * @method     ChildFormComponentQuery orderByTitle($order = Criteria::ASC) Order by the title column
+ * @method     ChildFormComponentQuery orderByFormComponentName($order = Criteria::ASC) Order by the form_component_name column
  * @method     ChildFormComponentQuery orderByHasOptions($order = Criteria::ASC) Order by the has_options column
  *
  * @method     ChildFormComponentQuery groupById() Group by the id column
- * @method     ChildFormComponentQuery groupByName() Group by the name column
+ * @method     ChildFormComponentQuery groupByTitle() Group by the title column
+ * @method     ChildFormComponentQuery groupByFormComponentName() Group by the form_component_name column
  * @method     ChildFormComponentQuery groupByHasOptions() Group by the has_options column
  *
  * @method     ChildFormComponentQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -48,23 +50,26 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     \QuestionQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
- * @method     ChildFormComponent findOne(ConnectionInterface $con = null) Return the first ChildFormComponent matching the query
+ * @method     ChildFormComponent|null findOne(ConnectionInterface $con = null) Return the first ChildFormComponent matching the query
  * @method     ChildFormComponent findOneOrCreate(ConnectionInterface $con = null) Return the first ChildFormComponent matching the query, or a new ChildFormComponent object populated from the query conditions when no match is found
  *
- * @method     ChildFormComponent findOneById(int $id) Return the first ChildFormComponent filtered by the id column
- * @method     ChildFormComponent findOneByName(string $name) Return the first ChildFormComponent filtered by the name column
- * @method     ChildFormComponent findOneByHasOptions(boolean $has_options) Return the first ChildFormComponent filtered by the has_options column *
+ * @method     ChildFormComponent|null findOneById(int $id) Return the first ChildFormComponent filtered by the id column
+ * @method     ChildFormComponent|null findOneByTitle(string $title) Return the first ChildFormComponent filtered by the title column
+ * @method     ChildFormComponent|null findOneByFormComponentName(string $form_component_name) Return the first ChildFormComponent filtered by the form_component_name column
+ * @method     ChildFormComponent|null findOneByHasOptions(boolean $has_options) Return the first ChildFormComponent filtered by the has_options column *
 
  * @method     ChildFormComponent requirePk($key, ConnectionInterface $con = null) Return the ChildFormComponent by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFormComponent requireOne(ConnectionInterface $con = null) Return the first ChildFormComponent matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildFormComponent requireOneById(int $id) Return the first ChildFormComponent filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildFormComponent requireOneByName(string $name) Return the first ChildFormComponent filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildFormComponent requireOneByTitle(string $title) Return the first ChildFormComponent filtered by the title column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildFormComponent requireOneByFormComponentName(string $form_component_name) Return the first ChildFormComponent filtered by the form_component_name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFormComponent requireOneByHasOptions(boolean $has_options) Return the first ChildFormComponent filtered by the has_options column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildFormComponent[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildFormComponent objects based on current ModelCriteria
  * @method     ChildFormComponent[]|ObjectCollection findById(int $id) Return ChildFormComponent objects filtered by the id column
- * @method     ChildFormComponent[]|ObjectCollection findByName(string $name) Return ChildFormComponent objects filtered by the name column
+ * @method     ChildFormComponent[]|ObjectCollection findByTitle(string $title) Return ChildFormComponent objects filtered by the title column
+ * @method     ChildFormComponent[]|ObjectCollection findByFormComponentName(string $form_component_name) Return ChildFormComponent objects filtered by the form_component_name column
  * @method     ChildFormComponent[]|ObjectCollection findByHasOptions(boolean $has_options) Return ChildFormComponent objects filtered by the has_options column
  * @method     ChildFormComponent[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
@@ -164,7 +169,7 @@ abstract class FormComponentQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, has_options FROM form_component WHERE id = :p0';
+        $sql = 'SELECT id, title, form_component_name, has_options FROM form_component WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -296,28 +301,53 @@ abstract class FormComponentQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the name column
+     * Filter the query on the title column
      *
      * Example usage:
      * <code>
-     * $query->filterByName('fooValue');   // WHERE name = 'fooValue'
-     * $query->filterByName('%fooValue%', Criteria::LIKE); // WHERE name LIKE '%fooValue%'
+     * $query->filterByTitle('fooValue');   // WHERE title = 'fooValue'
+     * $query->filterByTitle('%fooValue%', Criteria::LIKE); // WHERE title LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $name The value to use as filter.
+     * @param     string $title The value to use as filter.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildFormComponentQuery The current query, for fluid interface
      */
-    public function filterByName($name = null, $comparison = null)
+    public function filterByTitle($title = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($name)) {
+            if (is_array($title)) {
                 $comparison = Criteria::IN;
             }
         }
 
-        return $this->addUsingAlias(FormComponentTableMap::COL_NAME, $name, $comparison);
+        return $this->addUsingAlias(FormComponentTableMap::COL_TITLE, $title, $comparison);
+    }
+
+    /**
+     * Filter the query on the form_component_name column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByFormComponentName('fooValue');   // WHERE form_component_name = 'fooValue'
+     * $query->filterByFormComponentName('%fooValue%', Criteria::LIKE); // WHERE form_component_name LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $formComponentName The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildFormComponentQuery The current query, for fluid interface
+     */
+    public function filterByFormComponentName($formComponentName = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($formComponentName)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(FormComponentTableMap::COL_FORM_COMPONENT_NAME, $formComponentName, $comparison);
     }
 
     /**

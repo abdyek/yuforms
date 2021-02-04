@@ -68,12 +68,12 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     \FormComponentQuery|\FormItemQuery|\OptionQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
- * @method     ChildQuestion findOne(ConnectionInterface $con = null) Return the first ChildQuestion matching the query
+ * @method     ChildQuestion|null findOne(ConnectionInterface $con = null) Return the first ChildQuestion matching the query
  * @method     ChildQuestion findOneOrCreate(ConnectionInterface $con = null) Return the first ChildQuestion matching the query, or a new ChildQuestion object populated from the query conditions when no match is found
  *
- * @method     ChildQuestion findOneById(int $id) Return the first ChildQuestion filtered by the id column
- * @method     ChildQuestion findOneByText(string $text) Return the first ChildQuestion filtered by the text column
- * @method     ChildQuestion findOneByFormComponentId(int $form_component_id) Return the first ChildQuestion filtered by the form_component_id column *
+ * @method     ChildQuestion|null findOneById(int $id) Return the first ChildQuestion filtered by the id column
+ * @method     ChildQuestion|null findOneByText(string $text) Return the first ChildQuestion filtered by the text column
+ * @method     ChildQuestion|null findOneByFormComponentId(int $form_component_id) Return the first ChildQuestion filtered by the form_component_id column *
 
  * @method     ChildQuestion requirePk($key, ConnectionInterface $con = null) Return the ChildQuestion by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildQuestion requireOne(ConnectionInterface $con = null) Return the first ChildQuestion matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found

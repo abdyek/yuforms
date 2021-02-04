@@ -72,14 +72,14 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     \MemberQuery|\ShareQuery|\FormItemQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
- * @method     ChildForm findOne(ConnectionInterface $con = null) Return the first ChildForm matching the query
+ * @method     ChildForm|null findOne(ConnectionInterface $con = null) Return the first ChildForm matching the query
  * @method     ChildForm findOneOrCreate(ConnectionInterface $con = null) Return the first ChildForm matching the query, or a new ChildForm object populated from the query conditions when no match is found
  *
- * @method     ChildForm findOneById(int $id) Return the first ChildForm filtered by the id column
- * @method     ChildForm findOneByName(string $name) Return the first ChildForm filtered by the name column
- * @method     ChildForm findOneByCreateDateTime(string $create_date_time) Return the first ChildForm filtered by the create_date_time column
- * @method     ChildForm findOneByLastEditDateTime(string $last_edit_date_time) Return the first ChildForm filtered by the last_edit_date_time column
- * @method     ChildForm findOneByMemberId(int $member_id) Return the first ChildForm filtered by the member_id column *
+ * @method     ChildForm|null findOneById(int $id) Return the first ChildForm filtered by the id column
+ * @method     ChildForm|null findOneByName(string $name) Return the first ChildForm filtered by the name column
+ * @method     ChildForm|null findOneByCreateDateTime(string $create_date_time) Return the first ChildForm filtered by the create_date_time column
+ * @method     ChildForm|null findOneByLastEditDateTime(string $last_edit_date_time) Return the first ChildForm filtered by the last_edit_date_time column
+ * @method     ChildForm|null findOneByMemberId(int $member_id) Return the first ChildForm filtered by the member_id column *
 
  * @method     ChildForm requirePk($key, ConnectionInterface $con = null) Return the ChildForm by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildForm requireOne(ConnectionInterface $con = null) Return the first ChildForm matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found

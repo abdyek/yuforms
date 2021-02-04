@@ -18,10 +18,16 @@ const state = {
 };
 
 const getters = {
-    questionsReadyToSend: function() {
+    readyQuestionsToSend: function() {
         return state.questions.filter(function(question) {
             return question.deleted==false
         })
+    },
+    readyFormToSend: function(state,getters) {
+        return {
+            formTitle:state.formTitle,
+            questions: getters.readyQuestionsToSend
+        }
     }
 };
 
@@ -40,7 +46,8 @@ const mutations = {
                     placeholder:"Seçenek 1",
                     value:""
                 }
-            ]
+            ],
+            formComponentType:""
         });
         state.questionIndex = state.questionIndex + 1;
     },
@@ -53,7 +60,7 @@ const mutations = {
     updateOptions(state, obj) {
         Vue.set(state.questions[obj.id], 'options', obj.options);
     },
-    sendResponse(state, obj) {
+    response(state, obj) {
         state.sent = true;
         state.formResponseTitle = obj.formResponseTitle;
         state.formResponseMessage = obj.formResponseMessage;
@@ -62,6 +69,9 @@ const mutations = {
     },
     changeSlug(state, formSlug) {
         state.formSlug = formSlug;
+    },
+    changeFormComponentType(state, obj) {
+        Vue.set(state.questions[obj.id], 'formComponentType', obj.formComponentType);
     }
 };
 
@@ -82,27 +92,27 @@ const actions = {
         commit('updateOptions', obj);
     },
     sendForm({commit, getters}) {
-        fetch('api/createForm', {
+        fetch('api/newForm', {
             method: 'POST',
             header: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(
-                getters.questionsReadyToSend
+                getters.readyFormToSend
             )
         }).then((response)=>{
             if(!response.ok) throw new Error(response.status);
             else return response.json();
         }).then((json)=>{
             commit('changeSlug', json.formSlug);
-            commit('sendResponse', {
+            commit('response', {
                 formResponseTitle: "Form Oluşturuldu",
                 formResponseMessage: "Başarılı bir şekilde form oluşturuldu",
                 formResponseColor: "green",
                 responseSuccessful: true
             });
         }).catch((error)=>{
-            commit('sendResponse', {
+            commit('response', {
                 formResponseTitle: error.message,
                 formResponseMessage: "Beklenmedik bir hata oldu",
                 formResponseColor: "red",
@@ -116,6 +126,9 @@ const actions = {
     goShareForm() {
         console.log(state.formSlug);
         changePage('/form-paylas?slug=' + state.formSlug);
+    },
+    changeFormComponentType({commit}, obj) {
+        commit('changeFormComponentType', obj);
     }
 };
 

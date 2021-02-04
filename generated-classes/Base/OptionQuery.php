@@ -50,13 +50,13 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     \QuestionQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
- * @method     ChildOption findOne(ConnectionInterface $con = null) Return the first ChildOption matching the query
+ * @method     ChildOption|null findOne(ConnectionInterface $con = null) Return the first ChildOption matching the query
  * @method     ChildOption findOneOrCreate(ConnectionInterface $con = null) Return the first ChildOption matching the query, or a new ChildOption object populated from the query conditions when no match is found
  *
- * @method     ChildOption findOneById(int $id) Return the first ChildOption filtered by the id column
- * @method     ChildOption findOneByValue(string $value) Return the first ChildOption filtered by the value column
- * @method     ChildOption findOneByText(string $text) Return the first ChildOption filtered by the text column
- * @method     ChildOption findOneByQuestionId(int $question_id) Return the first ChildOption filtered by the question_id column *
+ * @method     ChildOption|null findOneById(int $id) Return the first ChildOption filtered by the id column
+ * @method     ChildOption|null findOneByValue(string $value) Return the first ChildOption filtered by the value column
+ * @method     ChildOption|null findOneByText(string $text) Return the first ChildOption filtered by the text column
+ * @method     ChildOption|null findOneByQuestionId(int $question_id) Return the first ChildOption filtered by the question_id column *
 
  * @method     ChildOption requirePk($key, ConnectionInterface $con = null) Return the ChildOption by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildOption requireOne(ConnectionInterface $con = null) Return the first ChildOption matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found

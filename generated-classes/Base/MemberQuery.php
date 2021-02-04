@@ -80,18 +80,18 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     \FormQuery|\ShareQuery|\SubmitQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
- * @method     ChildMember findOne(ConnectionInterface $con = null) Return the first ChildMember matching the query
+ * @method     ChildMember|null findOne(ConnectionInterface $con = null) Return the first ChildMember matching the query
  * @method     ChildMember findOneOrCreate(ConnectionInterface $con = null) Return the first ChildMember matching the query, or a new ChildMember object populated from the query conditions when no match is found
  *
- * @method     ChildMember findOneById(int $id) Return the first ChildMember filtered by the id column
- * @method     ChildMember findOneByEmail(string $email) Return the first ChildMember filtered by the email column
- * @method     ChildMember findOneByFirstName(string $first_name) Return the first ChildMember filtered by the first_name column
- * @method     ChildMember findOneByLastName(string $last_name) Return the first ChildMember filtered by the last_name column
- * @method     ChildMember findOneByConfirmedEmail(boolean $confirmed_email) Return the first ChildMember filtered by the confirmed_email column
- * @method     ChildMember findOneByPasswordHash(string $password_hash) Return the first ChildMember filtered by the password_hash column
- * @method     ChildMember findOneByActivationCode(string $activation_code) Return the first ChildMember filtered by the activation_code column
- * @method     ChildMember findOneByRecoveryCode(string $recovery_code) Return the first ChildMember filtered by the recovery_code column
- * @method     ChildMember findOneBySignUpDateTime(string $sign_up_date_time) Return the first ChildMember filtered by the sign_up_date_time column *
+ * @method     ChildMember|null findOneById(int $id) Return the first ChildMember filtered by the id column
+ * @method     ChildMember|null findOneByEmail(string $email) Return the first ChildMember filtered by the email column
+ * @method     ChildMember|null findOneByFirstName(string $first_name) Return the first ChildMember filtered by the first_name column
+ * @method     ChildMember|null findOneByLastName(string $last_name) Return the first ChildMember filtered by the last_name column
+ * @method     ChildMember|null findOneByConfirmedEmail(boolean $confirmed_email) Return the first ChildMember filtered by the confirmed_email column
+ * @method     ChildMember|null findOneByPasswordHash(string $password_hash) Return the first ChildMember filtered by the password_hash column
+ * @method     ChildMember|null findOneByActivationCode(string $activation_code) Return the first ChildMember filtered by the activation_code column
+ * @method     ChildMember|null findOneByRecoveryCode(string $recovery_code) Return the first ChildMember filtered by the recovery_code column
+ * @method     ChildMember|null findOneBySignUpDateTime(string $sign_up_date_time) Return the first ChildMember filtered by the sign_up_date_time column *
 
  * @method     ChildMember requirePk($key, ConnectionInterface $con = null) Return the ChildMember by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildMember requireOne(ConnectionInterface $con = null) Return the first ChildMember matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
