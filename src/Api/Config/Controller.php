@@ -218,9 +218,21 @@ class Controller {
                 'authorization'=>['member']
             ]
         ],
-        'NewForm'=>[
+        'Form'=>[
             'POST'=>[
                 'authorization'=>['member'],
+            ],
+            'GET'=>[
+                'authorization'=>['guest', 'member'],
+                'required'=>[
+                    'id'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>11,
+                        ]
+                    ]
+                ]
             ]
         ]
     ];

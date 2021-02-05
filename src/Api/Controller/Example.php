@@ -35,4 +35,7 @@ class Example extends Controller {
         $member->save();
          */
     }
+    protected function get() {
+        $this->response($this->data);
+    }
 }

@@ -92,7 +92,7 @@ const actions = {
         commit('updateOptions', obj);
     },
     sendForm({commit, getters}) {
-        fetch('api/newForm', {
+        fetch('api/form', {
             method: 'POST',
             header: {
                 'Content-Type': 'application/json'

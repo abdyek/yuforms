@@ -2,10 +2,11 @@
     <yuforms-header></yuforms-header>
     <yuforms-main>
         <div v-if="sent==false">
-            <yuforms-container :margin-top="true" :margin-right="true">
-                <yuforms-form-title :editable="true"></yuforms-form-title>
-            <yuforms-questions></yuforms-questions>
-            <yuforms-form-create-button></yuforms-form-create-button>
+                <yuforms-container margin-top margin-right>
+                    <yuforms-form-title :editable="true"></yuforms-form-title>
+                </yuforms-container>
+                <yuforms-questions></yuforms-questions>
+                <yuforms-form-create-button></yuforms-form-create-button>
         </div>
         <div v-else>
             <yuforms-alert :title="formResponseTitle" :message="formResponseMessage" :color="formResponseColor"></yuforms-alert>

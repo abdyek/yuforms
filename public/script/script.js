@@ -68,6 +68,18 @@ function getUserInfo() {
     return userInfo;
 }
 
+function generateUrlPar(data) {
+    let keys = Object.keys(data);
+    for(let i=0;i<keys.length;i++) {
+        if(data[keys[i]]===false) {
+            data[keys[i]]=0;
+        } else if(data[keys[i]]===true) {
+            data[keys[i]]=1;
+        }
+    }
+    return Object.entries(data).map(e => e.join('=')).join('&');
+}
+
 // ^ global funcs
 
 Vue.component('yuforms-header-button', {
@@ -255,6 +267,33 @@ Vue.component('yuforms-form-header', {
     props:['name'],
     template:`
         <h2>{{name}}</h2>
+    `
+});
+
+Vue.component('yuforms-form-title', {
+    props: {
+        editable: {
+            type:Boolean,
+            default:false
+        }
+    },
+    computed: {
+        ...Vuex.mapState([
+            'formTitle'
+        ]),
+    },
+    methods: {
+        ...Vuex.mapActions([
+            'setFormTitle'
+        ]),
+        changeTitle: function(e) {
+            this.setFormTitle(e.target.innerText);
+        }
+    },
+    template: `
+        <h1 :contenteditable="editable" @blur="changeTitle">
+            {{formTitle}}
+        </h1>
     `
 });
 
