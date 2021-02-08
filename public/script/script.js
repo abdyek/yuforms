@@ -80,6 +80,13 @@ function generateUrlPar(data) {
     return Object.entries(data).map(e => e.join('=')).join('&');
 }
 
+function getUrlPar(key, url) {
+    url = url || window.location.href;
+    const urlRef = new URL(url);
+    const urlsp = urlRef.searchParams;
+    return encodeURI(urlsp.get(key));
+}
+
 // ^ global funcs
 
 Vue.component('yuforms-header-button', {
