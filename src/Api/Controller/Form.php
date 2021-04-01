@@ -124,4 +124,46 @@ class Form extends Controller {
         }
         return $optionsArr;
     }
+    public function put() {
+        $this->generateMember();
+        $this->generateForm();
+        if(!$this->form) {
+            http_response_code(404);
+            exit();
+        }
+        $this->updateForm(); 
+        $this->updateQuestions();
+        $this->success();
+    }
+    private function generateForm() {
+        $this->formQuery = new \FormQuery();
+        $this->form = $this->formQuery->filterByMemberId($this->member->getId())->findOneById($this->data['id']);
+    }
+    private function updateForm() {
+        $this->form->setName($this->data['formTitle']);
+        $this->form->save();
+    }
+    private function updateQuestions() {
+        foreach($this->data['questions'] as $que) {
+            $formItem = \FormItemQuery::create()->filterByFormId($this->form->getId())->findOneByQuestionId($que['id']);
+            if(!$formItem) {
+                continue;
+            }
+            $question = \QuestionQuery::create()->findPk($formItem->getQuestionId());
+            $question->setText($que['questionText']);
+            $question->save();
+            $formComponent = \FormComponentQuery::create()->findPk($question->getFormComponentId());
+            if($formComponent->getHasOptions()) {
+                $questionId = $question->getId();
+                foreach($que['options'] as $ops) {
+                    $option = \OptionQuery::create()->filterByQuestionId($questionId)->findPk($ops['id']);
+                    if(!$option) {
+                        continue;
+                    }
+                    $option->setText($ops['text']);
+                    $option->save();
+                }
+            }
+        }
+    }
 }

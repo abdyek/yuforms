@@ -5,7 +5,6 @@ require 'generated-conf/config.php';
 
 // website
 use Yuforms\WebSite\Core\Controller as WebSiteController;
-//use Yuforms\WebSite\Config as WebSiteConfig;
 
 // router
 use Buki\Router\Router;
@@ -26,11 +25,7 @@ $router->any('api/:string', function($controller) {
     }
 });
 
-// website
-$router->get('/', function(){
-    Page::create();
-});
-
+// WEBSITE
 $router->get('/:slug?', function($slug = 'index'){
     new WebSiteController($slug);
 });

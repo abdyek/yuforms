@@ -26,7 +26,7 @@ class Controller {
     }
     private function checkMethod() {
         if(!in_array($this->method, $this->supportedMethods)) {
-            http_response_code(405);
+            http_response_code(403);
             exit();
         }
         $methodArrayKeys = array_keys($this->config[$this->method]);
@@ -40,7 +40,7 @@ class Controller {
     }
     private function setData() {
         // This must be refactoring
-        switch($_SERVER['REQUEST_METHOD']) {
+        switch($this->method) {
             case 'POST':
                 $this->data = (empty($_POST))?json_decode(file_get_contents('php://input'), true):$_POST;
                 $this->run = function() { $this->post(); };

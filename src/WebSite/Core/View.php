@@ -4,14 +4,15 @@ namespace Yuforms\WebSite\Core;
 use Yuforms\WebSite\Config;
 
 class View {
-    public function redirect($slug) {
+    public static function redirect($slug) {
         include 'Redirect.php';
     }
-    public function create($slug) {
-        $title = Config::PAGES[$slug]['title'];
-        $body = 'public/html/'.Config::PAGES[$slug]['name'].'.html';
-        $style = Config::PAGES[$slug]['name'];
-        $script = Config::PAGES[$slug]['name'];
+    public static function create($slug) {
+        $pageConfig = Config::PAGES[$slug];
+        $title = $pageConfig['title'];
+        $body = 'public/html/'.$pageConfig['name'].'.html';
+        $style = $pageConfig['name'];
+        $script = $pageConfig['name'];
         include 'Template.php';
     }
 }

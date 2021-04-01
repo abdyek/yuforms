@@ -6,7 +6,7 @@ function validateEmail(email) {
 }
 
 function changePage(uri) {
-    window.location.href="/yuforms"+uri;
+    window.location.href=uri;
 }
 
 function base64FromObject(obj) {
