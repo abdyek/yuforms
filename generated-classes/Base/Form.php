@@ -1664,31 +1664,6 @@ abstract class Form implements ActiveRecordInterface
         return $this;
     }
 
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Form is new, it will return
-     * an empty collection; or if this Form has previously
-     * been saved, it will retrieve related Shares from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Form.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|ChildShare[] List of ChildShare objects
-     */
-    public function getSharesJoinMember(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
-    {
-        $query = ChildShareQuery::create(null, $criteria);
-        $query->joinWith('Member', $joinBehavior);
-
-        return $this->getShares($query, $con);
-    }
-
     /**
      * Clears out the collFormItems collection
      *

@@ -3,10 +3,12 @@ namespace Yuforms\Api\Controller;
 
 use Yuforms\Api\Core\Controller;
 use Yuforms\Api\Other\Time;
+use Yuforms\Api\Model\Member as MemberModel;
+use Yuforms\Api\Model\Form as FormModel;
 
 class Form extends Controller {
     protected function post() {
-        $this->generateMember();
+        $this->member = MemberModel::get($this->userId);
         $this->createForm();
         $this->addQuestions();
     }
@@ -45,11 +47,6 @@ class Form extends Controller {
                 }
             }
         }
-    }
-    private function generateMember() {
-        $this->memberQuery = new \MemberQuery();
-        $this->member = $this->memberQuery->findPK($this->userId);
-
     }
     protected function get() {
         $this->formOwner = false;
@@ -125,19 +122,11 @@ class Form extends Controller {
         return $optionsArr;
     }
     public function put() {
-        $this->generateMember();
-        $this->generateForm();
-        if(!$this->form) {
-            http_response_code(404);
-            exit();
-        }
+        $this->member = MemberModel::get($this->userId);
+        $this->form = FormModel::get($this->userId, $this->data['id']);
         $this->updateForm(); 
         $this->updateQuestions();
         $this->success();
-    }
-    private function generateForm() {
-        $this->formQuery = new \FormQuery();
-        $this->form = $this->formQuery->filterByMemberId($this->member->getId())->findOneById($this->data['id']);
     }
     private function updateForm() {
         $this->form->setName($this->data['formTitle']);
@@ -165,5 +154,11 @@ class Form extends Controller {
                 }
             }
         }
+    }
+    protected function delete() {
+        $this->member = MemberModel::get($this->userId);
+        $this->form = FormModel::get($this->userId, $this->data['id']);
+        // NOT COMPLETED
+        $this->response($this->data);
     }
 }

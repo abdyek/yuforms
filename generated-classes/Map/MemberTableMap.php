@@ -269,13 +269,6 @@ class MemberTableMap extends TableMap
     1 => ':id',
   ),
 ), null, null, 'Forms', false);
-        $this->addRelation('Share', '\\Share', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':member_id',
-    1 => ':id',
-  ),
-), null, null, 'Shares', false);
         $this->addRelation('Submit', '\\Submit', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (

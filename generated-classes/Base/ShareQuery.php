@@ -25,7 +25,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildShareQuery orderByStopDateTime($order = Criteria::ASC) Order by the stop_date_time column
  * @method     ChildShareQuery orderBySessionType($order = Criteria::ASC) Order by the session_type column
  * @method     ChildShareQuery orderBySubmitCount($order = Criteria::ASC) Order by the submit_count column
- * @method     ChildShareQuery orderByMemberId($order = Criteria::ASC) Order by the member_id column
  * @method     ChildShareQuery orderByFormId($order = Criteria::ASC) Order by the form_id column
  *
  * @method     ChildShareQuery groupById() Group by the id column
@@ -33,7 +32,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildShareQuery groupByStopDateTime() Group by the stop_date_time column
  * @method     ChildShareQuery groupBySessionType() Group by the session_type column
  * @method     ChildShareQuery groupBySubmitCount() Group by the submit_count column
- * @method     ChildShareQuery groupByMemberId() Group by the member_id column
  * @method     ChildShareQuery groupByFormId() Group by the form_id column
  *
  * @method     ChildShareQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -43,16 +41,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildShareQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
  * @method     ChildShareQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildShareQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
- *
- * @method     ChildShareQuery leftJoinMember($relationAlias = null) Adds a LEFT JOIN clause to the query using the Member relation
- * @method     ChildShareQuery rightJoinMember($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Member relation
- * @method     ChildShareQuery innerJoinMember($relationAlias = null) Adds a INNER JOIN clause to the query using the Member relation
- *
- * @method     ChildShareQuery joinWithMember($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Member relation
- *
- * @method     ChildShareQuery leftJoinWithMember() Adds a LEFT JOIN clause and with to the query using the Member relation
- * @method     ChildShareQuery rightJoinWithMember() Adds a RIGHT JOIN clause and with to the query using the Member relation
- * @method     ChildShareQuery innerJoinWithMember() Adds a INNER JOIN clause and with to the query using the Member relation
  *
  * @method     ChildShareQuery leftJoinForm($relationAlias = null) Adds a LEFT JOIN clause to the query using the Form relation
  * @method     ChildShareQuery rightJoinForm($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Form relation
@@ -74,7 +62,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildShareQuery rightJoinWithSubmit() Adds a RIGHT JOIN clause and with to the query using the Submit relation
  * @method     ChildShareQuery innerJoinWithSubmit() Adds a INNER JOIN clause and with to the query using the Submit relation
  *
- * @method     \MemberQuery|\FormQuery|\SubmitQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \FormQuery|\SubmitQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildShare|null findOne(ConnectionInterface $con = null) Return the first ChildShare matching the query
  * @method     ChildShare findOneOrCreate(ConnectionInterface $con = null) Return the first ChildShare matching the query, or a new ChildShare object populated from the query conditions when no match is found
@@ -84,7 +72,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildShare|null findOneByStopDateTime(string $stop_date_time) Return the first ChildShare filtered by the stop_date_time column
  * @method     ChildShare|null findOneBySessionType(string $session_type) Return the first ChildShare filtered by the session_type column
  * @method     ChildShare|null findOneBySubmitCount(int $submit_count) Return the first ChildShare filtered by the submit_count column
- * @method     ChildShare|null findOneByMemberId(int $member_id) Return the first ChildShare filtered by the member_id column
  * @method     ChildShare|null findOneByFormId(int $form_id) Return the first ChildShare filtered by the form_id column *
 
  * @method     ChildShare requirePk($key, ConnectionInterface $con = null) Return the ChildShare by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -95,7 +82,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildShare requireOneByStopDateTime(string $stop_date_time) Return the first ChildShare filtered by the stop_date_time column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildShare requireOneBySessionType(string $session_type) Return the first ChildShare filtered by the session_type column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildShare requireOneBySubmitCount(int $submit_count) Return the first ChildShare filtered by the submit_count column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildShare requireOneByMemberId(int $member_id) Return the first ChildShare filtered by the member_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildShare requireOneByFormId(int $form_id) Return the first ChildShare filtered by the form_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildShare[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildShare objects based on current ModelCriteria
@@ -104,7 +90,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildShare[]|ObjectCollection findByStopDateTime(string $stop_date_time) Return ChildShare objects filtered by the stop_date_time column
  * @method     ChildShare[]|ObjectCollection findBySessionType(string $session_type) Return ChildShare objects filtered by the session_type column
  * @method     ChildShare[]|ObjectCollection findBySubmitCount(int $submit_count) Return ChildShare objects filtered by the submit_count column
- * @method     ChildShare[]|ObjectCollection findByMemberId(int $member_id) Return ChildShare objects filtered by the member_id column
  * @method     ChildShare[]|ObjectCollection findByFormId(int $form_id) Return ChildShare objects filtered by the form_id column
  * @method     ChildShare[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
@@ -204,7 +189,7 @@ abstract class ShareQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, start_date_time, stop_date_time, session_type, submit_count, member_id, form_id FROM share WHERE id = :p0';
+        $sql = 'SELECT id, start_date_time, stop_date_time, session_type, submit_count, form_id FROM share WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -488,49 +473,6 @@ abstract class ShareQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the member_id column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByMemberId(1234); // WHERE member_id = 1234
-     * $query->filterByMemberId(array(12, 34)); // WHERE member_id IN (12, 34)
-     * $query->filterByMemberId(array('min' => 12)); // WHERE member_id > 12
-     * </code>
-     *
-     * @see       filterByMember()
-     *
-     * @param     mixed $memberId The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildShareQuery The current query, for fluid interface
-     */
-    public function filterByMemberId($memberId = null, $comparison = null)
-    {
-        if (is_array($memberId)) {
-            $useMinMax = false;
-            if (isset($memberId['min'])) {
-                $this->addUsingAlias(ShareTableMap::COL_MEMBER_ID, $memberId['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($memberId['max'])) {
-                $this->addUsingAlias(ShareTableMap::COL_MEMBER_ID, $memberId['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(ShareTableMap::COL_MEMBER_ID, $memberId, $comparison);
-    }
-
-    /**
      * Filter the query on the form_id column
      *
      * Example usage:
@@ -571,83 +513,6 @@ abstract class ShareQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ShareTableMap::COL_FORM_ID, $formId, $comparison);
-    }
-
-    /**
-     * Filter the query by a related \Member object
-     *
-     * @param \Member|ObjectCollection $member The related object(s) to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @throws \Propel\Runtime\Exception\PropelException
-     *
-     * @return ChildShareQuery The current query, for fluid interface
-     */
-    public function filterByMember($member, $comparison = null)
-    {
-        if ($member instanceof \Member) {
-            return $this
-                ->addUsingAlias(ShareTableMap::COL_MEMBER_ID, $member->getId(), $comparison);
-        } elseif ($member instanceof ObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(ShareTableMap::COL_MEMBER_ID, $member->toKeyValue('PrimaryKey', 'Id'), $comparison);
-        } else {
-            throw new PropelException('filterByMember() only accepts arguments of type \Member or Collection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Member relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return $this|ChildShareQuery The current query, for fluid interface
-     */
-    public function joinMember($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Member');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Member');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Member relation Member object
-     *
-     * @see useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return \MemberQuery A secondary query class using the current class as primary query
-     */
-    public function useMemberQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinMember($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Member', '\MemberQuery');
     }
 
     /**

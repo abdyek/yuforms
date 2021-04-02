@@ -53,17 +53,12 @@ CREATE TABLE `share`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `start_date_time` DATETIME NOT NULL,
-    `stop_date_time` DATETIME NOT NULL,
+    `stop_date_time` DATETIME,
     `session_type` VARCHAR(20) NOT NULL,
     `submit_count` INTEGER DEFAULT 0 NOT NULL,
-    `member_id` INTEGER NOT NULL,
     `form_id` INTEGER NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `share_fi_672062` (`member_id`),
     INDEX `share_fi_ee8551` (`form_id`),
-    CONSTRAINT `share_fk_672062`
-        FOREIGN KEY (`member_id`)
-        REFERENCES `member` (`id`),
     CONSTRAINT `share_fk_ee8551`
         FOREIGN KEY (`form_id`)
         REFERENCES `form` (`id`)

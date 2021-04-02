@@ -4,8 +4,6 @@ namespace Base;
 
 use \Form as ChildForm;
 use \FormQuery as ChildFormQuery;
-use \Member as ChildMember;
-use \MemberQuery as ChildMemberQuery;
 use \Share as ChildShare;
 use \ShareQuery as ChildShareQuery;
 use \Submit as ChildSubmit;
@@ -87,7 +85,7 @@ abstract class Share implements ActiveRecordInterface
     /**
      * The value for the stop_date_time field.
      *
-     * @var        DateTime
+     * @var        DateTime|null
      */
     protected $stop_date_time;
 
@@ -107,23 +105,11 @@ abstract class Share implements ActiveRecordInterface
     protected $submit_count;
 
     /**
-     * The value for the member_id field.
-     *
-     * @var        int
-     */
-    protected $member_id;
-
-    /**
      * The value for the form_id field.
      *
      * @var        int
      */
     protected $form_id;
-
-    /**
-     * @var        ChildMember
-     */
-    protected $aMember;
 
     /**
      * @var        ChildForm
@@ -425,7 +411,7 @@ abstract class Share implements ActiveRecordInterface
      * @param string|null $format The date/time format string (either date()-style or strftime()-style).
      *   If format is NULL, then the raw DateTime object will be returned.
      *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     * @return string|DateTime|null Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
@@ -456,16 +442,6 @@ abstract class Share implements ActiveRecordInterface
     public function getSubmitCount()
     {
         return $this->submit_count;
-    }
-
-    /**
-     * Get the [member_id] column value.
-     *
-     * @return int
-     */
-    public function getMemberId()
-    {
-        return $this->member_id;
     }
 
     /**
@@ -521,7 +497,7 @@ abstract class Share implements ActiveRecordInterface
     /**
      * Sets the value of [stop_date_time] column to a normalized version of the date/time value specified.
      *
-     * @param  string|integer|\DateTimeInterface $v string, integer (timestamp), or \DateTimeInterface value.
+     * @param  string|integer|\DateTimeInterface|null $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
      * @return $this|\Share The current object (for fluent API support)
      */
@@ -577,30 +553,6 @@ abstract class Share implements ActiveRecordInterface
 
         return $this;
     } // setSubmitCount()
-
-    /**
-     * Set the value of [member_id] column.
-     *
-     * @param int $v New value
-     * @return $this|\Share The current object (for fluent API support)
-     */
-    public function setMemberId($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->member_id !== $v) {
-            $this->member_id = $v;
-            $this->modifiedColumns[ShareTableMap::COL_MEMBER_ID] = true;
-        }
-
-        if ($this->aMember !== null && $this->aMember->getId() !== $v) {
-            $this->aMember = null;
-        }
-
-        return $this;
-    } // setMemberId()
 
     /**
      * Set the value of [form_id] column.
@@ -687,10 +639,7 @@ abstract class Share implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ShareTableMap::translateFieldName('SubmitCount', TableMap::TYPE_PHPNAME, $indexType)];
             $this->submit_count = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ShareTableMap::translateFieldName('MemberId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->member_id = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ShareTableMap::translateFieldName('FormId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ShareTableMap::translateFieldName('FormId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->form_id = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
@@ -700,7 +649,7 @@ abstract class Share implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 7; // 7 = ShareTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 6; // 6 = ShareTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Share'), 0, $e);
@@ -722,9 +671,6 @@ abstract class Share implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aMember !== null && $this->member_id !== $this->aMember->getId()) {
-            $this->aMember = null;
-        }
         if ($this->aForm !== null && $this->form_id !== $this->aForm->getId()) {
             $this->aForm = null;
         }
@@ -767,7 +713,6 @@ abstract class Share implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aMember = null;
             $this->aForm = null;
             $this->collSubmits = null;
 
@@ -879,13 +824,6 @@ abstract class Share implements ActiveRecordInterface
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aMember !== null) {
-                if ($this->aMember->isModified() || $this->aMember->isNew()) {
-                    $affectedRows += $this->aMember->save($con);
-                }
-                $this->setMember($this->aMember);
-            }
-
             if ($this->aForm !== null) {
                 if ($this->aForm->isModified() || $this->aForm->isNew()) {
                     $affectedRows += $this->aForm->save($con);
@@ -962,9 +900,6 @@ abstract class Share implements ActiveRecordInterface
         if ($this->isColumnModified(ShareTableMap::COL_SUBMIT_COUNT)) {
             $modifiedColumns[':p' . $index++]  = 'submit_count';
         }
-        if ($this->isColumnModified(ShareTableMap::COL_MEMBER_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'member_id';
-        }
         if ($this->isColumnModified(ShareTableMap::COL_FORM_ID)) {
             $modifiedColumns[':p' . $index++]  = 'form_id';
         }
@@ -993,9 +928,6 @@ abstract class Share implements ActiveRecordInterface
                         break;
                     case 'submit_count':
                         $stmt->bindValue($identifier, $this->submit_count, PDO::PARAM_INT);
-                        break;
-                    case 'member_id':
-                        $stmt->bindValue($identifier, $this->member_id, PDO::PARAM_INT);
                         break;
                     case 'form_id':
                         $stmt->bindValue($identifier, $this->form_id, PDO::PARAM_INT);
@@ -1078,9 +1010,6 @@ abstract class Share implements ActiveRecordInterface
                 return $this->getSubmitCount();
                 break;
             case 5:
-                return $this->getMemberId();
-                break;
-            case 6:
                 return $this->getFormId();
                 break;
             default:
@@ -1118,8 +1047,7 @@ abstract class Share implements ActiveRecordInterface
             $keys[2] => $this->getStopDateTime(),
             $keys[3] => $this->getSessionType(),
             $keys[4] => $this->getSubmitCount(),
-            $keys[5] => $this->getMemberId(),
-            $keys[6] => $this->getFormId(),
+            $keys[5] => $this->getFormId(),
         );
         if ($result[$keys[1]] instanceof \DateTimeInterface) {
             $result[$keys[1]] = $result[$keys[1]]->format('Y-m-d H:i:s.u');
@@ -1135,21 +1063,6 @@ abstract class Share implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aMember) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'member';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = 'member';
-                        break;
-                    default:
-                        $key = 'Member';
-                }
-
-                $result[$key] = $this->aMember->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
             if (null !== $this->aForm) {
 
                 switch ($keyType) {
@@ -1230,9 +1143,6 @@ abstract class Share implements ActiveRecordInterface
                 $this->setSubmitCount($value);
                 break;
             case 5:
-                $this->setMemberId($value);
-                break;
-            case 6:
                 $this->setFormId($value);
                 break;
         } // switch()
@@ -1277,10 +1187,7 @@ abstract class Share implements ActiveRecordInterface
             $this->setSubmitCount($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setMemberId($arr[$keys[5]]);
-        }
-        if (array_key_exists($keys[6], $arr)) {
-            $this->setFormId($arr[$keys[6]]);
+            $this->setFormId($arr[$keys[5]]);
         }
     }
 
@@ -1337,9 +1244,6 @@ abstract class Share implements ActiveRecordInterface
         }
         if ($this->isColumnModified(ShareTableMap::COL_SUBMIT_COUNT)) {
             $criteria->add(ShareTableMap::COL_SUBMIT_COUNT, $this->submit_count);
-        }
-        if ($this->isColumnModified(ShareTableMap::COL_MEMBER_ID)) {
-            $criteria->add(ShareTableMap::COL_MEMBER_ID, $this->member_id);
         }
         if ($this->isColumnModified(ShareTableMap::COL_FORM_ID)) {
             $criteria->add(ShareTableMap::COL_FORM_ID, $this->form_id);
@@ -1434,7 +1338,6 @@ abstract class Share implements ActiveRecordInterface
         $copyObj->setStopDateTime($this->getStopDateTime());
         $copyObj->setSessionType($this->getSessionType());
         $copyObj->setSubmitCount($this->getSubmitCount());
-        $copyObj->setMemberId($this->getMemberId());
         $copyObj->setFormId($this->getFormId());
 
         if ($deepCopy) {
@@ -1476,57 +1379,6 @@ abstract class Share implements ActiveRecordInterface
         $this->copyInto($copyObj, $deepCopy);
 
         return $copyObj;
-    }
-
-    /**
-     * Declares an association between this object and a ChildMember object.
-     *
-     * @param  ChildMember $v
-     * @return $this|\Share The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setMember(ChildMember $v = null)
-    {
-        if ($v === null) {
-            $this->setMemberId(NULL);
-        } else {
-            $this->setMemberId($v->getId());
-        }
-
-        $this->aMember = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildMember object, it will not be re-added.
-        if ($v !== null) {
-            $v->addShare($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated ChildMember object
-     *
-     * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildMember The associated ChildMember object.
-     * @throws PropelException
-     */
-    public function getMember(ConnectionInterface $con = null)
-    {
-        if ($this->aMember === null && ($this->member_id != 0)) {
-            $this->aMember = ChildMemberQuery::create()->findPk($this->member_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aMember->addShares($this);
-             */
-        }
-
-        return $this->aMember;
     }
 
     /**
@@ -1888,9 +1740,6 @@ abstract class Share implements ActiveRecordInterface
      */
     public function clear()
     {
-        if (null !== $this->aMember) {
-            $this->aMember->removeShare($this);
-        }
         if (null !== $this->aForm) {
             $this->aForm->removeShare($this);
         }
@@ -1899,7 +1748,6 @@ abstract class Share implements ActiveRecordInterface
         $this->stop_date_time = null;
         $this->session_type = null;
         $this->submit_count = null;
-        $this->member_id = null;
         $this->form_id = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
@@ -1928,7 +1776,6 @@ abstract class Share implements ActiveRecordInterface
         } // if ($deep)
 
         $this->collSubmits = null;
-        $this->aMember = null;
         $this->aForm = null;
     }
 

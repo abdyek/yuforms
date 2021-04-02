@@ -58,16 +58,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMemberQuery rightJoinWithForm() Adds a RIGHT JOIN clause and with to the query using the Form relation
  * @method     ChildMemberQuery innerJoinWithForm() Adds a INNER JOIN clause and with to the query using the Form relation
  *
- * @method     ChildMemberQuery leftJoinShare($relationAlias = null) Adds a LEFT JOIN clause to the query using the Share relation
- * @method     ChildMemberQuery rightJoinShare($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Share relation
- * @method     ChildMemberQuery innerJoinShare($relationAlias = null) Adds a INNER JOIN clause to the query using the Share relation
- *
- * @method     ChildMemberQuery joinWithShare($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Share relation
- *
- * @method     ChildMemberQuery leftJoinWithShare() Adds a LEFT JOIN clause and with to the query using the Share relation
- * @method     ChildMemberQuery rightJoinWithShare() Adds a RIGHT JOIN clause and with to the query using the Share relation
- * @method     ChildMemberQuery innerJoinWithShare() Adds a INNER JOIN clause and with to the query using the Share relation
- *
  * @method     ChildMemberQuery leftJoinSubmit($relationAlias = null) Adds a LEFT JOIN clause to the query using the Submit relation
  * @method     ChildMemberQuery rightJoinSubmit($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Submit relation
  * @method     ChildMemberQuery innerJoinSubmit($relationAlias = null) Adds a INNER JOIN clause to the query using the Submit relation
@@ -78,7 +68,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMemberQuery rightJoinWithSubmit() Adds a RIGHT JOIN clause and with to the query using the Submit relation
  * @method     ChildMemberQuery innerJoinWithSubmit() Adds a INNER JOIN clause and with to the query using the Submit relation
  *
- * @method     \FormQuery|\ShareQuery|\SubmitQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \FormQuery|\SubmitQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildMember|null findOne(ConnectionInterface $con = null) Return the first ChildMember matching the query
  * @method     ChildMember findOneOrCreate(ConnectionInterface $con = null) Return the first ChildMember matching the query, or a new ChildMember object populated from the query conditions when no match is found
@@ -636,79 +626,6 @@ abstract class MemberQuery extends ModelCriteria
         return $this
             ->joinForm($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Form', '\FormQuery');
-    }
-
-    /**
-     * Filter the query by a related \Share object
-     *
-     * @param \Share|ObjectCollection $share the related object to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildMemberQuery The current query, for fluid interface
-     */
-    public function filterByShare($share, $comparison = null)
-    {
-        if ($share instanceof \Share) {
-            return $this
-                ->addUsingAlias(MemberTableMap::COL_ID, $share->getMemberId(), $comparison);
-        } elseif ($share instanceof ObjectCollection) {
-            return $this
-                ->useShareQuery()
-                ->filterByPrimaryKeys($share->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByShare() only accepts arguments of type \Share or Collection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Share relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return $this|ChildMemberQuery The current query, for fluid interface
-     */
-    public function joinShare($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Share');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Share');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Share relation Share object
-     *
-     * @see useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return \ShareQuery A secondary query class using the current class as primary query
-     */
-    public function useShareQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinShare($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Share', '\ShareQuery');
     }
 
     /**

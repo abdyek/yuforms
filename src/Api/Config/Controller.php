@@ -259,7 +259,52 @@ class Controller {
                         ]
                     ]
                 ]
+            ],
+            'DELETE'=>[
+                'authorization'=>['member'],
+                'required'=>[
+                    'id'=>[
+                        'type'=>'int',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>11
+                        ]
+                    ]
+                ]
             ]
-        ]
+        ],
+        'Share'=>[
+            'POST'=>[
+                'authorization'=>['member'],
+                'required'=>[
+                    'id'=>[
+                        'type'=>'int',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>11
+                        ]
+                    ],
+                    'sessionType'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>20
+                        ]
+                    ]
+                ]
+            ],
+            'DELETE'=>[
+                'authorization'=>['member'],
+                'required'=>[
+                    'id'=>[
+                        'type'=>'int',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>11
+                        ]
+                    ]
+                ]
+            ]
+        ],
     ];
 }

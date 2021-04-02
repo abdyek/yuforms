@@ -6,8 +6,6 @@ use \Form as ChildForm;
 use \FormQuery as ChildFormQuery;
 use \Member as ChildMember;
 use \MemberQuery as ChildMemberQuery;
-use \Share as ChildShare;
-use \ShareQuery as ChildShareQuery;
 use \Submit as ChildSubmit;
 use \SubmitQuery as ChildSubmitQuery;
 use \DateTime;
@@ -15,7 +13,6 @@ use \Exception;
 use \PDO;
 use Map\FormTableMap;
 use Map\MemberTableMap;
-use Map\ShareTableMap;
 use Map\SubmitTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -142,12 +139,6 @@ abstract class Member implements ActiveRecordInterface
     protected $collFormsPartial;
 
     /**
-     * @var        ObjectCollection|ChildShare[] Collection to store aggregation of ChildShare objects.
-     */
-    protected $collShares;
-    protected $collSharesPartial;
-
-    /**
      * @var        ObjectCollection|ChildSubmit[] Collection to store aggregation of ChildSubmit objects.
      */
     protected $collSubmits;
@@ -166,12 +157,6 @@ abstract class Member implements ActiveRecordInterface
      * @var ObjectCollection|ChildForm[]
      */
     protected $formsScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildShare[]
-     */
-    protected $sharesScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -838,8 +823,6 @@ abstract class Member implements ActiveRecordInterface
 
             $this->collForms = null;
 
-            $this->collShares = null;
-
             $this->collSubmits = null;
 
         } // if (deep)
@@ -967,23 +950,6 @@ abstract class Member implements ActiveRecordInterface
 
             if ($this->collForms !== null) {
                 foreach ($this->collForms as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
-            if ($this->sharesScheduledForDeletion !== null) {
-                if (!$this->sharesScheduledForDeletion->isEmpty()) {
-                    \ShareQuery::create()
-                        ->filterByPrimaryKeys($this->sharesScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->sharesScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collShares !== null) {
-                foreach ($this->collShares as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1252,21 +1218,6 @@ abstract class Member implements ActiveRecordInterface
                 }
 
                 $result[$key] = $this->collForms->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
-            if (null !== $this->collShares) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'shares';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = 'shares';
-                        break;
-                    default:
-                        $key = 'Shares';
-                }
-
-                $result[$key] = $this->collShares->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collSubmits) {
 
@@ -1571,12 +1522,6 @@ abstract class Member implements ActiveRecordInterface
                 }
             }
 
-            foreach ($this->getShares() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addShare($relObj->copy($deepCopy));
-                }
-            }
-
             foreach ($this->getSubmits() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addSubmit($relObj->copy($deepCopy));
@@ -1626,10 +1571,6 @@ abstract class Member implements ActiveRecordInterface
     {
         if ('Form' === $relationName) {
             $this->initForms();
-            return;
-        }
-        if ('Share' === $relationName) {
-            $this->initShares();
             return;
         }
         if ('Submit' === $relationName) {
@@ -1870,265 +1811,6 @@ abstract class Member implements ActiveRecordInterface
         }
 
         return $this;
-    }
-
-    /**
-     * Clears out the collShares collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addShares()
-     */
-    public function clearShares()
-    {
-        $this->collShares = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Reset is the collShares collection loaded partially.
-     */
-    public function resetPartialShares($v = true)
-    {
-        $this->collSharesPartial = $v;
-    }
-
-    /**
-     * Initializes the collShares collection.
-     *
-     * By default this just sets the collShares collection to an empty array (like clearcollShares());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initShares($overrideExisting = true)
-    {
-        if (null !== $this->collShares && !$overrideExisting) {
-            return;
-        }
-
-        $collectionClassName = ShareTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collShares = new $collectionClassName;
-        $this->collShares->setModel('\Share');
-    }
-
-    /**
-     * Gets an array of ChildShare objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildMember is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildShare[] List of ChildShare objects
-     * @throws PropelException
-     */
-    public function getShares(Criteria $criteria = null, ConnectionInterface $con = null)
-    {
-        $partial = $this->collSharesPartial && !$this->isNew();
-        if (null === $this->collShares || null !== $criteria || $partial) {
-            if ($this->isNew()) {
-                // return empty collection
-                if (null === $this->collShares) {
-                    $this->initShares();
-                } else {
-                    $collectionClassName = ShareTableMap::getTableMap()->getCollectionClassName();
-
-                    $collShares = new $collectionClassName;
-                    $collShares->setModel('\Share');
-
-                    return $collShares;
-                }
-            } else {
-                $collShares = ChildShareQuery::create(null, $criteria)
-                    ->filterByMember($this)
-                    ->find($con);
-
-                if (null !== $criteria) {
-                    if (false !== $this->collSharesPartial && count($collShares)) {
-                        $this->initShares(false);
-
-                        foreach ($collShares as $obj) {
-                            if (false == $this->collShares->contains($obj)) {
-                                $this->collShares->append($obj);
-                            }
-                        }
-
-                        $this->collSharesPartial = true;
-                    }
-
-                    return $collShares;
-                }
-
-                if ($partial && $this->collShares) {
-                    foreach ($this->collShares as $obj) {
-                        if ($obj->isNew()) {
-                            $collShares[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collShares = $collShares;
-                $this->collSharesPartial = false;
-            }
-        }
-
-        return $this->collShares;
-    }
-
-    /**
-     * Sets a collection of ChildShare objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $shares A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return $this|ChildMember The current object (for fluent API support)
-     */
-    public function setShares(Collection $shares, ConnectionInterface $con = null)
-    {
-        /** @var ChildShare[] $sharesToDelete */
-        $sharesToDelete = $this->getShares(new Criteria(), $con)->diff($shares);
-
-
-        $this->sharesScheduledForDeletion = $sharesToDelete;
-
-        foreach ($sharesToDelete as $shareRemoved) {
-            $shareRemoved->setMember(null);
-        }
-
-        $this->collShares = null;
-        foreach ($shares as $share) {
-            $this->addShare($share);
-        }
-
-        $this->collShares = $shares;
-        $this->collSharesPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Share objects.
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related Share objects.
-     * @throws PropelException
-     */
-    public function countShares(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collSharesPartial && !$this->isNew();
-        if (null === $this->collShares || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collShares) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getShares());
-            }
-
-            $query = ChildShareQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByMember($this)
-                ->count($con);
-        }
-
-        return count($this->collShares);
-    }
-
-    /**
-     * Method called to associate a ChildShare object to this object
-     * through the ChildShare foreign key attribute.
-     *
-     * @param  ChildShare $l ChildShare
-     * @return $this|\Member The current object (for fluent API support)
-     */
-    public function addShare(ChildShare $l)
-    {
-        if ($this->collShares === null) {
-            $this->initShares();
-            $this->collSharesPartial = true;
-        }
-
-        if (!$this->collShares->contains($l)) {
-            $this->doAddShare($l);
-
-            if ($this->sharesScheduledForDeletion and $this->sharesScheduledForDeletion->contains($l)) {
-                $this->sharesScheduledForDeletion->remove($this->sharesScheduledForDeletion->search($l));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param ChildShare $share The ChildShare object to add.
-     */
-    protected function doAddShare(ChildShare $share)
-    {
-        $this->collShares[]= $share;
-        $share->setMember($this);
-    }
-
-    /**
-     * @param  ChildShare $share The ChildShare object to remove.
-     * @return $this|ChildMember The current object (for fluent API support)
-     */
-    public function removeShare(ChildShare $share)
-    {
-        if ($this->getShares()->contains($share)) {
-            $pos = $this->collShares->search($share);
-            $this->collShares->remove($pos);
-            if (null === $this->sharesScheduledForDeletion) {
-                $this->sharesScheduledForDeletion = clone $this->collShares;
-                $this->sharesScheduledForDeletion->clear();
-            }
-            $this->sharesScheduledForDeletion[]= clone $share;
-            $share->setMember(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Member is new, it will return
-     * an empty collection; or if this Member has previously
-     * been saved, it will retrieve related Shares from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Member.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|ChildShare[] List of ChildShare objects
-     */
-    public function getSharesJoinForm(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
-    {
-        $query = ChildShareQuery::create(null, $criteria);
-        $query->joinWith('Form', $joinBehavior);
-
-        return $this->getShares($query, $con);
     }
 
     /**
@@ -2454,11 +2136,6 @@ abstract class Member implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collShares) {
-                foreach ($this->collShares as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->collSubmits) {
                 foreach ($this->collSubmits as $o) {
                     $o->clearAllReferences($deep);
@@ -2467,7 +2144,6 @@ abstract class Member implements ActiveRecordInterface
         } // if ($deep)
 
         $this->collForms = null;
-        $this->collShares = null;
         $this->collSubmits = null;
     }
 

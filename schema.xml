@@ -25,16 +25,12 @@
     <table name="share">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="start_date_time" type="timestamp" required="true"/>
-        <column name="stop_date_time" type="timestamp" required="true"/>
+        <column name="stop_date_time" type="timestamp" />
         <column name="session_type" type="varchar" size="20" required="true"/>
         <column name="submit_count" type="integer" required="true" defaultValue="0" />
 
-        <column name="member_id" type="integer" required="true"/>
         <column name="form_id" type="integer" required="true"/>
 
-        <foreign-key foreignTable="member">
-            <reference local="member_id" foreign="id" />
-        </foreign-key>
         <foreign-key foreignTable="form">
             <reference local="form_id" foreign="id" />
         </foreign-key>
