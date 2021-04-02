@@ -5,6 +5,8 @@ use Yuforms\Api\Core\Controller;
 use Yuforms\Api\Other\Time;
 use Yuforms\Api\Model\Member as MemberModel;
 use Yuforms\Api\Model\Form as FormModel;
+use Yuforms\Api\Model\Share as ShareModel;
+use Yuforms\Api\Model\FormItem as FormItemModel;
 
 class Form extends Controller {
     protected function post() {
@@ -158,7 +160,11 @@ class Form extends Controller {
     protected function delete() {
         $this->member = MemberModel::get($this->userId);
         $this->form = FormModel::get($this->userId, $this->data['id']);
-        // NOT COMPLETED
+        $this->shares = ShareModel::gets($this->form->getId());
+        $this->formItems = FormItemModel::gets($this->form->getId());
+        $this->shares->delete();
+        $this->formItems->delete();
+        $this->form->delete();
         $this->response($this->data);
     }
 }
