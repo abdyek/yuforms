@@ -90,11 +90,12 @@ abstract class Share implements ActiveRecordInterface
     protected $stop_date_time;
 
     /**
-     * The value for the session_type field.
+     * The value for the onlymember field.
      *
-     * @var        string
+     * Note: this column has a database default value of: true
+     * @var        boolean
      */
-    protected $session_type;
+    protected $onlymember;
 
     /**
      * The value for the submit_count field.
@@ -144,6 +145,7 @@ abstract class Share implements ActiveRecordInterface
      */
     public function applyDefaultValues()
     {
+        $this->onlymember = true;
         $this->submit_count = 0;
     }
 
@@ -425,13 +427,23 @@ abstract class Share implements ActiveRecordInterface
     }
 
     /**
-     * Get the [session_type] column value.
+     * Get the [onlymember] column value.
      *
-     * @return string
+     * @return boolean
      */
-    public function getSessionType()
+    public function getOnlymember()
     {
-        return $this->session_type;
+        return $this->onlymember;
+    }
+
+    /**
+     * Get the [onlymember] column value.
+     *
+     * @return boolean
+     */
+    public function isOnlymember()
+    {
+        return $this->getOnlymember();
     }
 
     /**
@@ -515,24 +527,32 @@ abstract class Share implements ActiveRecordInterface
     } // setStopDateTime()
 
     /**
-     * Set the value of [session_type] column.
+     * Sets the value of the [onlymember] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      *
-     * @param string $v New value
+     * @param  boolean|integer|string $v The new value
      * @return $this|\Share The current object (for fluent API support)
      */
-    public function setSessionType($v)
+    public function setOnlymember($v)
     {
         if ($v !== null) {
-            $v = (string) $v;
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
         }
 
-        if ($this->session_type !== $v) {
-            $this->session_type = $v;
-            $this->modifiedColumns[ShareTableMap::COL_SESSION_TYPE] = true;
+        if ($this->onlymember !== $v) {
+            $this->onlymember = $v;
+            $this->modifiedColumns[ShareTableMap::COL_ONLYMEMBER] = true;
         }
 
         return $this;
-    } // setSessionType()
+    } // setOnlymember()
 
     /**
      * Set the value of [submit_count] column.
@@ -588,6 +608,10 @@ abstract class Share implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->onlymember !== true) {
+                return false;
+            }
+
             if ($this->submit_count !== 0) {
                 return false;
             }
@@ -633,8 +657,8 @@ abstract class Share implements ActiveRecordInterface
             }
             $this->stop_date_time = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ShareTableMap::translateFieldName('SessionType', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->session_type = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ShareTableMap::translateFieldName('Onlymember', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->onlymember = (null !== $col) ? (boolean) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ShareTableMap::translateFieldName('SubmitCount', TableMap::TYPE_PHPNAME, $indexType)];
             $this->submit_count = (null !== $col) ? (int) $col : null;
@@ -894,8 +918,8 @@ abstract class Share implements ActiveRecordInterface
         if ($this->isColumnModified(ShareTableMap::COL_STOP_DATE_TIME)) {
             $modifiedColumns[':p' . $index++]  = 'stop_date_time';
         }
-        if ($this->isColumnModified(ShareTableMap::COL_SESSION_TYPE)) {
-            $modifiedColumns[':p' . $index++]  = 'session_type';
+        if ($this->isColumnModified(ShareTableMap::COL_ONLYMEMBER)) {
+            $modifiedColumns[':p' . $index++]  = 'onlyMember';
         }
         if ($this->isColumnModified(ShareTableMap::COL_SUBMIT_COUNT)) {
             $modifiedColumns[':p' . $index++]  = 'submit_count';
@@ -923,8 +947,8 @@ abstract class Share implements ActiveRecordInterface
                     case 'stop_date_time':
                         $stmt->bindValue($identifier, $this->stop_date_time ? $this->stop_date_time->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
-                    case 'session_type':
-                        $stmt->bindValue($identifier, $this->session_type, PDO::PARAM_STR);
+                    case 'onlyMember':
+                        $stmt->bindValue($identifier, (int) $this->onlymember, PDO::PARAM_INT);
                         break;
                     case 'submit_count':
                         $stmt->bindValue($identifier, $this->submit_count, PDO::PARAM_INT);
@@ -1004,7 +1028,7 @@ abstract class Share implements ActiveRecordInterface
                 return $this->getStopDateTime();
                 break;
             case 3:
-                return $this->getSessionType();
+                return $this->getOnlymember();
                 break;
             case 4:
                 return $this->getSubmitCount();
@@ -1045,7 +1069,7 @@ abstract class Share implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getStartDateTime(),
             $keys[2] => $this->getStopDateTime(),
-            $keys[3] => $this->getSessionType(),
+            $keys[3] => $this->getOnlymember(),
             $keys[4] => $this->getSubmitCount(),
             $keys[5] => $this->getFormId(),
         );
@@ -1137,7 +1161,7 @@ abstract class Share implements ActiveRecordInterface
                 $this->setStopDateTime($value);
                 break;
             case 3:
-                $this->setSessionType($value);
+                $this->setOnlymember($value);
                 break;
             case 4:
                 $this->setSubmitCount($value);
@@ -1181,7 +1205,7 @@ abstract class Share implements ActiveRecordInterface
             $this->setStopDateTime($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setSessionType($arr[$keys[3]]);
+            $this->setOnlymember($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
             $this->setSubmitCount($arr[$keys[4]]);
@@ -1239,8 +1263,8 @@ abstract class Share implements ActiveRecordInterface
         if ($this->isColumnModified(ShareTableMap::COL_STOP_DATE_TIME)) {
             $criteria->add(ShareTableMap::COL_STOP_DATE_TIME, $this->stop_date_time);
         }
-        if ($this->isColumnModified(ShareTableMap::COL_SESSION_TYPE)) {
-            $criteria->add(ShareTableMap::COL_SESSION_TYPE, $this->session_type);
+        if ($this->isColumnModified(ShareTableMap::COL_ONLYMEMBER)) {
+            $criteria->add(ShareTableMap::COL_ONLYMEMBER, $this->onlymember);
         }
         if ($this->isColumnModified(ShareTableMap::COL_SUBMIT_COUNT)) {
             $criteria->add(ShareTableMap::COL_SUBMIT_COUNT, $this->submit_count);
@@ -1336,7 +1360,7 @@ abstract class Share implements ActiveRecordInterface
     {
         $copyObj->setStartDateTime($this->getStartDateTime());
         $copyObj->setStopDateTime($this->getStopDateTime());
-        $copyObj->setSessionType($this->getSessionType());
+        $copyObj->setOnlymember($this->getOnlymember());
         $copyObj->setSubmitCount($this->getSubmitCount());
         $copyObj->setFormId($this->getFormId());
 
@@ -1746,7 +1770,7 @@ abstract class Share implements ActiveRecordInterface
         $this->id = null;
         $this->start_date_time = null;
         $this->stop_date_time = null;
-        $this->session_type = null;
+        $this->onlymember = null;
         $this->submit_count = null;
         $this->form_id = null;
         $this->alreadyInSave = false;

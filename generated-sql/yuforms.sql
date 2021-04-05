@@ -54,7 +54,7 @@ CREATE TABLE `share`
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `start_date_time` DATETIME NOT NULL,
     `stop_date_time` DATETIME,
-    `session_type` VARCHAR(20) NOT NULL,
+    `onlyMember` TINYINT(1) DEFAULT 1 NOT NULL,
     `submit_count` INTEGER DEFAULT 0 NOT NULL,
     `form_id` INTEGER NOT NULL,
     PRIMARY KEY (`id`),

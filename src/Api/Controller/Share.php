@@ -19,13 +19,13 @@ class Share extends Controller {
     }
     private function prepareModels() {
         $this->member = MemberModel::get($this->userId);
-        $this->form = FormModel::get($this->member->getId(), $this->data['id']);
+        $this->form = FormModel::getWithMemberId($this->member->getId(), $this->data['id']);
         $this->availableShare = ShareModel::getUnfinished($this->form->getId());
     }
     private function addNewShare() {
         $share = new \Share();
         $share->setStartDateTime(Time::current());
-        $share->setSessionType($this->data['sessionType']);
+        $share->setOnlyMember($this->data['onlyMember']);
         $share->setFormId($this->form->getId());
         $share->save();
     }

@@ -222,8 +222,9 @@ class Controller {
             'POST'=>[
                 'authorization'=>['member'],
             ],
+            /* these codes will changed by myself
             'GET'=>[
-                'authorization'=>['guest', 'member'],
+                'authorization'=>['member'],
                 'required'=>[
                     'id'=>[
                         'type'=>'str',
@@ -234,6 +235,7 @@ class Controller {
                     ]
                 ]
             ],
+             */
             'PUT'=>[
                 'authorization'=>['member'],
                 'required'=>[
@@ -284,11 +286,11 @@ class Controller {
                             'max'=>11
                         ]
                     ],
-                    'sessionType'=>[
-                        'type'=>'str',
+                    'onlyMember'=>[
+                        'type'=>'int',
                         'limits'=>[
                             'min'=>1,
-                            'max'=>20
+                            'max'=>1
                         ]
                     ]
                 ]
@@ -304,7 +306,21 @@ class Controller {
                         ]
                     ]
                 ]
-            ]
+            ],
         ],
+        'Submit'=>[
+            'GET'=>[
+                'authorization'=>['guest', 'member'],
+                'required'=>[
+                    'id'=>[
+                        'type'=>'int',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>11
+                        ]
+                    ]
+                ]
+            ]
+        ]
     ];
 }

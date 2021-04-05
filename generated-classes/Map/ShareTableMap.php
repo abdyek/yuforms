@@ -86,9 +86,9 @@ class ShareTableMap extends TableMap
     const COL_STOP_DATE_TIME = 'share.stop_date_time';
 
     /**
-     * the column name for the session_type field
+     * the column name for the onlyMember field
      */
-    const COL_SESSION_TYPE = 'share.session_type';
+    const COL_ONLYMEMBER = 'share.onlyMember';
 
     /**
      * the column name for the submit_count field
@@ -112,10 +112,10 @@ class ShareTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'StartDateTime', 'StopDateTime', 'SessionType', 'SubmitCount', 'FormId', ),
-        self::TYPE_CAMELNAME     => array('id', 'startDateTime', 'stopDateTime', 'sessionType', 'submitCount', 'formId', ),
-        self::TYPE_COLNAME       => array(ShareTableMap::COL_ID, ShareTableMap::COL_START_DATE_TIME, ShareTableMap::COL_STOP_DATE_TIME, ShareTableMap::COL_SESSION_TYPE, ShareTableMap::COL_SUBMIT_COUNT, ShareTableMap::COL_FORM_ID, ),
-        self::TYPE_FIELDNAME     => array('id', 'start_date_time', 'stop_date_time', 'session_type', 'submit_count', 'form_id', ),
+        self::TYPE_PHPNAME       => array('Id', 'StartDateTime', 'StopDateTime', 'Onlymember', 'SubmitCount', 'FormId', ),
+        self::TYPE_CAMELNAME     => array('id', 'startDateTime', 'stopDateTime', 'onlymember', 'submitCount', 'formId', ),
+        self::TYPE_COLNAME       => array(ShareTableMap::COL_ID, ShareTableMap::COL_START_DATE_TIME, ShareTableMap::COL_STOP_DATE_TIME, ShareTableMap::COL_ONLYMEMBER, ShareTableMap::COL_SUBMIT_COUNT, ShareTableMap::COL_FORM_ID, ),
+        self::TYPE_FIELDNAME     => array('id', 'start_date_time', 'stop_date_time', 'onlyMember', 'submit_count', 'form_id', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
@@ -126,10 +126,10 @@ class ShareTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'StartDateTime' => 1, 'StopDateTime' => 2, 'SessionType' => 3, 'SubmitCount' => 4, 'FormId' => 5, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'startDateTime' => 1, 'stopDateTime' => 2, 'sessionType' => 3, 'submitCount' => 4, 'formId' => 5, ),
-        self::TYPE_COLNAME       => array(ShareTableMap::COL_ID => 0, ShareTableMap::COL_START_DATE_TIME => 1, ShareTableMap::COL_STOP_DATE_TIME => 2, ShareTableMap::COL_SESSION_TYPE => 3, ShareTableMap::COL_SUBMIT_COUNT => 4, ShareTableMap::COL_FORM_ID => 5, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'start_date_time' => 1, 'stop_date_time' => 2, 'session_type' => 3, 'submit_count' => 4, 'form_id' => 5, ),
+        self::TYPE_PHPNAME       => array('Id' => 0, 'StartDateTime' => 1, 'StopDateTime' => 2, 'Onlymember' => 3, 'SubmitCount' => 4, 'FormId' => 5, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'startDateTime' => 1, 'stopDateTime' => 2, 'onlymember' => 3, 'submitCount' => 4, 'formId' => 5, ),
+        self::TYPE_COLNAME       => array(ShareTableMap::COL_ID => 0, ShareTableMap::COL_START_DATE_TIME => 1, ShareTableMap::COL_STOP_DATE_TIME => 2, ShareTableMap::COL_ONLYMEMBER => 3, ShareTableMap::COL_SUBMIT_COUNT => 4, ShareTableMap::COL_FORM_ID => 5, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'start_date_time' => 1, 'stop_date_time' => 2, 'onlyMember' => 3, 'submit_count' => 4, 'form_id' => 5, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
@@ -164,14 +164,14 @@ class ShareTableMap extends TableMap
         'COL_STOP_DATE_TIME' => 'STOP_DATE_TIME',
         'stop_date_time' => 'STOP_DATE_TIME',
         'share.stop_date_time' => 'STOP_DATE_TIME',
-        'SessionType' => 'SESSION_TYPE',
-        'Share.SessionType' => 'SESSION_TYPE',
-        'sessionType' => 'SESSION_TYPE',
-        'share.sessionType' => 'SESSION_TYPE',
-        'ShareTableMap::COL_SESSION_TYPE' => 'SESSION_TYPE',
-        'COL_SESSION_TYPE' => 'SESSION_TYPE',
-        'session_type' => 'SESSION_TYPE',
-        'share.session_type' => 'SESSION_TYPE',
+        'Onlymember' => 'ONLYMEMBER',
+        'Share.Onlymember' => 'ONLYMEMBER',
+        'onlymember' => 'ONLYMEMBER',
+        'share.onlymember' => 'ONLYMEMBER',
+        'ShareTableMap::COL_ONLYMEMBER' => 'ONLYMEMBER',
+        'COL_ONLYMEMBER' => 'ONLYMEMBER',
+        'onlyMember' => 'ONLYMEMBER',
+        'share.onlyMember' => 'ONLYMEMBER',
         'SubmitCount' => 'SUBMIT_COUNT',
         'Share.SubmitCount' => 'SUBMIT_COUNT',
         'submitCount' => 'SUBMIT_COUNT',
@@ -210,7 +210,7 @@ class ShareTableMap extends TableMap
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('start_date_time', 'StartDateTime', 'TIMESTAMP', true, null, null);
         $this->addColumn('stop_date_time', 'StopDateTime', 'TIMESTAMP', false, null, null);
-        $this->addColumn('session_type', 'SessionType', 'VARCHAR', true, 20, null);
+        $this->addColumn('onlyMember', 'Onlymember', 'BOOLEAN', true, 1, true);
         $this->addColumn('submit_count', 'SubmitCount', 'INTEGER', true, null, 0);
         $this->addForeignKey('form_id', 'FormId', 'INTEGER', 'form', 'id', true, null, null);
     } // initialize()
@@ -380,14 +380,14 @@ class ShareTableMap extends TableMap
             $criteria->addSelectColumn(ShareTableMap::COL_ID);
             $criteria->addSelectColumn(ShareTableMap::COL_START_DATE_TIME);
             $criteria->addSelectColumn(ShareTableMap::COL_STOP_DATE_TIME);
-            $criteria->addSelectColumn(ShareTableMap::COL_SESSION_TYPE);
+            $criteria->addSelectColumn(ShareTableMap::COL_ONLYMEMBER);
             $criteria->addSelectColumn(ShareTableMap::COL_SUBMIT_COUNT);
             $criteria->addSelectColumn(ShareTableMap::COL_FORM_ID);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.start_date_time');
             $criteria->addSelectColumn($alias . '.stop_date_time');
-            $criteria->addSelectColumn($alias . '.session_type');
+            $criteria->addSelectColumn($alias . '.onlyMember');
             $criteria->addSelectColumn($alias . '.submit_count');
             $criteria->addSelectColumn($alias . '.form_id');
         }
@@ -410,14 +410,14 @@ class ShareTableMap extends TableMap
             $criteria->removeSelectColumn(ShareTableMap::COL_ID);
             $criteria->removeSelectColumn(ShareTableMap::COL_START_DATE_TIME);
             $criteria->removeSelectColumn(ShareTableMap::COL_STOP_DATE_TIME);
-            $criteria->removeSelectColumn(ShareTableMap::COL_SESSION_TYPE);
+            $criteria->removeSelectColumn(ShareTableMap::COL_ONLYMEMBER);
             $criteria->removeSelectColumn(ShareTableMap::COL_SUBMIT_COUNT);
             $criteria->removeSelectColumn(ShareTableMap::COL_FORM_ID);
         } else {
             $criteria->removeSelectColumn($alias . '.id');
             $criteria->removeSelectColumn($alias . '.start_date_time');
             $criteria->removeSelectColumn($alias . '.stop_date_time');
-            $criteria->removeSelectColumn($alias . '.session_type');
+            $criteria->removeSelectColumn($alias . '.onlyMember');
             $criteria->removeSelectColumn($alias . '.submit_count');
             $criteria->removeSelectColumn($alias . '.form_id');
         }

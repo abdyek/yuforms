@@ -23,14 +23,14 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildShareQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildShareQuery orderByStartDateTime($order = Criteria::ASC) Order by the start_date_time column
  * @method     ChildShareQuery orderByStopDateTime($order = Criteria::ASC) Order by the stop_date_time column
- * @method     ChildShareQuery orderBySessionType($order = Criteria::ASC) Order by the session_type column
+ * @method     ChildShareQuery orderByOnlymember($order = Criteria::ASC) Order by the onlyMember column
  * @method     ChildShareQuery orderBySubmitCount($order = Criteria::ASC) Order by the submit_count column
  * @method     ChildShareQuery orderByFormId($order = Criteria::ASC) Order by the form_id column
  *
  * @method     ChildShareQuery groupById() Group by the id column
  * @method     ChildShareQuery groupByStartDateTime() Group by the start_date_time column
  * @method     ChildShareQuery groupByStopDateTime() Group by the stop_date_time column
- * @method     ChildShareQuery groupBySessionType() Group by the session_type column
+ * @method     ChildShareQuery groupByOnlymember() Group by the onlyMember column
  * @method     ChildShareQuery groupBySubmitCount() Group by the submit_count column
  * @method     ChildShareQuery groupByFormId() Group by the form_id column
  *
@@ -70,7 +70,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildShare|null findOneById(int $id) Return the first ChildShare filtered by the id column
  * @method     ChildShare|null findOneByStartDateTime(string $start_date_time) Return the first ChildShare filtered by the start_date_time column
  * @method     ChildShare|null findOneByStopDateTime(string $stop_date_time) Return the first ChildShare filtered by the stop_date_time column
- * @method     ChildShare|null findOneBySessionType(string $session_type) Return the first ChildShare filtered by the session_type column
+ * @method     ChildShare|null findOneByOnlymember(boolean $onlyMember) Return the first ChildShare filtered by the onlyMember column
  * @method     ChildShare|null findOneBySubmitCount(int $submit_count) Return the first ChildShare filtered by the submit_count column
  * @method     ChildShare|null findOneByFormId(int $form_id) Return the first ChildShare filtered by the form_id column *
 
@@ -80,7 +80,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildShare requireOneById(int $id) Return the first ChildShare filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildShare requireOneByStartDateTime(string $start_date_time) Return the first ChildShare filtered by the start_date_time column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildShare requireOneByStopDateTime(string $stop_date_time) Return the first ChildShare filtered by the stop_date_time column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildShare requireOneBySessionType(string $session_type) Return the first ChildShare filtered by the session_type column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildShare requireOneByOnlymember(boolean $onlyMember) Return the first ChildShare filtered by the onlyMember column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildShare requireOneBySubmitCount(int $submit_count) Return the first ChildShare filtered by the submit_count column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildShare requireOneByFormId(int $form_id) Return the first ChildShare filtered by the form_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
@@ -88,7 +88,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildShare[]|ObjectCollection findById(int $id) Return ChildShare objects filtered by the id column
  * @method     ChildShare[]|ObjectCollection findByStartDateTime(string $start_date_time) Return ChildShare objects filtered by the start_date_time column
  * @method     ChildShare[]|ObjectCollection findByStopDateTime(string $stop_date_time) Return ChildShare objects filtered by the stop_date_time column
- * @method     ChildShare[]|ObjectCollection findBySessionType(string $session_type) Return ChildShare objects filtered by the session_type column
+ * @method     ChildShare[]|ObjectCollection findByOnlymember(boolean $onlyMember) Return ChildShare objects filtered by the onlyMember column
  * @method     ChildShare[]|ObjectCollection findBySubmitCount(int $submit_count) Return ChildShare objects filtered by the submit_count column
  * @method     ChildShare[]|ObjectCollection findByFormId(int $form_id) Return ChildShare objects filtered by the form_id column
  * @method     ChildShare[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
@@ -189,7 +189,7 @@ abstract class ShareQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, start_date_time, stop_date_time, session_type, submit_count, form_id FROM share WHERE id = :p0';
+        $sql = 'SELECT id, start_date_time, stop_date_time, onlyMember, submit_count, form_id FROM share WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -407,28 +407,30 @@ abstract class ShareQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the session_type column
+     * Filter the query on the onlyMember column
      *
      * Example usage:
      * <code>
-     * $query->filterBySessionType('fooValue');   // WHERE session_type = 'fooValue'
-     * $query->filterBySessionType('%fooValue%', Criteria::LIKE); // WHERE session_type LIKE '%fooValue%'
+     * $query->filterByOnlymember(true); // WHERE onlyMember = true
+     * $query->filterByOnlymember('yes'); // WHERE onlyMember = true
      * </code>
      *
-     * @param     string $sessionType The value to use as filter.
+     * @param     boolean|string $onlymember The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildShareQuery The current query, for fluid interface
      */
-    public function filterBySessionType($sessionType = null, $comparison = null)
+    public function filterByOnlymember($onlymember = null, $comparison = null)
     {
-        if (null === $comparison) {
-            if (is_array($sessionType)) {
-                $comparison = Criteria::IN;
-            }
+        if (is_string($onlymember)) {
+            $onlymember = in_array(strtolower($onlymember), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
         }
 
-        return $this->addUsingAlias(ShareTableMap::COL_SESSION_TYPE, $sessionType, $comparison);
+        return $this->addUsingAlias(ShareTableMap::COL_ONLYMEMBER, $onlymember, $comparison);
     }
 
     /**
