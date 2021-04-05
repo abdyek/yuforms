@@ -22,5 +22,14 @@ class Option {
         }
         return $optsArr;
     }
+    public static function isThereValue($questionId, $value) {
+        $options = self::getsByQuestionId($questionId);
+        foreach($options as $opt) {
+            if($opt->getValue()==$value) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
