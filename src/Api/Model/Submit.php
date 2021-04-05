@@ -19,5 +19,23 @@ class Submit {
     public static function getCountByShareIdIpAddress($shareId, $IpAddress) {
         return \SubmitQuery::create()->filterByShareId($shareId)->filterByIpAddress($IpAddress)->count();
     }
+    public static function deleteByShareId($shareId) {
+        $submit = \SubmitQuery::create()->findByShareId($shareId);
+        $submit->delete();
+    }
+    public static function deleteByShares($shares) {
+        foreach($shares as $s) {
+            self::deleteByShareId($s->getId());
+        }
+    }
+    public static function deleteByFormItemId($formItemId) {
+        $submit = \SubmitQuery::create()->findByFormItemId($formItemId);
+        $submit->delete();
+    }
+    public static function deleteByFormItems($formItems) {
+        foreach($formItems as $fi) {
+            self::deleteByFormItemId($fi->getId());
+        }
+    }
 }
 

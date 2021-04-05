@@ -5,10 +5,6 @@ use Yuforms\Api\Core\Controller;
 use Yuforms\Api\Other\Time;
 use Yuforms\Api\Model\Member as MemberModel;
 use Yuforms\Api\Model\Form as FormModel;
-use Yuforms\Api\Model\Share as ShareModel;
-use Yuforms\Api\Model\FormItem as FormItemModel;
-use Yuforms\Api\Model\Question as QuestionModel;
-use Yuforms\Api\Model\Option as OptionModel;
 
 class Form extends Controller {
     protected function post() {
@@ -160,17 +156,12 @@ class Form extends Controller {
         }
     }
     protected function delete() {
-        $this->member = MemberModel::get($this->userId);
-        $this->form = FormModel::getWithMemberId($this->userId, $this->data['id']);
-        $this->shares = ShareModel::gets($this->form->getId());
-        $this->formItems = FormItemModel::gets($this->form->getId());
-        $this->shares->delete();
-        $this->formItems->delete();
-        $this->form->delete();
-        foreach($this->formItems as $formItem) {
-            OptionModel::deleteByQuestionId($formItem->getQuestionId());
-            QuestionModel::delete($formItem->getQuestionId());
+        $form = formModel::get($this->data['id']);
+        if($form->getMemberId()!=$this->userId) {
+            httt_reponse_code(404);
+            exit();
         }
-        $this->response($this->data);
+        FormModel::delete($this->data['id']);
+        $this->success();
     }
 }
