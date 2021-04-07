@@ -94,6 +94,14 @@ abstract class FormComponent implements ActiveRecordInterface
     protected $has_options;
 
     /**
+     * The value for the multi_response field.
+     *
+     * Note: this column has a database default value of: false
+     * @var        boolean
+     */
+    protected $multi_response;
+
+    /**
      * @var        ObjectCollection|ChildQuestion[] Collection to store aggregation of ChildQuestion objects.
      */
     protected $collQuestions;
@@ -122,6 +130,7 @@ abstract class FormComponent implements ActiveRecordInterface
     public function applyDefaultValues()
     {
         $this->has_options = false;
+        $this->multi_response = false;
     }
 
     /**
@@ -402,6 +411,26 @@ abstract class FormComponent implements ActiveRecordInterface
     }
 
     /**
+     * Get the [multi_response] column value.
+     *
+     * @return boolean
+     */
+    public function getMultiResponse()
+    {
+        return $this->multi_response;
+    }
+
+    /**
+     * Get the [multi_response] column value.
+     *
+     * @return boolean
+     */
+    public function isMultiResponse()
+    {
+        return $this->getMultiResponse();
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v New value
@@ -490,6 +519,34 @@ abstract class FormComponent implements ActiveRecordInterface
     } // setHasOptions()
 
     /**
+     * Sets the value of the [multi_response] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param  boolean|integer|string $v The new value
+     * @return $this|\FormComponent The current object (for fluent API support)
+     */
+    public function setMultiResponse($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->multi_response !== $v) {
+            $this->multi_response = $v;
+            $this->modifiedColumns[FormComponentTableMap::COL_MULTI_RESPONSE] = true;
+        }
+
+        return $this;
+    } // setMultiResponse()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -500,6 +557,10 @@ abstract class FormComponent implements ActiveRecordInterface
     public function hasOnlyDefaultValues()
     {
             if ($this->has_options !== false) {
+                return false;
+            }
+
+            if ($this->multi_response !== false) {
                 return false;
             }
 
@@ -540,6 +601,9 @@ abstract class FormComponent implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : FormComponentTableMap::translateFieldName('HasOptions', TableMap::TYPE_PHPNAME, $indexType)];
             $this->has_options = (null !== $col) ? (boolean) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : FormComponentTableMap::translateFieldName('MultiResponse', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->multi_response = (null !== $col) ? (boolean) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -548,7 +612,7 @@ abstract class FormComponent implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 4; // 4 = FormComponentTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = FormComponentTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\FormComponent'), 0, $e);
@@ -780,6 +844,9 @@ abstract class FormComponent implements ActiveRecordInterface
         if ($this->isColumnModified(FormComponentTableMap::COL_HAS_OPTIONS)) {
             $modifiedColumns[':p' . $index++]  = 'has_options';
         }
+        if ($this->isColumnModified(FormComponentTableMap::COL_MULTI_RESPONSE)) {
+            $modifiedColumns[':p' . $index++]  = 'multi_response';
+        }
 
         $sql = sprintf(
             'INSERT INTO form_component (%s) VALUES (%s)',
@@ -802,6 +869,9 @@ abstract class FormComponent implements ActiveRecordInterface
                         break;
                     case 'has_options':
                         $stmt->bindValue($identifier, (int) $this->has_options, PDO::PARAM_INT);
+                        break;
+                    case 'multi_response':
+                        $stmt->bindValue($identifier, (int) $this->multi_response, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -877,6 +947,9 @@ abstract class FormComponent implements ActiveRecordInterface
             case 3:
                 return $this->getHasOptions();
                 break;
+            case 4:
+                return $this->getMultiResponse();
+                break;
             default:
                 return null;
                 break;
@@ -911,6 +984,7 @@ abstract class FormComponent implements ActiveRecordInterface
             $keys[1] => $this->getTitle(),
             $keys[2] => $this->getFormComponentName(),
             $keys[3] => $this->getHasOptions(),
+            $keys[4] => $this->getMultiResponse(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -979,6 +1053,9 @@ abstract class FormComponent implements ActiveRecordInterface
             case 3:
                 $this->setHasOptions($value);
                 break;
+            case 4:
+                $this->setMultiResponse($value);
+                break;
         } // switch()
 
         return $this;
@@ -1016,6 +1093,9 @@ abstract class FormComponent implements ActiveRecordInterface
         }
         if (array_key_exists($keys[3], $arr)) {
             $this->setHasOptions($arr[$keys[3]]);
+        }
+        if (array_key_exists($keys[4], $arr)) {
+            $this->setMultiResponse($arr[$keys[4]]);
         }
     }
 
@@ -1069,6 +1149,9 @@ abstract class FormComponent implements ActiveRecordInterface
         }
         if ($this->isColumnModified(FormComponentTableMap::COL_HAS_OPTIONS)) {
             $criteria->add(FormComponentTableMap::COL_HAS_OPTIONS, $this->has_options);
+        }
+        if ($this->isColumnModified(FormComponentTableMap::COL_MULTI_RESPONSE)) {
+            $criteria->add(FormComponentTableMap::COL_MULTI_RESPONSE, $this->multi_response);
         }
 
         return $criteria;
@@ -1159,6 +1242,7 @@ abstract class FormComponent implements ActiveRecordInterface
         $copyObj->setTitle($this->getTitle());
         $copyObj->setFormComponentName($this->getFormComponentName());
         $copyObj->setHasOptions($this->getHasOptions());
+        $copyObj->setMultiResponse($this->getMultiResponse());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1463,6 +1547,7 @@ abstract class FormComponent implements ActiveRecordInterface
         $this->title = null;
         $this->form_component_name = null;
         $this->has_options = null;
+        $this->multi_response = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();

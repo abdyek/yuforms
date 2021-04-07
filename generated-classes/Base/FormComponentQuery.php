@@ -24,11 +24,13 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFormComponentQuery orderByTitle($order = Criteria::ASC) Order by the title column
  * @method     ChildFormComponentQuery orderByFormComponentName($order = Criteria::ASC) Order by the form_component_name column
  * @method     ChildFormComponentQuery orderByHasOptions($order = Criteria::ASC) Order by the has_options column
+ * @method     ChildFormComponentQuery orderByMultiResponse($order = Criteria::ASC) Order by the multi_response column
  *
  * @method     ChildFormComponentQuery groupById() Group by the id column
  * @method     ChildFormComponentQuery groupByTitle() Group by the title column
  * @method     ChildFormComponentQuery groupByFormComponentName() Group by the form_component_name column
  * @method     ChildFormComponentQuery groupByHasOptions() Group by the has_options column
+ * @method     ChildFormComponentQuery groupByMultiResponse() Group by the multi_response column
  *
  * @method     ChildFormComponentQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildFormComponentQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -56,7 +58,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFormComponent|null findOneById(int $id) Return the first ChildFormComponent filtered by the id column
  * @method     ChildFormComponent|null findOneByTitle(string $title) Return the first ChildFormComponent filtered by the title column
  * @method     ChildFormComponent|null findOneByFormComponentName(string $form_component_name) Return the first ChildFormComponent filtered by the form_component_name column
- * @method     ChildFormComponent|null findOneByHasOptions(boolean $has_options) Return the first ChildFormComponent filtered by the has_options column *
+ * @method     ChildFormComponent|null findOneByHasOptions(boolean $has_options) Return the first ChildFormComponent filtered by the has_options column
+ * @method     ChildFormComponent|null findOneByMultiResponse(boolean $multi_response) Return the first ChildFormComponent filtered by the multi_response column *
 
  * @method     ChildFormComponent requirePk($key, ConnectionInterface $con = null) Return the ChildFormComponent by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFormComponent requireOne(ConnectionInterface $con = null) Return the first ChildFormComponent matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -65,12 +68,14 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFormComponent requireOneByTitle(string $title) Return the first ChildFormComponent filtered by the title column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFormComponent requireOneByFormComponentName(string $form_component_name) Return the first ChildFormComponent filtered by the form_component_name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFormComponent requireOneByHasOptions(boolean $has_options) Return the first ChildFormComponent filtered by the has_options column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildFormComponent requireOneByMultiResponse(boolean $multi_response) Return the first ChildFormComponent filtered by the multi_response column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildFormComponent[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildFormComponent objects based on current ModelCriteria
  * @method     ChildFormComponent[]|ObjectCollection findById(int $id) Return ChildFormComponent objects filtered by the id column
  * @method     ChildFormComponent[]|ObjectCollection findByTitle(string $title) Return ChildFormComponent objects filtered by the title column
  * @method     ChildFormComponent[]|ObjectCollection findByFormComponentName(string $form_component_name) Return ChildFormComponent objects filtered by the form_component_name column
  * @method     ChildFormComponent[]|ObjectCollection findByHasOptions(boolean $has_options) Return ChildFormComponent objects filtered by the has_options column
+ * @method     ChildFormComponent[]|ObjectCollection findByMultiResponse(boolean $multi_response) Return ChildFormComponent objects filtered by the multi_response column
  * @method     ChildFormComponent[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -169,7 +174,7 @@ abstract class FormComponentQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, title, form_component_name, has_options FROM form_component WHERE id = :p0';
+        $sql = 'SELECT id, title, form_component_name, has_options, multi_response FROM form_component WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -375,6 +380,33 @@ abstract class FormComponentQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(FormComponentTableMap::COL_HAS_OPTIONS, $hasOptions, $comparison);
+    }
+
+    /**
+     * Filter the query on the multi_response column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByMultiResponse(true); // WHERE multi_response = true
+     * $query->filterByMultiResponse('yes'); // WHERE multi_response = true
+     * </code>
+     *
+     * @param     boolean|string $multiResponse The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildFormComponentQuery The current query, for fluid interface
+     */
+    public function filterByMultiResponse($multiResponse = null, $comparison = null)
+    {
+        if (is_string($multiResponse)) {
+            $multiResponse = in_array(strtolower($multiResponse), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+
+        return $this->addUsingAlias(FormComponentTableMap::COL_MULTI_RESPONSE, $multiResponse, $comparison);
     }
 
     /**

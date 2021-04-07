@@ -58,7 +58,7 @@ class FormComponentTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 5;
 
     /**
      * The number of lazy-loaded columns
@@ -68,7 +68,7 @@ class FormComponentTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /**
      * the column name for the id field
@@ -91,6 +91,11 @@ class FormComponentTableMap extends TableMap
     const COL_HAS_OPTIONS = 'form_component.has_options';
 
     /**
+     * the column name for the multi_response field
+     */
+    const COL_MULTI_RESPONSE = 'form_component.multi_response';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -102,11 +107,11 @@ class FormComponentTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Title', 'FormComponentName', 'HasOptions', ),
-        self::TYPE_CAMELNAME     => array('id', 'title', 'formComponentName', 'hasOptions', ),
-        self::TYPE_COLNAME       => array(FormComponentTableMap::COL_ID, FormComponentTableMap::COL_TITLE, FormComponentTableMap::COL_FORM_COMPONENT_NAME, FormComponentTableMap::COL_HAS_OPTIONS, ),
-        self::TYPE_FIELDNAME     => array('id', 'title', 'form_component_name', 'has_options', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id', 'Title', 'FormComponentName', 'HasOptions', 'MultiResponse', ),
+        self::TYPE_CAMELNAME     => array('id', 'title', 'formComponentName', 'hasOptions', 'multiResponse', ),
+        self::TYPE_COLNAME       => array(FormComponentTableMap::COL_ID, FormComponentTableMap::COL_TITLE, FormComponentTableMap::COL_FORM_COMPONENT_NAME, FormComponentTableMap::COL_HAS_OPTIONS, FormComponentTableMap::COL_MULTI_RESPONSE, ),
+        self::TYPE_FIELDNAME     => array('id', 'title', 'form_component_name', 'has_options', 'multi_response', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -116,11 +121,11 @@ class FormComponentTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Title' => 1, 'FormComponentName' => 2, 'HasOptions' => 3, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'title' => 1, 'formComponentName' => 2, 'hasOptions' => 3, ),
-        self::TYPE_COLNAME       => array(FormComponentTableMap::COL_ID => 0, FormComponentTableMap::COL_TITLE => 1, FormComponentTableMap::COL_FORM_COMPONENT_NAME => 2, FormComponentTableMap::COL_HAS_OPTIONS => 3, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'title' => 1, 'form_component_name' => 2, 'has_options' => 3, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Title' => 1, 'FormComponentName' => 2, 'HasOptions' => 3, 'MultiResponse' => 4, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'title' => 1, 'formComponentName' => 2, 'hasOptions' => 3, 'multiResponse' => 4, ),
+        self::TYPE_COLNAME       => array(FormComponentTableMap::COL_ID => 0, FormComponentTableMap::COL_TITLE => 1, FormComponentTableMap::COL_FORM_COMPONENT_NAME => 2, FormComponentTableMap::COL_HAS_OPTIONS => 3, FormComponentTableMap::COL_MULTI_RESPONSE => 4, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'title' => 1, 'form_component_name' => 2, 'has_options' => 3, 'multi_response' => 4, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -162,6 +167,14 @@ class FormComponentTableMap extends TableMap
         'COL_HAS_OPTIONS' => 'HAS_OPTIONS',
         'has_options' => 'HAS_OPTIONS',
         'form_component.has_options' => 'HAS_OPTIONS',
+        'MultiResponse' => 'MULTI_RESPONSE',
+        'FormComponent.MultiResponse' => 'MULTI_RESPONSE',
+        'multiResponse' => 'MULTI_RESPONSE',
+        'formComponent.multiResponse' => 'MULTI_RESPONSE',
+        'FormComponentTableMap::COL_MULTI_RESPONSE' => 'MULTI_RESPONSE',
+        'COL_MULTI_RESPONSE' => 'MULTI_RESPONSE',
+        'multi_response' => 'MULTI_RESPONSE',
+        'form_component.multi_response' => 'MULTI_RESPONSE',
     ];
 
     /**
@@ -185,6 +198,7 @@ class FormComponentTableMap extends TableMap
         $this->addColumn('title', 'Title', 'VARCHAR', true, 256, null);
         $this->addColumn('form_component_name', 'FormComponentName', 'VARCHAR', true, 256, null);
         $this->addColumn('has_options', 'HasOptions', 'BOOLEAN', true, 1, false);
+        $this->addColumn('multi_response', 'MultiResponse', 'BOOLEAN', true, 1, false);
     } // initialize()
 
     /**
@@ -346,11 +360,13 @@ class FormComponentTableMap extends TableMap
             $criteria->addSelectColumn(FormComponentTableMap::COL_TITLE);
             $criteria->addSelectColumn(FormComponentTableMap::COL_FORM_COMPONENT_NAME);
             $criteria->addSelectColumn(FormComponentTableMap::COL_HAS_OPTIONS);
+            $criteria->addSelectColumn(FormComponentTableMap::COL_MULTI_RESPONSE);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.title');
             $criteria->addSelectColumn($alias . '.form_component_name');
             $criteria->addSelectColumn($alias . '.has_options');
+            $criteria->addSelectColumn($alias . '.multi_response');
         }
     }
 
@@ -372,11 +388,13 @@ class FormComponentTableMap extends TableMap
             $criteria->removeSelectColumn(FormComponentTableMap::COL_TITLE);
             $criteria->removeSelectColumn(FormComponentTableMap::COL_FORM_COMPONENT_NAME);
             $criteria->removeSelectColumn(FormComponentTableMap::COL_HAS_OPTIONS);
+            $criteria->removeSelectColumn(FormComponentTableMap::COL_MULTI_RESPONSE);
         } else {
             $criteria->removeSelectColumn($alias . '.id');
             $criteria->removeSelectColumn($alias . '.title');
             $criteria->removeSelectColumn($alias . '.form_component_name');
             $criteria->removeSelectColumn($alias . '.has_options');
+            $criteria->removeSelectColumn($alias . '.multi_response');
         }
     }
 

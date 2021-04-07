@@ -128,6 +128,7 @@ CREATE TABLE `form_component`
     `title` VARCHAR(256) NOT NULL,
     `form_component_name` VARCHAR(256) NOT NULL,
     `has_options` TINYINT(1) DEFAULT 0 NOT NULL,
+    `multi_response` TINYINT(1) DEFAULT 0 NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
