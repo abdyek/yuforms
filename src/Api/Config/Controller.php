@@ -359,6 +359,11 @@ class Controller {
                     ]
                 ]
             ]
-        ]
+        ],
+        'ListMyForms'=>[
+            'GET'=>[
+                'authorization'=>['member']
+            ],
+        ],
     ];
 }

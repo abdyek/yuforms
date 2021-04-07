@@ -39,4 +39,19 @@ class Form {
             QuestionModel::delete($formItem->getQuestionId());
         }
     }
+    public static function getsByMemberId($memberId) {
+        return \FormQuery::create()->findByMemberId($memberId);
+    }
+    public static function getInfoArrWithShareInfo($form) {
+        $share = ShareModel::getUnfinished($form->getId());
+        $shareArr = ($share)?ShareModel::getInfoArr($share):null;
+        return [
+            'id'=>$form->getId(),
+            'name'=>$form->getName(),
+            'createDateTime'=>$form->getCreateDateTime(),
+            'lastEditDateTime'=>$form->getLastEditDateTime(),
+            'stillShared'=>($share)?true:false,
+            'share'=>$shareArr
+        ];
+    }
 }

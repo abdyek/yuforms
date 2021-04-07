@@ -10,4 +10,12 @@ class Share {
         $shares = \ShareQuery::create()->findByFormId($formId);
         return $shares;
     }
+    public static function getInfoArr($share) {
+        return [
+            'id'=>$share->getId(),
+            'startDateTime'=>$share->getStartDateTime(),
+            'onlyMember'=>$share->getOnlyMember(),
+            'submitCount'=>$share->getSubmitCount()
+        ];
+    }
 }

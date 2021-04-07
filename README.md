@@ -34,7 +34,7 @@ if the requirements look like poor for you don't worry. There is more idea in my
 | Autumn | Midterm | Change Email | Change email for any reason | :heavy_check_mark: | :heavy_check_mark: |
 | Autumn | Midterm | Log out | Log out account | :heavy_check_mark: | :heavy_check_mark: |
 | Autumn | Final | Create Form | Create form to share | :heavy_check_mark: | :heavy_check_mark: |
-| Autumn | Final | List My Forms | List my forms created by myself | :x: | :x: |
+| Autumn | Final | List My Forms | List my forms created by myself | :heavy_check_mark: | :x: |
 | Autumn | Final | Share Form | Share form for other users to submit it | :heavy_check_mark: | :x: |
 | Autumn | Final | Edit Form | Edit form if didn't share it | :heavy_check_mark: | :x: |
 | Autumn | Final | Delete Form | Delete form | :heavy_check_mark: | :x: |
