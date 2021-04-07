@@ -37,5 +37,13 @@ class Submit {
             self::deleteByFormItemId($fi->getId());
         }
     }
+    public static function getByFormItemId($formItemId) {
+        return \SubmitQuery::create()->findOneByFormItemId($formItemId);
+    }
+    public static function updateSubmit($submit, $obj) {
+        $submit->setResponse($obj['response']);
+        $submit->setMultiResponse($obj['multiResponse']);
+        $submit->save();
+    }
 }
 

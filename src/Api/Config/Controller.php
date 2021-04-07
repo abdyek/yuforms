@@ -339,6 +339,25 @@ class Controller {
                         ]
                     ]
                 ]
+            ],
+            'PUT'=>[
+                'authorization'=>['guest', 'member'],
+                'required'=>[
+                    'id'=>[
+                        'type'=>'int',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>11
+                        ]
+                    ],
+                    'answers'=>[
+                        'type'=>'arr',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>100
+                        ]
+                    ]
+                ]
             ]
         ]
     ];

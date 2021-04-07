@@ -47,7 +47,11 @@ class Submit extends Controller {
     }
     protected function post() {
         $this->prepareModels();
-        $this->checkAvailable();
+        if($this->checkAvailable()) {
+            http_response_code(422);
+            exit();
+        }
+        // SAME CODES, I must refactor here
         $answers = $this->data['answers'];
         foreach($answers as $ans) {
             $question = QuestionModel::get($ans['questionId']);
@@ -71,6 +75,7 @@ class Submit extends Controller {
                 $userId = null;
                 $ipAddress = $_SERVER['REMOTE_ADDR'];
             }
+            // ^ SAME CODES, I must refactor here
             SubmitModel::create([
                 'formItemId'=>$formItem->getId(),
                 'shareId'=>$this->share->getId(),
@@ -83,15 +88,46 @@ class Submit extends Controller {
         $this->success();
     }
     private function checkAvailable() {
-        $submits = null;
         if($this->share->getOnlyMember()) {
-            $submits = SubmitModel::getCountByShareIdMemberId($this->share->getId(), $this->userId);
+            return SubmitModel::getCountByShareIdMemberId($this->share->getId(), $this->userId);
         } else {
-            $submits = SubmitModel::getCountByShareIdIpAddress($this->share->getId(), $_SERVER['REMOTE_ADDR']);
+            return SubmitModel::getCountByShareIdIpAddress($this->share->getId(), $_SERVER['REMOTE_ADDR']);
         }
-        if($submits) {
-            http_response_code(422);
+        return null;
+    }
+    protected function put() {
+        $this->prepareModels();
+        if(!$this->checkAvailable()) {
+            http_response_code(404);
             exit();
         }
+        // SAME CODES, I must refactor here
+        $answers = $this->data['answers'];
+        foreach($answers as $ans) {
+            $question = QuestionModel::get($ans['questionId']);
+            if(!$question) {
+                continue;
+            }
+            $formItem = FormItemModel::getWithFormIdQuestionId($this->form->getId(), $question->getId());
+            $formComponent = FormComponentModel::get($question->getFormComponentId());
+            if(!$formItem) {
+                continue;
+            }
+            if($formComponent->getHasOptions()) {
+                if(!OptionModel::isThereValue($question->getId(), $ans['answer'])) {
+                    continue;
+                }
+            }
+            // ^ SAME CODES, I must refactor here
+            $submit = SubmitModel::getByFormItemId($formItem->getId());
+            // these codes are not solution for input-checkbox component
+            // form_component table must contain multi_response
+            // I will fix it later
+            SubmitModel::updateSubmit($submit, [
+                'response'=>$ans['answer'],
+                'multiResponse'=>$formComponent->getHasOptions()
+            ]);
+        }
+        $this->success();
     }
 }
