@@ -58,7 +58,7 @@ class FormTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 5;
+    const NUM_COLUMNS = 6;
 
     /**
      * The number of lazy-loaded columns
@@ -68,7 +68,7 @@ class FormTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 5;
+    const NUM_HYDRATE_COLUMNS = 6;
 
     /**
      * the column name for the id field
@@ -91,6 +91,11 @@ class FormTableMap extends TableMap
     const COL_LAST_EDIT_DATE_TIME = 'form.last_edit_date_time';
 
     /**
+     * the column name for the is_template field
+     */
+    const COL_IS_TEMPLATE = 'form.is_template';
+
+    /**
      * the column name for the member_id field
      */
     const COL_MEMBER_ID = 'form.member_id';
@@ -107,11 +112,11 @@ class FormTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'CreateDateTime', 'LastEditDateTime', 'MemberId', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'createDateTime', 'lastEditDateTime', 'memberId', ),
-        self::TYPE_COLNAME       => array(FormTableMap::COL_ID, FormTableMap::COL_NAME, FormTableMap::COL_CREATE_DATE_TIME, FormTableMap::COL_LAST_EDIT_DATE_TIME, FormTableMap::COL_MEMBER_ID, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'create_date_time', 'last_edit_date_time', 'member_id', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'CreateDateTime', 'LastEditDateTime', 'IsTemplate', 'MemberId', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'createDateTime', 'lastEditDateTime', 'isTemplate', 'memberId', ),
+        self::TYPE_COLNAME       => array(FormTableMap::COL_ID, FormTableMap::COL_NAME, FormTableMap::COL_CREATE_DATE_TIME, FormTableMap::COL_LAST_EDIT_DATE_TIME, FormTableMap::COL_IS_TEMPLATE, FormTableMap::COL_MEMBER_ID, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'create_date_time', 'last_edit_date_time', 'is_template', 'member_id', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -121,11 +126,11 @@ class FormTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'CreateDateTime' => 2, 'LastEditDateTime' => 3, 'MemberId' => 4, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'createDateTime' => 2, 'lastEditDateTime' => 3, 'memberId' => 4, ),
-        self::TYPE_COLNAME       => array(FormTableMap::COL_ID => 0, FormTableMap::COL_NAME => 1, FormTableMap::COL_CREATE_DATE_TIME => 2, FormTableMap::COL_LAST_EDIT_DATE_TIME => 3, FormTableMap::COL_MEMBER_ID => 4, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'create_date_time' => 2, 'last_edit_date_time' => 3, 'member_id' => 4, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'CreateDateTime' => 2, 'LastEditDateTime' => 3, 'IsTemplate' => 4, 'MemberId' => 5, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'createDateTime' => 2, 'lastEditDateTime' => 3, 'isTemplate' => 4, 'memberId' => 5, ),
+        self::TYPE_COLNAME       => array(FormTableMap::COL_ID => 0, FormTableMap::COL_NAME => 1, FormTableMap::COL_CREATE_DATE_TIME => 2, FormTableMap::COL_LAST_EDIT_DATE_TIME => 3, FormTableMap::COL_IS_TEMPLATE => 4, FormTableMap::COL_MEMBER_ID => 5, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'create_date_time' => 2, 'last_edit_date_time' => 3, 'is_template' => 4, 'member_id' => 5, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -167,6 +172,14 @@ class FormTableMap extends TableMap
         'COL_LAST_EDIT_DATE_TIME' => 'LAST_EDIT_DATE_TIME',
         'last_edit_date_time' => 'LAST_EDIT_DATE_TIME',
         'form.last_edit_date_time' => 'LAST_EDIT_DATE_TIME',
+        'IsTemplate' => 'IS_TEMPLATE',
+        'Form.IsTemplate' => 'IS_TEMPLATE',
+        'isTemplate' => 'IS_TEMPLATE',
+        'form.isTemplate' => 'IS_TEMPLATE',
+        'FormTableMap::COL_IS_TEMPLATE' => 'IS_TEMPLATE',
+        'COL_IS_TEMPLATE' => 'IS_TEMPLATE',
+        'is_template' => 'IS_TEMPLATE',
+        'form.is_template' => 'IS_TEMPLATE',
         'MemberId' => 'MEMBER_ID',
         'Form.MemberId' => 'MEMBER_ID',
         'memberId' => 'MEMBER_ID',
@@ -196,8 +209,9 @@ class FormTableMap extends TableMap
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('name', 'Name', 'VARCHAR', true, 255, null);
-        $this->addColumn('create_date_time', 'CreateDateTime', 'TIMESTAMP', true, null, null);
+        $this->addColumn('create_date_time', 'CreateDateTime', 'TIMESTAMP', true, null, 'CURRENT_TIMESTAMP');
         $this->addColumn('last_edit_date_time', 'LastEditDateTime', 'TIMESTAMP', false, null, null);
+        $this->addColumn('is_template', 'IsTemplate', 'BOOLEAN', true, 1, false);
         $this->addForeignKey('member_id', 'MemberId', 'INTEGER', 'member', 'id', true, null, null);
     } // initialize()
 
@@ -227,6 +241,13 @@ class FormTableMap extends TableMap
     1 => ':id',
   ),
 ), null, null, 'FormItems', false);
+        $this->addRelation('Template', '\\Template', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':form_id',
+    1 => ':id',
+  ),
+), null, null, 'Templates', false);
     } // buildRelations()
 
     /**
@@ -374,12 +395,14 @@ class FormTableMap extends TableMap
             $criteria->addSelectColumn(FormTableMap::COL_NAME);
             $criteria->addSelectColumn(FormTableMap::COL_CREATE_DATE_TIME);
             $criteria->addSelectColumn(FormTableMap::COL_LAST_EDIT_DATE_TIME);
+            $criteria->addSelectColumn(FormTableMap::COL_IS_TEMPLATE);
             $criteria->addSelectColumn(FormTableMap::COL_MEMBER_ID);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.create_date_time');
             $criteria->addSelectColumn($alias . '.last_edit_date_time');
+            $criteria->addSelectColumn($alias . '.is_template');
             $criteria->addSelectColumn($alias . '.member_id');
         }
     }
@@ -402,12 +425,14 @@ class FormTableMap extends TableMap
             $criteria->removeSelectColumn(FormTableMap::COL_NAME);
             $criteria->removeSelectColumn(FormTableMap::COL_CREATE_DATE_TIME);
             $criteria->removeSelectColumn(FormTableMap::COL_LAST_EDIT_DATE_TIME);
+            $criteria->removeSelectColumn(FormTableMap::COL_IS_TEMPLATE);
             $criteria->removeSelectColumn(FormTableMap::COL_MEMBER_ID);
         } else {
             $criteria->removeSelectColumn($alias . '.id');
             $criteria->removeSelectColumn($alias . '.name');
             $criteria->removeSelectColumn($alias . '.create_date_time');
             $criteria->removeSelectColumn($alias . '.last_edit_date_time');
+            $criteria->removeSelectColumn($alias . '.is_template');
             $criteria->removeSelectColumn($alias . '.member_id');
         }
     }

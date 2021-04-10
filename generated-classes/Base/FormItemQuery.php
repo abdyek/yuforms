@@ -479,6 +479,32 @@ abstract class FormItemQuery extends ModelCriteria
     }
 
     /**
+     * Use the Form relation Form object
+     *
+     * @param callable(\FormQuery):\FormQuery $callable A function working on the related query
+     *
+     * @param string|null $relationAlias optional alias for the relation
+     *
+     * @param string|null $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this
+     */
+    public function withFormQuery(
+        callable $callable,
+        string $relationAlias = null,
+        ?string $joinType = Criteria::INNER_JOIN
+    ) {
+        $relatedQuery = $this->useFormQuery(
+            $relationAlias,
+            $joinType
+        );
+        $callable($relatedQuery);
+        $relatedQuery->endUse();
+
+        return $this;
+    }
+
+    /**
      * Filter the query by a related \Question object
      *
      * @param \Question|ObjectCollection $question The related object(s) to use as filter
@@ -556,6 +582,32 @@ abstract class FormItemQuery extends ModelCriteria
     }
 
     /**
+     * Use the Question relation Question object
+     *
+     * @param callable(\QuestionQuery):\QuestionQuery $callable A function working on the related query
+     *
+     * @param string|null $relationAlias optional alias for the relation
+     *
+     * @param string|null $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this
+     */
+    public function withQuestionQuery(
+        callable $callable,
+        string $relationAlias = null,
+        ?string $joinType = Criteria::INNER_JOIN
+    ) {
+        $relatedQuery = $this->useQuestionQuery(
+            $relationAlias,
+            $joinType
+        );
+        $callable($relatedQuery);
+        $relatedQuery->endUse();
+
+        return $this;
+    }
+
+    /**
      * Filter the query by a related \Submit object
      *
      * @param \Submit|ObjectCollection $submit the related object to use as filter
@@ -626,6 +678,32 @@ abstract class FormItemQuery extends ModelCriteria
         return $this
             ->joinSubmit($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Submit', '\SubmitQuery');
+    }
+
+    /**
+     * Use the Submit relation Submit object
+     *
+     * @param callable(\SubmitQuery):\SubmitQuery $callable A function working on the related query
+     *
+     * @param string|null $relationAlias optional alias for the relation
+     *
+     * @param string|null $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this
+     */
+    public function withSubmitQuery(
+        callable $callable,
+        string $relationAlias = null,
+        ?string $joinType = Criteria::INNER_JOIN
+    ) {
+        $relatedQuery = $this->useSubmitQuery(
+            $relationAlias,
+            $joinType
+        );
+        $callable($relatedQuery);
+        $relatedQuery->endUse();
+
+        return $this;
     }
 
     /**

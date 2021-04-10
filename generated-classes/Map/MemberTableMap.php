@@ -254,7 +254,7 @@ class MemberTableMap extends TableMap
         $this->addColumn('password_hash', 'PasswordHash', 'VARCHAR', true, 60, null);
         $this->addColumn('activation_code', 'ActivationCode', 'VARCHAR', true, 6, null);
         $this->addColumn('recovery_code', 'RecoveryCode', 'VARCHAR', false, 10, null);
-        $this->addColumn('sign_up_date_time', 'SignUpDateTime', 'TIMESTAMP', true, null, null);
+        $this->addColumn('sign_up_date_time', 'SignUpDateTime', 'TIMESTAMP', true, null, 'CURRENT_TIMESTAMP');
     } // initialize()
 
     /**

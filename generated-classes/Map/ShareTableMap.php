@@ -208,7 +208,7 @@ class ShareTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('start_date_time', 'StartDateTime', 'TIMESTAMP', true, null, null);
+        $this->addColumn('start_date_time', 'StartDateTime', 'TIMESTAMP', true, null, 'CURRENT_TIMESTAMP');
         $this->addColumn('stop_date_time', 'StopDateTime', 'TIMESTAMP', false, null, null);
         $this->addColumn('onlyMember', 'Onlymember', 'BOOLEAN', true, 1, true);
         $this->addColumn('submit_count', 'SubmitCount', 'INTEGER', true, null, 0);

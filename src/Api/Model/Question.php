@@ -14,4 +14,11 @@ class Question {
         }
         $question->delete();
     }
+    public static function create($formComponentId, $text) {
+        $question = new \Question;
+        $question->setFormComponentId($formComponentId);
+        $question->setText($text);
+        $question->save();
+        return $question;
+    }
 }

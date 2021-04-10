@@ -8,13 +8,14 @@
         <column name="password_hash" type="varchar" size="60" required="true"/>
         <column name="activation_code" type="varchar" size="6" required="true"/>
         <column name="recovery_code" type="varchar" size="10" required="false"/>
-        <column name="sign_up_date_time" type="timestamp" required="true"/>
+        <column name="sign_up_date_time" type="timestamp" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
     </table>
     <table name="form">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="name" type="varchar" size="255" required="true"/>
-        <column name="create_date_time" type="timestamp" required="true"/>
+        <column name="create_date_time" type="timestamp" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
         <column name="last_edit_date_time" type="timestamp"/>
+        <column name="is_template" type="boolean" required="true" defaultValue="false"/>
         
         <column name="member_id" type="integer" required="true"/>
         <foreign-key foreignTable="member">
@@ -24,7 +25,7 @@
     </table>
     <table name="share">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="start_date_time" type="timestamp" required="true"/>
+        <column name="start_date_time" type="timestamp" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
         <column name="stop_date_time" type="timestamp" />
         <column name="onlyMember" type="boolean" required="true" defaultValue="true" />
         <column name="submit_count" type="integer" required="true" defaultValue="0" />
@@ -101,5 +102,13 @@
             <reference local="question_id" foreign="id" />
         </foreign-key>
 
+    </table>
+    <table name="template">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="form_id" type="integer" required="true"/>
+        <column name="is_public" type="boolean" required="true" defaultValue="false"/>
+        <foreign-key foreignTable="form">
+            <reference local="form_id" foreign="id" />
+        </foreign-key>
     </table>
 </database>

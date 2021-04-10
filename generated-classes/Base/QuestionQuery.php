@@ -461,6 +461,32 @@ abstract class QuestionQuery extends ModelCriteria
     }
 
     /**
+     * Use the FormComponent relation FormComponent object
+     *
+     * @param callable(\FormComponentQuery):\FormComponentQuery $callable A function working on the related query
+     *
+     * @param string|null $relationAlias optional alias for the relation
+     *
+     * @param string|null $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this
+     */
+    public function withFormComponentQuery(
+        callable $callable,
+        string $relationAlias = null,
+        ?string $joinType = Criteria::INNER_JOIN
+    ) {
+        $relatedQuery = $this->useFormComponentQuery(
+            $relationAlias,
+            $joinType
+        );
+        $callable($relatedQuery);
+        $relatedQuery->endUse();
+
+        return $this;
+    }
+
+    /**
      * Filter the query by a related \FormItem object
      *
      * @param \FormItem|ObjectCollection $formItem the related object to use as filter
@@ -534,6 +560,32 @@ abstract class QuestionQuery extends ModelCriteria
     }
 
     /**
+     * Use the FormItem relation FormItem object
+     *
+     * @param callable(\FormItemQuery):\FormItemQuery $callable A function working on the related query
+     *
+     * @param string|null $relationAlias optional alias for the relation
+     *
+     * @param string|null $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this
+     */
+    public function withFormItemQuery(
+        callable $callable,
+        string $relationAlias = null,
+        ?string $joinType = Criteria::INNER_JOIN
+    ) {
+        $relatedQuery = $this->useFormItemQuery(
+            $relationAlias,
+            $joinType
+        );
+        $callable($relatedQuery);
+        $relatedQuery->endUse();
+
+        return $this;
+    }
+
+    /**
      * Filter the query by a related \Option object
      *
      * @param \Option|ObjectCollection $option the related object to use as filter
@@ -604,6 +656,32 @@ abstract class QuestionQuery extends ModelCriteria
         return $this
             ->joinOption($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Option', '\OptionQuery');
+    }
+
+    /**
+     * Use the Option relation Option object
+     *
+     * @param callable(\OptionQuery):\OptionQuery $callable A function working on the related query
+     *
+     * @param string|null $relationAlias optional alias for the relation
+     *
+     * @param string|null $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this
+     */
+    public function withOptionQuery(
+        callable $callable,
+        string $relationAlias = null,
+        ?string $joinType = Criteria::INNER_JOIN
+    ) {
+        $relatedQuery = $this->useOptionQuery(
+            $relationAlias,
+            $joinType
+        );
+        $callable($relatedQuery);
+        $relatedQuery->endUse();
+
+        return $this;
     }
 
     /**

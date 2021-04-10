@@ -471,6 +471,32 @@ abstract class OptionQuery extends ModelCriteria
     }
 
     /**
+     * Use the Question relation Question object
+     *
+     * @param callable(\QuestionQuery):\QuestionQuery $callable A function working on the related query
+     *
+     * @param string|null $relationAlias optional alias for the relation
+     *
+     * @param string|null $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this
+     */
+    public function withQuestionQuery(
+        callable $callable,
+        string $relationAlias = null,
+        ?string $joinType = Criteria::INNER_JOIN
+    ) {
+        $relatedQuery = $this->useQuestionQuery(
+            $relationAlias,
+            $joinType
+        );
+        $callable($relatedQuery);
+        $relatedQuery->endUse();
+
+        return $this;
+    }
+
+    /**
      * Exclude object from result
      *
      * @param   ChildOption $option Object to remove from the list of results

@@ -10,12 +10,15 @@ use \Member as ChildMember;
 use \MemberQuery as ChildMemberQuery;
 use \Share as ChildShare;
 use \ShareQuery as ChildShareQuery;
+use \Template as ChildTemplate;
+use \TemplateQuery as ChildTemplateQuery;
 use \DateTime;
 use \Exception;
 use \PDO;
 use Map\FormItemTableMap;
 use Map\FormTableMap;
 use Map\ShareTableMap;
+use Map\TemplateTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -88,6 +91,7 @@ abstract class Form implements ActiveRecordInterface
     /**
      * The value for the create_date_time field.
      *
+     * Note: this column has a database default value of: (expression) CURRENT_TIMESTAMP
      * @var        DateTime
      */
     protected $create_date_time;
@@ -98,6 +102,14 @@ abstract class Form implements ActiveRecordInterface
      * @var        DateTime|null
      */
     protected $last_edit_date_time;
+
+    /**
+     * The value for the is_template field.
+     *
+     * Note: this column has a database default value of: false
+     * @var        boolean
+     */
+    protected $is_template;
 
     /**
      * The value for the member_id field.
@@ -124,6 +136,12 @@ abstract class Form implements ActiveRecordInterface
     protected $collFormItemsPartial;
 
     /**
+     * @var        ObjectCollection|ChildTemplate[] Collection to store aggregation of ChildTemplate objects.
+     */
+    protected $collTemplates;
+    protected $collTemplatesPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
@@ -144,10 +162,29 @@ abstract class Form implements ActiveRecordInterface
     protected $formItemsScheduledForDeletion = null;
 
     /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildTemplate[]
+     */
+    protected $templatesScheduledForDeletion = null;
+
+    /**
+     * Applies default values to this object.
+     * This method should be called from the object's constructor (or
+     * equivalent initialization method).
+     * @see __construct()
+     */
+    public function applyDefaultValues()
+    {
+        $this->is_template = false;
+    }
+
+    /**
      * Initializes internal state of Base\Form object.
+     * @see applyDefaults()
      */
     public function __construct()
     {
+        $this->applyDefaultValues();
     }
 
     /**
@@ -338,15 +375,16 @@ abstract class Form implements ActiveRecordInterface
      *
      * @param  mixed   $parser                 A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param  boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
+     * @param  string  $keyType                (optional) One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM. Defaults to TableMap::TYPE_PHPNAME.
      * @return string  The exported data
      */
-    public function exportTo($parser, $includeLazyLoadColumns = true)
+    public function exportTo($parser, $includeLazyLoadColumns = true, $keyType = TableMap::TYPE_PHPNAME)
     {
         if (!$parser instanceof AbstractParser) {
             $parser = AbstractParser::getParser($parser);
         }
 
-        return $parser->fromArray($this->toArray(TableMap::TYPE_PHPNAME, $includeLazyLoadColumns, array(), true));
+        return $parser->fromArray($this->toArray($keyType, $includeLazyLoadColumns, array(), true));
     }
 
     /**
@@ -398,6 +436,8 @@ abstract class Form implements ActiveRecordInterface
      * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
+     *
+     * @psalm-return ($format is null ? DateTime : string)
      */
     public function getCreateDateTime($format = null)
     {
@@ -418,6 +458,8 @@ abstract class Form implements ActiveRecordInterface
      * @return string|DateTime|null Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
+     *
+     * @psalm-return ($format is null ? DateTime|null : string|null)
      */
     public function getLastEditDateTime($format = null)
     {
@@ -426,6 +468,26 @@ abstract class Form implements ActiveRecordInterface
         } else {
             return $this->last_edit_date_time instanceof \DateTimeInterface ? $this->last_edit_date_time->format($format) : null;
         }
+    }
+
+    /**
+     * Get the [is_template] column value.
+     *
+     * @return boolean
+     */
+    public function getIsTemplate()
+    {
+        return $this->is_template;
+    }
+
+    /**
+     * Get the [is_template] column value.
+     *
+     * @return boolean
+     */
+    public function isTemplate()
+    {
+        return $this->getIsTemplate();
     }
 
     /**
@@ -519,6 +581,34 @@ abstract class Form implements ActiveRecordInterface
     } // setLastEditDateTime()
 
     /**
+     * Sets the value of the [is_template] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param  boolean|integer|string $v The new value
+     * @return $this|\Form The current object (for fluent API support)
+     */
+    public function setIsTemplate($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->is_template !== $v) {
+            $this->is_template = $v;
+            $this->modifiedColumns[FormTableMap::COL_IS_TEMPLATE] = true;
+        }
+
+        return $this;
+    } // setIsTemplate()
+
+    /**
      * Set the value of [member_id] column.
      *
      * @param int $v New value
@@ -552,6 +642,10 @@ abstract class Form implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->is_template !== false) {
+                return false;
+            }
+
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -596,7 +690,10 @@ abstract class Form implements ActiveRecordInterface
             }
             $this->last_edit_date_time = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : FormTableMap::translateFieldName('MemberId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : FormTableMap::translateFieldName('IsTemplate', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->is_template = (null !== $col) ? (boolean) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : FormTableMap::translateFieldName('MemberId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->member_id = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
@@ -606,7 +703,7 @@ abstract class Form implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 5; // 5 = FormTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 6; // 6 = FormTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Form'), 0, $e);
@@ -674,6 +771,8 @@ abstract class Form implements ActiveRecordInterface
             $this->collShares = null;
 
             $this->collFormItems = null;
+
+            $this->collTemplates = null;
 
         } // if (deep)
     }
@@ -835,6 +934,23 @@ abstract class Form implements ActiveRecordInterface
                 }
             }
 
+            if ($this->templatesScheduledForDeletion !== null) {
+                if (!$this->templatesScheduledForDeletion->isEmpty()) {
+                    \TemplateQuery::create()
+                        ->filterByPrimaryKeys($this->templatesScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->templatesScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collTemplates !== null) {
+                foreach ($this->collTemplates as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             $this->alreadyInSave = false;
 
         }
@@ -873,6 +989,9 @@ abstract class Form implements ActiveRecordInterface
         if ($this->isColumnModified(FormTableMap::COL_LAST_EDIT_DATE_TIME)) {
             $modifiedColumns[':p' . $index++]  = 'last_edit_date_time';
         }
+        if ($this->isColumnModified(FormTableMap::COL_IS_TEMPLATE)) {
+            $modifiedColumns[':p' . $index++]  = 'is_template';
+        }
         if ($this->isColumnModified(FormTableMap::COL_MEMBER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'member_id';
         }
@@ -898,6 +1017,9 @@ abstract class Form implements ActiveRecordInterface
                         break;
                     case 'last_edit_date_time':
                         $stmt->bindValue($identifier, $this->last_edit_date_time ? $this->last_edit_date_time->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
+                        break;
+                    case 'is_template':
+                        $stmt->bindValue($identifier, (int) $this->is_template, PDO::PARAM_INT);
                         break;
                     case 'member_id':
                         $stmt->bindValue($identifier, $this->member_id, PDO::PARAM_INT);
@@ -977,6 +1099,9 @@ abstract class Form implements ActiveRecordInterface
                 return $this->getLastEditDateTime();
                 break;
             case 4:
+                return $this->getIsTemplate();
+                break;
+            case 5:
                 return $this->getMemberId();
                 break;
             default:
@@ -1013,7 +1138,8 @@ abstract class Form implements ActiveRecordInterface
             $keys[1] => $this->getName(),
             $keys[2] => $this->getCreateDateTime(),
             $keys[3] => $this->getLastEditDateTime(),
-            $keys[4] => $this->getMemberId(),
+            $keys[4] => $this->getIsTemplate(),
+            $keys[5] => $this->getMemberId(),
         );
         if ($result[$keys[2]] instanceof \DateTimeInterface) {
             $result[$keys[2]] = $result[$keys[2]]->format('Y-m-d H:i:s.u');
@@ -1074,6 +1200,21 @@ abstract class Form implements ActiveRecordInterface
 
                 $result[$key] = $this->collFormItems->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
+            if (null !== $this->collTemplates) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'templates';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'templates';
+                        break;
+                    default:
+                        $key = 'Templates';
+                }
+
+                $result[$key] = $this->collTemplates->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
         }
 
         return $result;
@@ -1121,6 +1262,9 @@ abstract class Form implements ActiveRecordInterface
                 $this->setLastEditDateTime($value);
                 break;
             case 4:
+                $this->setIsTemplate($value);
+                break;
+            case 5:
                 $this->setMemberId($value);
                 break;
         } // switch()
@@ -1143,7 +1287,7 @@ abstract class Form implements ActiveRecordInterface
      *
      * @param      array  $arr     An array to populate the object from.
      * @param      string $keyType The type of keys the array uses.
-     * @return void
+     * @return     $this|\Form
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1162,8 +1306,13 @@ abstract class Form implements ActiveRecordInterface
             $this->setLastEditDateTime($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setMemberId($arr[$keys[4]]);
+            $this->setIsTemplate($arr[$keys[4]]);
         }
+        if (array_key_exists($keys[5], $arr)) {
+            $this->setMemberId($arr[$keys[5]]);
+        }
+
+        return $this;
     }
 
      /**
@@ -1216,6 +1365,9 @@ abstract class Form implements ActiveRecordInterface
         }
         if ($this->isColumnModified(FormTableMap::COL_LAST_EDIT_DATE_TIME)) {
             $criteria->add(FormTableMap::COL_LAST_EDIT_DATE_TIME, $this->last_edit_date_time);
+        }
+        if ($this->isColumnModified(FormTableMap::COL_IS_TEMPLATE)) {
+            $criteria->add(FormTableMap::COL_IS_TEMPLATE, $this->is_template);
         }
         if ($this->isColumnModified(FormTableMap::COL_MEMBER_ID)) {
             $criteria->add(FormTableMap::COL_MEMBER_ID, $this->member_id);
@@ -1309,6 +1461,7 @@ abstract class Form implements ActiveRecordInterface
         $copyObj->setName($this->getName());
         $copyObj->setCreateDateTime($this->getCreateDateTime());
         $copyObj->setLastEditDateTime($this->getLastEditDateTime());
+        $copyObj->setIsTemplate($this->getIsTemplate());
         $copyObj->setMemberId($this->getMemberId());
 
         if ($deepCopy) {
@@ -1325,6 +1478,12 @@ abstract class Form implements ActiveRecordInterface
             foreach ($this->getFormItems() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addFormItem($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getTemplates() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addTemplate($relObj->copy($deepCopy));
                 }
             }
 
@@ -1426,6 +1585,10 @@ abstract class Form implements ActiveRecordInterface
         }
         if ('FormItem' === $relationName) {
             $this->initFormItems();
+            return;
+        }
+        if ('Template' === $relationName) {
+            $this->initTemplates();
             return;
         }
     }
@@ -1924,6 +2087,240 @@ abstract class Form implements ActiveRecordInterface
     }
 
     /**
+     * Clears out the collTemplates collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addTemplates()
+     */
+    public function clearTemplates()
+    {
+        $this->collTemplates = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collTemplates collection loaded partially.
+     */
+    public function resetPartialTemplates($v = true)
+    {
+        $this->collTemplatesPartial = $v;
+    }
+
+    /**
+     * Initializes the collTemplates collection.
+     *
+     * By default this just sets the collTemplates collection to an empty array (like clearcollTemplates());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initTemplates($overrideExisting = true)
+    {
+        if (null !== $this->collTemplates && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = TemplateTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collTemplates = new $collectionClassName;
+        $this->collTemplates->setModel('\Template');
+    }
+
+    /**
+     * Gets an array of ChildTemplate objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildForm is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildTemplate[] List of ChildTemplate objects
+     * @throws PropelException
+     */
+    public function getTemplates(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collTemplatesPartial && !$this->isNew();
+        if (null === $this->collTemplates || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collTemplates) {
+                    $this->initTemplates();
+                } else {
+                    $collectionClassName = TemplateTableMap::getTableMap()->getCollectionClassName();
+
+                    $collTemplates = new $collectionClassName;
+                    $collTemplates->setModel('\Template');
+
+                    return $collTemplates;
+                }
+            } else {
+                $collTemplates = ChildTemplateQuery::create(null, $criteria)
+                    ->filterByForm($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collTemplatesPartial && count($collTemplates)) {
+                        $this->initTemplates(false);
+
+                        foreach ($collTemplates as $obj) {
+                            if (false == $this->collTemplates->contains($obj)) {
+                                $this->collTemplates->append($obj);
+                            }
+                        }
+
+                        $this->collTemplatesPartial = true;
+                    }
+
+                    return $collTemplates;
+                }
+
+                if ($partial && $this->collTemplates) {
+                    foreach ($this->collTemplates as $obj) {
+                        if ($obj->isNew()) {
+                            $collTemplates[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collTemplates = $collTemplates;
+                $this->collTemplatesPartial = false;
+            }
+        }
+
+        return $this->collTemplates;
+    }
+
+    /**
+     * Sets a collection of ChildTemplate objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $templates A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildForm The current object (for fluent API support)
+     */
+    public function setTemplates(Collection $templates, ConnectionInterface $con = null)
+    {
+        /** @var ChildTemplate[] $templatesToDelete */
+        $templatesToDelete = $this->getTemplates(new Criteria(), $con)->diff($templates);
+
+
+        $this->templatesScheduledForDeletion = $templatesToDelete;
+
+        foreach ($templatesToDelete as $templateRemoved) {
+            $templateRemoved->setForm(null);
+        }
+
+        $this->collTemplates = null;
+        foreach ($templates as $template) {
+            $this->addTemplate($template);
+        }
+
+        $this->collTemplates = $templates;
+        $this->collTemplatesPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Template objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Template objects.
+     * @throws PropelException
+     */
+    public function countTemplates(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collTemplatesPartial && !$this->isNew();
+        if (null === $this->collTemplates || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collTemplates) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getTemplates());
+            }
+
+            $query = ChildTemplateQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByForm($this)
+                ->count($con);
+        }
+
+        return count($this->collTemplates);
+    }
+
+    /**
+     * Method called to associate a ChildTemplate object to this object
+     * through the ChildTemplate foreign key attribute.
+     *
+     * @param  ChildTemplate $l ChildTemplate
+     * @return $this|\Form The current object (for fluent API support)
+     */
+    public function addTemplate(ChildTemplate $l)
+    {
+        if ($this->collTemplates === null) {
+            $this->initTemplates();
+            $this->collTemplatesPartial = true;
+        }
+
+        if (!$this->collTemplates->contains($l)) {
+            $this->doAddTemplate($l);
+
+            if ($this->templatesScheduledForDeletion and $this->templatesScheduledForDeletion->contains($l)) {
+                $this->templatesScheduledForDeletion->remove($this->templatesScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildTemplate $template The ChildTemplate object to add.
+     */
+    protected function doAddTemplate(ChildTemplate $template)
+    {
+        $this->collTemplates[]= $template;
+        $template->setForm($this);
+    }
+
+    /**
+     * @param  ChildTemplate $template The ChildTemplate object to remove.
+     * @return $this|ChildForm The current object (for fluent API support)
+     */
+    public function removeTemplate(ChildTemplate $template)
+    {
+        if ($this->getTemplates()->contains($template)) {
+            $pos = $this->collTemplates->search($template);
+            $this->collTemplates->remove($pos);
+            if (null === $this->templatesScheduledForDeletion) {
+                $this->templatesScheduledForDeletion = clone $this->collTemplates;
+                $this->templatesScheduledForDeletion->clear();
+            }
+            $this->templatesScheduledForDeletion[]= clone $template;
+            $template->setForm(null);
+        }
+
+        return $this;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
@@ -1937,9 +2334,11 @@ abstract class Form implements ActiveRecordInterface
         $this->name = null;
         $this->create_date_time = null;
         $this->last_edit_date_time = null;
+        $this->is_template = null;
         $this->member_id = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
+        $this->applyDefaultValues();
         $this->resetModified();
         $this->setNew(true);
         $this->setDeleted(false);
@@ -1966,10 +2365,16 @@ abstract class Form implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collTemplates) {
+                foreach ($this->collTemplates as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
         $this->collShares = null;
         $this->collFormItems = null;
+        $this->collTemplates = null;
         $this->aMember = null;
     }
 
@@ -2083,15 +2488,18 @@ abstract class Form implements ActiveRecordInterface
 
         if (0 === strpos($name, 'from')) {
             $format = substr($name, 4);
+            $inputData = $params[0];
+            $keyType = $params[1] ?? TableMap::TYPE_PHPNAME;
 
-            return $this->importFrom($format, reset($params));
+            return $this->importFrom($format, $inputData, $keyType);
         }
 
         if (0 === strpos($name, 'to')) {
             $format = substr($name, 2);
-            $includeLazyLoadColumns = isset($params[0]) ? $params[0] : true;
+            $includeLazyLoadColumns = $params[0] ?? true;
+            $keyType = $params[1] ?? TableMap::TYPE_PHPNAME;
 
-            return $this->exportTo($format, $includeLazyLoadColumns);
+            return $this->exportTo($format, $includeLazyLoadColumns, $keyType);
         }
 
         throw new BadMethodCallException(sprintf('Call to undefined method: %s.', $name));

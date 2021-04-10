@@ -24,12 +24,14 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFormQuery orderByName($order = Criteria::ASC) Order by the name column
  * @method     ChildFormQuery orderByCreateDateTime($order = Criteria::ASC) Order by the create_date_time column
  * @method     ChildFormQuery orderByLastEditDateTime($order = Criteria::ASC) Order by the last_edit_date_time column
+ * @method     ChildFormQuery orderByIsTemplate($order = Criteria::ASC) Order by the is_template column
  * @method     ChildFormQuery orderByMemberId($order = Criteria::ASC) Order by the member_id column
  *
  * @method     ChildFormQuery groupById() Group by the id column
  * @method     ChildFormQuery groupByName() Group by the name column
  * @method     ChildFormQuery groupByCreateDateTime() Group by the create_date_time column
  * @method     ChildFormQuery groupByLastEditDateTime() Group by the last_edit_date_time column
+ * @method     ChildFormQuery groupByIsTemplate() Group by the is_template column
  * @method     ChildFormQuery groupByMemberId() Group by the member_id column
  *
  * @method     ChildFormQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -70,7 +72,17 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFormQuery rightJoinWithFormItem() Adds a RIGHT JOIN clause and with to the query using the FormItem relation
  * @method     ChildFormQuery innerJoinWithFormItem() Adds a INNER JOIN clause and with to the query using the FormItem relation
  *
- * @method     \MemberQuery|\ShareQuery|\FormItemQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     ChildFormQuery leftJoinTemplate($relationAlias = null) Adds a LEFT JOIN clause to the query using the Template relation
+ * @method     ChildFormQuery rightJoinTemplate($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Template relation
+ * @method     ChildFormQuery innerJoinTemplate($relationAlias = null) Adds a INNER JOIN clause to the query using the Template relation
+ *
+ * @method     ChildFormQuery joinWithTemplate($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Template relation
+ *
+ * @method     ChildFormQuery leftJoinWithTemplate() Adds a LEFT JOIN clause and with to the query using the Template relation
+ * @method     ChildFormQuery rightJoinWithTemplate() Adds a RIGHT JOIN clause and with to the query using the Template relation
+ * @method     ChildFormQuery innerJoinWithTemplate() Adds a INNER JOIN clause and with to the query using the Template relation
+ *
+ * @method     \MemberQuery|\ShareQuery|\FormItemQuery|\TemplateQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildForm|null findOne(ConnectionInterface $con = null) Return the first ChildForm matching the query
  * @method     ChildForm findOneOrCreate(ConnectionInterface $con = null) Return the first ChildForm matching the query, or a new ChildForm object populated from the query conditions when no match is found
@@ -79,6 +91,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildForm|null findOneByName(string $name) Return the first ChildForm filtered by the name column
  * @method     ChildForm|null findOneByCreateDateTime(string $create_date_time) Return the first ChildForm filtered by the create_date_time column
  * @method     ChildForm|null findOneByLastEditDateTime(string $last_edit_date_time) Return the first ChildForm filtered by the last_edit_date_time column
+ * @method     ChildForm|null findOneByIsTemplate(boolean $is_template) Return the first ChildForm filtered by the is_template column
  * @method     ChildForm|null findOneByMemberId(int $member_id) Return the first ChildForm filtered by the member_id column *
 
  * @method     ChildForm requirePk($key, ConnectionInterface $con = null) Return the ChildForm by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -88,6 +101,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildForm requireOneByName(string $name) Return the first ChildForm filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildForm requireOneByCreateDateTime(string $create_date_time) Return the first ChildForm filtered by the create_date_time column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildForm requireOneByLastEditDateTime(string $last_edit_date_time) Return the first ChildForm filtered by the last_edit_date_time column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildForm requireOneByIsTemplate(boolean $is_template) Return the first ChildForm filtered by the is_template column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildForm requireOneByMemberId(int $member_id) Return the first ChildForm filtered by the member_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildForm[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildForm objects based on current ModelCriteria
@@ -95,6 +109,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildForm[]|ObjectCollection findByName(string $name) Return ChildForm objects filtered by the name column
  * @method     ChildForm[]|ObjectCollection findByCreateDateTime(string $create_date_time) Return ChildForm objects filtered by the create_date_time column
  * @method     ChildForm[]|ObjectCollection findByLastEditDateTime(string $last_edit_date_time) Return ChildForm objects filtered by the last_edit_date_time column
+ * @method     ChildForm[]|ObjectCollection findByIsTemplate(boolean $is_template) Return ChildForm objects filtered by the is_template column
  * @method     ChildForm[]|ObjectCollection findByMemberId(int $member_id) Return ChildForm objects filtered by the member_id column
  * @method     ChildForm[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
@@ -194,7 +209,7 @@ abstract class FormQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, create_date_time, last_edit_date_time, member_id FROM form WHERE id = :p0';
+        $sql = 'SELECT id, name, create_date_time, last_edit_date_time, is_template, member_id FROM form WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -437,6 +452,33 @@ abstract class FormQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the is_template column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByIsTemplate(true); // WHERE is_template = true
+     * $query->filterByIsTemplate('yes'); // WHERE is_template = true
+     * </code>
+     *
+     * @param     boolean|string $isTemplate The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildFormQuery The current query, for fluid interface
+     */
+    public function filterByIsTemplate($isTemplate = null, $comparison = null)
+    {
+        if (is_string($isTemplate)) {
+            $isTemplate = in_array(strtolower($isTemplate), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+
+        return $this->addUsingAlias(FormTableMap::COL_IS_TEMPLATE, $isTemplate, $comparison);
+    }
+
+    /**
      * Filter the query on the member_id column
      *
      * Example usage:
@@ -557,6 +599,32 @@ abstract class FormQuery extends ModelCriteria
     }
 
     /**
+     * Use the Member relation Member object
+     *
+     * @param callable(\MemberQuery):\MemberQuery $callable A function working on the related query
+     *
+     * @param string|null $relationAlias optional alias for the relation
+     *
+     * @param string|null $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this
+     */
+    public function withMemberQuery(
+        callable $callable,
+        string $relationAlias = null,
+        ?string $joinType = Criteria::INNER_JOIN
+    ) {
+        $relatedQuery = $this->useMemberQuery(
+            $relationAlias,
+            $joinType
+        );
+        $callable($relatedQuery);
+        $relatedQuery->endUse();
+
+        return $this;
+    }
+
+    /**
      * Filter the query by a related \Share object
      *
      * @param \Share|ObjectCollection $share the related object to use as filter
@@ -630,6 +698,32 @@ abstract class FormQuery extends ModelCriteria
     }
 
     /**
+     * Use the Share relation Share object
+     *
+     * @param callable(\ShareQuery):\ShareQuery $callable A function working on the related query
+     *
+     * @param string|null $relationAlias optional alias for the relation
+     *
+     * @param string|null $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this
+     */
+    public function withShareQuery(
+        callable $callable,
+        string $relationAlias = null,
+        ?string $joinType = Criteria::INNER_JOIN
+    ) {
+        $relatedQuery = $this->useShareQuery(
+            $relationAlias,
+            $joinType
+        );
+        $callable($relatedQuery);
+        $relatedQuery->endUse();
+
+        return $this;
+    }
+
+    /**
      * Filter the query by a related \FormItem object
      *
      * @param \FormItem|ObjectCollection $formItem the related object to use as filter
@@ -700,6 +794,131 @@ abstract class FormQuery extends ModelCriteria
         return $this
             ->joinFormItem($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'FormItem', '\FormItemQuery');
+    }
+
+    /**
+     * Use the FormItem relation FormItem object
+     *
+     * @param callable(\FormItemQuery):\FormItemQuery $callable A function working on the related query
+     *
+     * @param string|null $relationAlias optional alias for the relation
+     *
+     * @param string|null $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this
+     */
+    public function withFormItemQuery(
+        callable $callable,
+        string $relationAlias = null,
+        ?string $joinType = Criteria::INNER_JOIN
+    ) {
+        $relatedQuery = $this->useFormItemQuery(
+            $relationAlias,
+            $joinType
+        );
+        $callable($relatedQuery);
+        $relatedQuery->endUse();
+
+        return $this;
+    }
+
+    /**
+     * Filter the query by a related \Template object
+     *
+     * @param \Template|ObjectCollection $template the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildFormQuery The current query, for fluid interface
+     */
+    public function filterByTemplate($template, $comparison = null)
+    {
+        if ($template instanceof \Template) {
+            return $this
+                ->addUsingAlias(FormTableMap::COL_ID, $template->getFormId(), $comparison);
+        } elseif ($template instanceof ObjectCollection) {
+            return $this
+                ->useTemplateQuery()
+                ->filterByPrimaryKeys($template->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByTemplate() only accepts arguments of type \Template or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Template relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildFormQuery The current query, for fluid interface
+     */
+    public function joinTemplate($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Template');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Template');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Template relation Template object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \TemplateQuery A secondary query class using the current class as primary query
+     */
+    public function useTemplateQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinTemplate($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Template', '\TemplateQuery');
+    }
+
+    /**
+     * Use the Template relation Template object
+     *
+     * @param callable(\TemplateQuery):\TemplateQuery $callable A function working on the related query
+     *
+     * @param string|null $relationAlias optional alias for the relation
+     *
+     * @param string|null $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this
+     */
+    public function withTemplateQuery(
+        callable $callable,
+        string $relationAlias = null,
+        ?string $joinType = Criteria::INNER_JOIN
+    ) {
+        $relatedQuery = $this->useTemplateQuery(
+            $relationAlias,
+            $joinType
+        );
+        $callable($relatedQuery);
+        $relatedQuery->endUse();
+
+        return $this;
     }
 
     /**

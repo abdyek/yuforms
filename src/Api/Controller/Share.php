@@ -14,6 +14,10 @@ class Share extends Controller {
             http_response_code(422);
             exit();
         }
+        if($this->form->getIsTemplate()) {
+            http_response_code(404);
+            exit();
+        }
         $this->addNewShare();
         $this->success();
     }

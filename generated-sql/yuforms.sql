@@ -19,7 +19,7 @@ CREATE TABLE `member`
     `password_hash` VARCHAR(60) NOT NULL,
     `activation_code` VARCHAR(6) NOT NULL,
     `recovery_code` VARCHAR(10),
-    `sign_up_date_time` DATETIME NOT NULL,
+    `sign_up_date_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
@@ -33,8 +33,9 @@ CREATE TABLE `form`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
-    `create_date_time` DATETIME NOT NULL,
+    `create_date_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `last_edit_date_time` DATETIME,
+    `is_template` TINYINT(1) DEFAULT 0 NOT NULL,
     `member_id` INTEGER NOT NULL,
     PRIMARY KEY (`id`),
     INDEX `form_fi_672062` (`member_id`),
@@ -52,7 +53,7 @@ DROP TABLE IF EXISTS `share`;
 CREATE TABLE `share`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `start_date_time` DATETIME NOT NULL,
+    `start_date_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `stop_date_time` DATETIME,
     `onlyMember` TINYINT(1) DEFAULT 1 NOT NULL,
     `submit_count` INTEGER DEFAULT 0 NOT NULL,
@@ -167,6 +168,24 @@ CREATE TABLE `option`
     CONSTRAINT `option_fk_3ff0cc`
         FOREIGN KEY (`question_id`)
         REFERENCES `question` (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- template
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `template`;
+
+CREATE TABLE `template`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `form_id` INTEGER NOT NULL,
+    `is_public` TINYINT(1) DEFAULT 0 NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `template_fi_ee8551` (`form_id`),
+    CONSTRAINT `template_fk_ee8551`
+        FOREIGN KEY (`form_id`)
+        REFERENCES `form` (`id`)
 ) ENGINE=InnoDB;
 
 # This restores the fkey checks, after having unset them earlier

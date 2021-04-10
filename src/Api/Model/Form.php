@@ -9,6 +9,7 @@ use Yuforms\Api\Model\Submit as SubmitModel;
 
 class Form {
     public static function getWithMemberId($memberId, $formId) {
+        // ^^ I will change it after as 'getByMemberId'
         $formQuery = new \FormQuery();
         $form = $formQuery->filterByMemberId($memberId)->findPk($formId);
         if(!$form) {
@@ -53,5 +54,14 @@ class Form {
             'stillShared'=>($share)?true:false,
             'share'=>$shareArr
         ];
+    }
+    public static function create($obj) {
+        $isTemplate = (isset($obj['isTemplate']) and $obj['isTemplate'])?$obj['isTemplate']:false;
+        $form = new \Form();
+        $form->setMemberId($obj['memberId']);
+        $form->setName($obj['name']);
+        $form->setIsTemplate($isTemplate);
+        $form->save();
+        return $form;
     }
 }

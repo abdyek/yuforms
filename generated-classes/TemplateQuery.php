@@ -1,9 +1,9 @@
 <?php
 
-use Base\Form-itemQuery as BaseForm-itemQuery;
+use Base\TemplateQuery as BaseTemplateQuery;
 
 /**
- * Skeleton subclass for performing query and update operations on the 'form-item' table.
+ * Skeleton subclass for performing query and update operations on the 'template' table.
  *
  *
  *
@@ -11,7 +11,7 @@ use Base\Form-itemQuery as BaseForm-itemQuery;
  * application requirements.  This class will only be generated as
  * long as it does not already exist in the output directory.
  */
-class Form-itemQuery extends BaseForm-itemQuery
+class TemplateQuery extends BaseTemplateQuery
 {
 
 }

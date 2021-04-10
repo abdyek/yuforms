@@ -10,4 +10,11 @@ class FormItem {
     public static function getWithFormIdQuestionId($formId, $questionId) {
         return \FormItemQuery::create()->filterByFormId($formId)->filterByQuestionId($questionId)->findOne();
     }
+    public static function create($formId, $questionId) {
+        $formItem = new \FormItem;
+        $formItem->setFormId($formId);
+        $formItem->setQuestionId($questionId);
+        $formItem->save();
+        return $formItem;
+    }
 }

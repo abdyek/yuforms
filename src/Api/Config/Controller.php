@@ -365,5 +365,26 @@ class Controller {
                 'authorization'=>['member']
             ],
         ],
+        'Template'=>[
+            'POST'=>[
+                'authorization'=>['member'],
+                'required'=>[
+                    'id'=>[
+                        'type'=>'int',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>11
+                        ]
+                    ],
+                    'name'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>256
+                        ]
+                    ],
+                ]
+            ]
+        ],
     ];
 }

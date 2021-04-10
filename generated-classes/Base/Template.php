@@ -2,10 +2,12 @@
 
 namespace Base;
 
-use \Form-itemQuery as ChildForm-itemQuery;
+use \Form as ChildForm;
+use \FormQuery as ChildFormQuery;
+use \TemplateQuery as ChildTemplateQuery;
 use \Exception;
 use \PDO;
-use Map\Form-itemTableMap;
+use Map\TemplateTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -19,18 +21,18 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 
 /**
- * Base class that represents a row from the 'form-item' table.
+ * Base class that represents a row from the 'template' table.
  *
  *
  *
  * @package    propel.generator..Base
  */
-abstract class Form-item implements ActiveRecordInterface
+abstract class Template implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Map\\Form-itemTableMap';
+    const TABLE_MAP = '\\Map\\TemplateTableMap';
 
 
     /**
@@ -67,6 +69,26 @@ abstract class Form-item implements ActiveRecordInterface
     protected $id;
 
     /**
+     * The value for the form_id field.
+     *
+     * @var        int
+     */
+    protected $form_id;
+
+    /**
+     * The value for the is_public field.
+     *
+     * Note: this column has a database default value of: false
+     * @var        boolean
+     */
+    protected $is_public;
+
+    /**
+     * @var        ChildForm
+     */
+    protected $aForm;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
@@ -75,10 +97,23 @@ abstract class Form-item implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * Initializes internal state of Base\Form-item object.
+     * Applies default values to this object.
+     * This method should be called from the object's constructor (or
+     * equivalent initialization method).
+     * @see __construct()
+     */
+    public function applyDefaultValues()
+    {
+        $this->is_public = false;
+    }
+
+    /**
+     * Initializes internal state of Base\Template object.
+     * @see applyDefaults()
      */
     public function __construct()
     {
+        $this->applyDefaultValues();
     }
 
     /**
@@ -170,9 +205,9 @@ abstract class Form-item implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>Form-item</code> instance.  If
-     * <code>obj</code> is an instance of <code>Form-item</code>, delegates to
-     * <code>equals(Form-item)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>Template</code> instance.  If
+     * <code>obj</code> is an instance of <code>Template</code>, delegates to
+     * <code>equals(Template)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -269,15 +304,16 @@ abstract class Form-item implements ActiveRecordInterface
      *
      * @param  mixed   $parser                 A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param  boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
+     * @param  string  $keyType                (optional) One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM. Defaults to TableMap::TYPE_PHPNAME.
      * @return string  The exported data
      */
-    public function exportTo($parser, $includeLazyLoadColumns = true)
+    public function exportTo($parser, $includeLazyLoadColumns = true, $keyType = TableMap::TYPE_PHPNAME)
     {
         if (!$parser instanceof AbstractParser) {
             $parser = AbstractParser::getParser($parser);
         }
 
-        return $parser->fromArray($this->toArray(TableMap::TYPE_PHPNAME, $includeLazyLoadColumns, array(), true));
+        return $parser->fromArray($this->toArray($keyType, $includeLazyLoadColumns, array(), true));
     }
 
     /**
@@ -310,10 +346,40 @@ abstract class Form-item implements ActiveRecordInterface
     }
 
     /**
+     * Get the [form_id] column value.
+     *
+     * @return int
+     */
+    public function getFormId()
+    {
+        return $this->form_id;
+    }
+
+    /**
+     * Get the [is_public] column value.
+     *
+     * @return boolean
+     */
+    public function getIsPublic()
+    {
+        return $this->is_public;
+    }
+
+    /**
+     * Get the [is_public] column value.
+     *
+     * @return boolean
+     */
+    public function isPublic()
+    {
+        return $this->getIsPublic();
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v New value
-     * @return $this|\Form-item The current object (for fluent API support)
+     * @return $this|\Template The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -323,11 +389,63 @@ abstract class Form-item implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[Form-itemTableMap::COL_ID] = true;
+            $this->modifiedColumns[TemplateTableMap::COL_ID] = true;
         }
 
         return $this;
     } // setId()
+
+    /**
+     * Set the value of [form_id] column.
+     *
+     * @param int $v New value
+     * @return $this|\Template The current object (for fluent API support)
+     */
+    public function setFormId($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->form_id !== $v) {
+            $this->form_id = $v;
+            $this->modifiedColumns[TemplateTableMap::COL_FORM_ID] = true;
+        }
+
+        if ($this->aForm !== null && $this->aForm->getId() !== $v) {
+            $this->aForm = null;
+        }
+
+        return $this;
+    } // setFormId()
+
+    /**
+     * Sets the value of the [is_public] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param  boolean|integer|string $v The new value
+     * @return $this|\Template The current object (for fluent API support)
+     */
+    public function setIsPublic($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->is_public !== $v) {
+            $this->is_public = $v;
+            $this->modifiedColumns[TemplateTableMap::COL_IS_PUBLIC] = true;
+        }
+
+        return $this;
+    } // setIsPublic()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -339,6 +457,10 @@ abstract class Form-item implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->is_public !== false) {
+                return false;
+            }
+
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -365,8 +487,14 @@ abstract class Form-item implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : Form-itemTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : TemplateTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : TemplateTableMap::translateFieldName('FormId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->form_id = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : TemplateTableMap::translateFieldName('IsPublic', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->is_public = (null !== $col) ? (boolean) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -375,10 +503,10 @@ abstract class Form-item implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 1; // 1 = Form-itemTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 3; // 3 = TemplateTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\Form-item'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Template'), 0, $e);
         }
     }
 
@@ -397,6 +525,9 @@ abstract class Form-item implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
+        if ($this->aForm !== null && $this->form_id !== $this->aForm->getId()) {
+            $this->aForm = null;
+        }
     } // ensureConsistency
 
     /**
@@ -420,13 +551,13 @@ abstract class Form-item implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(Form-itemTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(TemplateTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildForm-itemQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildTemplateQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -436,6 +567,7 @@ abstract class Form-item implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->aForm = null;
         } // if (deep)
     }
 
@@ -445,8 +577,8 @@ abstract class Form-item implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see Form-item::setDeleted()
-     * @see Form-item::isDeleted()
+     * @see Template::setDeleted()
+     * @see Template::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -455,11 +587,11 @@ abstract class Form-item implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(Form-itemTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(TemplateTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildForm-itemQuery::create()
+            $deleteQuery = ChildTemplateQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -494,7 +626,7 @@ abstract class Form-item implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(Form-itemTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(TemplateTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -513,7 +645,7 @@ abstract class Form-item implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                Form-itemTableMap::addInstanceToPool($this);
+                TemplateTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -538,6 +670,18 @@ abstract class Form-item implements ActiveRecordInterface
         $affectedRows = 0; // initialize var to track total num of affected rows
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
+
+            // We call the save method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aForm !== null) {
+                if ($this->aForm->isModified() || $this->aForm->isNew()) {
+                    $affectedRows += $this->aForm->save($con);
+                }
+                $this->setForm($this->aForm);
+            }
 
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
@@ -570,18 +714,24 @@ abstract class Form-item implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[Form-itemTableMap::COL_ID] = true;
+        $this->modifiedColumns[TemplateTableMap::COL_ID] = true;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . Form-itemTableMap::COL_ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . TemplateTableMap::COL_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(Form-itemTableMap::COL_ID)) {
+        if ($this->isColumnModified(TemplateTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
+        }
+        if ($this->isColumnModified(TemplateTableMap::COL_FORM_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'form_id';
+        }
+        if ($this->isColumnModified(TemplateTableMap::COL_IS_PUBLIC)) {
+            $modifiedColumns[':p' . $index++]  = 'is_public';
         }
 
         $sql = sprintf(
-            'INSERT INTO form-item (%s) VALUES (%s)',
+            'INSERT INTO template (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -592,6 +742,12 @@ abstract class Form-item implements ActiveRecordInterface
                 switch ($columnName) {
                     case 'id':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+                        break;
+                    case 'form_id':
+                        $stmt->bindValue($identifier, $this->form_id, PDO::PARAM_INT);
+                        break;
+                    case 'is_public':
+                        $stmt->bindValue($identifier, (int) $this->is_public, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -639,7 +795,7 @@ abstract class Form-item implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = Form-itemTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = TemplateTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -658,6 +814,12 @@ abstract class Form-item implements ActiveRecordInterface
             case 0:
                 return $this->getId();
                 break;
+            case 1:
+                return $this->getFormId();
+                break;
+            case 2:
+                return $this->getIsPublic();
+                break;
             default:
                 return null;
                 break;
@@ -675,25 +837,45 @@ abstract class Form-item implements ActiveRecordInterface
      *                    Defaults to TableMap::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['Form-item'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['Template'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['Form-item'][$this->hashCode()] = true;
-        $keys = Form-itemTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['Template'][$this->hashCode()] = true;
+        $keys = TemplateTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
+            $keys[1] => $this->getFormId(),
+            $keys[2] => $this->getIsPublic(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
         }
 
+        if ($includeForeignObjects) {
+            if (null !== $this->aForm) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'form';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'form';
+                        break;
+                    default:
+                        $key = 'Form';
+                }
+
+                $result[$key] = $this->aForm->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+        }
 
         return $result;
     }
@@ -707,11 +889,11 @@ abstract class Form-item implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\Form-item
+     * @return $this|\Template
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = Form-itemTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = TemplateTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -722,13 +904,19 @@ abstract class Form-item implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\Form-item
+     * @return $this|\Template
      */
     public function setByPosition($pos, $value)
     {
         switch ($pos) {
             case 0:
                 $this->setId($value);
+                break;
+            case 1:
+                $this->setFormId($value);
+                break;
+            case 2:
+                $this->setIsPublic($value);
                 break;
         } // switch()
 
@@ -750,15 +938,23 @@ abstract class Form-item implements ActiveRecordInterface
      *
      * @param      array  $arr     An array to populate the object from.
      * @param      string $keyType The type of keys the array uses.
-     * @return void
+     * @return     $this|\Template
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = Form-itemTableMap::getFieldNames($keyType);
+        $keys = TemplateTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setId($arr[$keys[0]]);
         }
+        if (array_key_exists($keys[1], $arr)) {
+            $this->setFormId($arr[$keys[1]]);
+        }
+        if (array_key_exists($keys[2], $arr)) {
+            $this->setIsPublic($arr[$keys[2]]);
+        }
+
+        return $this;
     }
 
      /**
@@ -778,7 +974,7 @@ abstract class Form-item implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\Form-item The current object, for fluid interface
+     * @return $this|\Template The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -798,10 +994,16 @@ abstract class Form-item implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(Form-itemTableMap::DATABASE_NAME);
+        $criteria = new Criteria(TemplateTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(Form-itemTableMap::COL_ID)) {
-            $criteria->add(Form-itemTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(TemplateTableMap::COL_ID)) {
+            $criteria->add(TemplateTableMap::COL_ID, $this->id);
+        }
+        if ($this->isColumnModified(TemplateTableMap::COL_FORM_ID)) {
+            $criteria->add(TemplateTableMap::COL_FORM_ID, $this->form_id);
+        }
+        if ($this->isColumnModified(TemplateTableMap::COL_IS_PUBLIC)) {
+            $criteria->add(TemplateTableMap::COL_IS_PUBLIC, $this->is_public);
         }
 
         return $criteria;
@@ -819,8 +1021,8 @@ abstract class Form-item implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildForm-itemQuery::create();
-        $criteria->add(Form-itemTableMap::COL_ID, $this->id);
+        $criteria = ChildTemplateQuery::create();
+        $criteria->add(TemplateTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -882,13 +1084,15 @@ abstract class Form-item implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \Form-item (or compatible) type.
+     * @param      object $copyObj An object of \Template (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
+        $copyObj->setFormId($this->getFormId());
+        $copyObj->setIsPublic($this->getIsPublic());
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -904,7 +1108,7 @@ abstract class Form-item implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \Form-item Clone of current object.
+     * @return \Template Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -918,15 +1122,72 @@ abstract class Form-item implements ActiveRecordInterface
     }
 
     /**
+     * Declares an association between this object and a ChildForm object.
+     *
+     * @param  ChildForm $v
+     * @return $this|\Template The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setForm(ChildForm $v = null)
+    {
+        if ($v === null) {
+            $this->setFormId(NULL);
+        } else {
+            $this->setFormId($v->getId());
+        }
+
+        $this->aForm = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildForm object, it will not be re-added.
+        if ($v !== null) {
+            $v->addTemplate($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ChildForm object
+     *
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return ChildForm The associated ChildForm object.
+     * @throws PropelException
+     */
+    public function getForm(ConnectionInterface $con = null)
+    {
+        if ($this->aForm === null && ($this->form_id != 0)) {
+            $this->aForm = ChildFormQuery::create()->findPk($this->form_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aForm->addTemplates($this);
+             */
+        }
+
+        return $this->aForm;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
      */
     public function clear()
     {
+        if (null !== $this->aForm) {
+            $this->aForm->removeTemplate($this);
+        }
         $this->id = null;
+        $this->form_id = null;
+        $this->is_public = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
+        $this->applyDefaultValues();
         $this->resetModified();
         $this->setNew(true);
         $this->setDeleted(false);
@@ -945,6 +1206,7 @@ abstract class Form-item implements ActiveRecordInterface
         if ($deep) {
         } // if ($deep)
 
+        $this->aForm = null;
     }
 
     /**
@@ -954,7 +1216,7 @@ abstract class Form-item implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(Form-itemTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(TemplateTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**
@@ -1057,15 +1319,18 @@ abstract class Form-item implements ActiveRecordInterface
 
         if (0 === strpos($name, 'from')) {
             $format = substr($name, 4);
+            $inputData = $params[0];
+            $keyType = $params[1] ?? TableMap::TYPE_PHPNAME;
 
-            return $this->importFrom($format, reset($params));
+            return $this->importFrom($format, $inputData, $keyType);
         }
 
         if (0 === strpos($name, 'to')) {
             $format = substr($name, 2);
-            $includeLazyLoadColumns = isset($params[0]) ? $params[0] : true;
+            $includeLazyLoadColumns = $params[0] ?? true;
+            $keyType = $params[1] ?? TableMap::TYPE_PHPNAME;
 
-            return $this->exportTo($format, $includeLazyLoadColumns);
+            return $this->exportTo($format, $includeLazyLoadColumns, $keyType);
         }
 
         throw new BadMethodCallException(sprintf('Call to undefined method: %s.', $name));

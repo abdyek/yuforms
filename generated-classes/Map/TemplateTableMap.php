@@ -2,8 +2,8 @@
 
 namespace Map;
 
-use \Form-item;
-use \Form-itemQuery;
+use \Template;
+use \TemplateQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'form-item' table.
+ * This class defines the structure of the 'template' table.
  *
  *
  *
@@ -25,7 +25,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * ORDER BY clause to know whether it needs to apply SQL to make the ORDER BY case-insensitive
  * (i.e. if it's a text column type).
  */
-class Form-itemTableMap extends TableMap
+class TemplateTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -33,7 +33,7 @@ class Form-itemTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = '.Map.Form-itemTableMap';
+    const CLASS_NAME = '.Map.TemplateTableMap';
 
     /**
      * The default database name for this class
@@ -43,22 +43,22 @@ class Form-itemTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'form-item';
+    const TABLE_NAME = 'template';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\Form-item';
+    const OM_CLASS = '\\Template';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Form-item';
+    const CLASS_DEFAULT = 'Template';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 1;
+    const NUM_COLUMNS = 3;
 
     /**
      * The number of lazy-loaded columns
@@ -68,12 +68,22 @@ class Form-itemTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 1;
+    const NUM_HYDRATE_COLUMNS = 3;
 
     /**
      * the column name for the id field
      */
-    const COL_ID = 'form-item.id';
+    const COL_ID = 'template.id';
+
+    /**
+     * the column name for the form_id field
+     */
+    const COL_FORM_ID = 'template.form_id';
+
+    /**
+     * the column name for the is_public field
+     */
+    const COL_IS_PUBLIC = 'template.is_public';
 
     /**
      * The default string format for model objects of the related table
@@ -87,11 +97,11 @@ class Form-itemTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', ),
-        self::TYPE_CAMELNAME     => array('id', ),
-        self::TYPE_COLNAME       => array(Form-itemTableMap::COL_ID, ),
-        self::TYPE_FIELDNAME     => array('id', ),
-        self::TYPE_NUM           => array(0, )
+        self::TYPE_PHPNAME       => array('Id', 'FormId', 'IsPublic', ),
+        self::TYPE_CAMELNAME     => array('id', 'formId', 'isPublic', ),
+        self::TYPE_COLNAME       => array(TemplateTableMap::COL_ID, TemplateTableMap::COL_FORM_ID, TemplateTableMap::COL_IS_PUBLIC, ),
+        self::TYPE_FIELDNAME     => array('id', 'form_id', 'is_public', ),
+        self::TYPE_NUM           => array(0, 1, 2, )
     );
 
     /**
@@ -101,11 +111,11 @@ class Form-itemTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, ),
-        self::TYPE_COLNAME       => array(Form-itemTableMap::COL_ID => 0, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, ),
-        self::TYPE_NUM           => array(0, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'FormId' => 1, 'IsPublic' => 2, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'formId' => 1, 'isPublic' => 2, ),
+        self::TYPE_COLNAME       => array(TemplateTableMap::COL_ID => 0, TemplateTableMap::COL_FORM_ID => 1, TemplateTableMap::COL_IS_PUBLIC => 2, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'form_id' => 1, 'is_public' => 2, ),
+        self::TYPE_NUM           => array(0, 1, 2, )
     );
 
     /**
@@ -116,13 +126,29 @@ class Form-itemTableMap extends TableMap
     protected $normalizedColumnNameMap = [
 
         'Id' => 'ID',
-        'Form-item.Id' => 'ID',
+        'Template.Id' => 'ID',
         'id' => 'ID',
-        'form-item.id' => 'ID',
-        'Form-itemTableMap::COL_ID' => 'ID',
+        'template.id' => 'ID',
+        'TemplateTableMap::COL_ID' => 'ID',
         'COL_ID' => 'ID',
         'id' => 'ID',
-        'form-item.id' => 'ID',
+        'template.id' => 'ID',
+        'FormId' => 'FORM_ID',
+        'Template.FormId' => 'FORM_ID',
+        'formId' => 'FORM_ID',
+        'template.formId' => 'FORM_ID',
+        'TemplateTableMap::COL_FORM_ID' => 'FORM_ID',
+        'COL_FORM_ID' => 'FORM_ID',
+        'form_id' => 'FORM_ID',
+        'template.form_id' => 'FORM_ID',
+        'IsPublic' => 'IS_PUBLIC',
+        'Template.IsPublic' => 'IS_PUBLIC',
+        'isPublic' => 'IS_PUBLIC',
+        'template.isPublic' => 'IS_PUBLIC',
+        'TemplateTableMap::COL_IS_PUBLIC' => 'IS_PUBLIC',
+        'COL_IS_PUBLIC' => 'IS_PUBLIC',
+        'is_public' => 'IS_PUBLIC',
+        'template.is_public' => 'IS_PUBLIC',
     ];
 
     /**
@@ -135,14 +161,16 @@ class Form-itemTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('form-item');
-        $this->setPhpName('Form-item');
+        $this->setName('template');
+        $this->setPhpName('Template');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\Form-item');
+        $this->setClassName('\\Template');
         $this->setPackage('');
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
+        $this->addForeignKey('form_id', 'FormId', 'INTEGER', 'form', 'id', true, null, null);
+        $this->addColumn('is_public', 'IsPublic', 'BOOLEAN', true, 1, false);
     } // initialize()
 
     /**
@@ -150,6 +178,13 @@ class Form-itemTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('Form', '\\Form', RelationMap::MANY_TO_ONE, array (
+  0 =>
+  array (
+    0 => ':form_id',
+    1 => ':id',
+  ),
+), null, null, null, false);
     } // buildRelations()
 
     /**
@@ -209,7 +244,7 @@ class Form-itemTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? Form-itemTableMap::CLASS_DEFAULT : Form-itemTableMap::OM_CLASS;
+        return $withPrefix ? TemplateTableMap::CLASS_DEFAULT : TemplateTableMap::OM_CLASS;
     }
 
     /**
@@ -223,22 +258,22 @@ class Form-itemTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (Form-item object, last column rank)
+     * @return array           (Template object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = Form-itemTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = Form-itemTableMap::getInstanceFromPool($key))) {
+        $key = TemplateTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = TemplateTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + Form-itemTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + TemplateTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = Form-itemTableMap::OM_CLASS;
-            /** @var Form-item $obj */
+            $cls = TemplateTableMap::OM_CLASS;
+            /** @var Template $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            Form-itemTableMap::addInstanceToPool($obj, $key);
+            TemplateTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -261,18 +296,18 @@ class Form-itemTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = Form-itemTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = Form-itemTableMap::getInstanceFromPool($key))) {
+            $key = TemplateTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = TemplateTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var Form-item $obj */
+                /** @var Template $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                Form-itemTableMap::addInstanceToPool($obj, $key);
+                TemplateTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -293,9 +328,13 @@ class Form-itemTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(Form-itemTableMap::COL_ID);
+            $criteria->addSelectColumn(TemplateTableMap::COL_ID);
+            $criteria->addSelectColumn(TemplateTableMap::COL_FORM_ID);
+            $criteria->addSelectColumn(TemplateTableMap::COL_IS_PUBLIC);
         } else {
             $criteria->addSelectColumn($alias . '.id');
+            $criteria->addSelectColumn($alias . '.form_id');
+            $criteria->addSelectColumn($alias . '.is_public');
         }
     }
 
@@ -313,9 +352,13 @@ class Form-itemTableMap extends TableMap
     public static function removeSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->removeSelectColumn(Form-itemTableMap::COL_ID);
+            $criteria->removeSelectColumn(TemplateTableMap::COL_ID);
+            $criteria->removeSelectColumn(TemplateTableMap::COL_FORM_ID);
+            $criteria->removeSelectColumn(TemplateTableMap::COL_IS_PUBLIC);
         } else {
             $criteria->removeSelectColumn($alias . '.id');
+            $criteria->removeSelectColumn($alias . '.form_id');
+            $criteria->removeSelectColumn($alias . '.is_public');
         }
     }
 
@@ -328,7 +371,7 @@ class Form-itemTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(Form-itemTableMap::DATABASE_NAME)->getTable(Form-itemTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(TemplateTableMap::DATABASE_NAME)->getTable(TemplateTableMap::TABLE_NAME);
     }
 
     /**
@@ -336,16 +379,16 @@ class Form-itemTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(Form-itemTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(Form-itemTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new Form-itemTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(TemplateTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(TemplateTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new TemplateTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a Form-item or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a Template or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or Form-item object or primary key or array of primary keys
+     * @param mixed               $values Criteria or Template object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -356,27 +399,27 @@ class Form-itemTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(Form-itemTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(TemplateTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Form-item) { // it's a model object
+        } elseif ($values instanceof \Template) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(Form-itemTableMap::DATABASE_NAME);
-            $criteria->add(Form-itemTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(TemplateTableMap::DATABASE_NAME);
+            $criteria->add(TemplateTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = Form-itemQuery::create()->mergeWith($criteria);
+        $query = TemplateQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            Form-itemTableMap::clearInstancePool();
+            TemplateTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                Form-itemTableMap::removeInstanceFromPool($singleval);
+                TemplateTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -384,20 +427,20 @@ class Form-itemTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the form-item table.
+     * Deletes all rows from the template table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return Form-itemQuery::create()->doDeleteAll($con);
+        return TemplateQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a Form-item or Criteria object.
+     * Performs an INSERT on the database, given a Template or Criteria object.
      *
-     * @param mixed               $criteria Criteria or Form-item object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or Template object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -406,22 +449,22 @@ class Form-itemTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(Form-itemTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(TemplateTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from Form-item object
+            $criteria = $criteria->buildCriteria(); // build Criteria from Template object
         }
 
-        if ($criteria->containsKey(Form-itemTableMap::COL_ID) && $criteria->keyContainsValue(Form-itemTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.Form-itemTableMap::COL_ID.')');
+        if ($criteria->containsKey(TemplateTableMap::COL_ID) && $criteria->keyContainsValue(TemplateTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.TemplateTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = Form-itemQuery::create()->mergeWith($criteria);
+        $query = TemplateQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -430,7 +473,7 @@ class Form-itemTableMap extends TableMap
         });
     }
 
-} // Form-itemTableMap
+} // TemplateTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-Form-itemTableMap::buildTableMap();
+TemplateTableMap::buildTableMap();

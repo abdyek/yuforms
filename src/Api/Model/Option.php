@@ -31,5 +31,13 @@ class Option {
         }
         return false;
     }
+    public static function create($questionId, $value, $text) {
+        $option = new \Option;
+        $option->setQuestionId($questionId);
+        $option->setValue($value);
+        $option->setText($value);
+        $option->save();
+        return $option;
+    }
 }
 

@@ -157,8 +157,8 @@ class Form extends Controller {
     }
     protected function delete() {
         $form = formModel::get($this->data['id']);
-        if($form->getMemberId()!=$this->userId) {
-            httt_reponse_code(404);
+        if($form->getMemberId()!=$this->userId or $form->getIsTemplate()) {
+            http_response_code(404);
             exit();
         }
         FormModel::delete($this->data['id']);
