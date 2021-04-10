@@ -384,6 +384,18 @@ class Controller {
                         ]
                     ],
                 ]
+            ],
+            'DELETE'=>[
+                'authorization'=>['member'],
+                'required'=>[
+                    'id'=>[
+                        'type'=>'int',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>11
+                        ]
+                    ],
+                ]
             ]
         ],
     ];

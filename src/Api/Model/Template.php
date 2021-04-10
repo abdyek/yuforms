@@ -13,6 +13,9 @@ class Template {
     public static function getPublic($id) {
         return \TemplateQuery::create()->filterByIsPublic(true)->findPk($id);
     }
+    public static function getByFormId($formId) {
+        return \TemplateQuery::create()->findOneByFormId($formId);
+    }
     public static function create($obj) {
         $form = FormModel::create([
             'memberId'=>$obj['memberId'],
@@ -35,5 +38,9 @@ class Template {
                 OptionModel::create($newQuestion->getId(), $opt->getValue(), $opt->getText());
             }
         }
+    }
+    public static function delete($template) {
+        $template->delete();
+        FormModel::delete($template->getFormId());
     }
 }

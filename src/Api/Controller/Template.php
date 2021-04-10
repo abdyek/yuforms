@@ -24,4 +24,14 @@ class Template extends Controller {
         TemplateModel::copyToTemplate($template, $form);
         $this->success();
     }
+    protected function delete() {
+        $formId = FormModel::getWithMemberId($this->userId, $this->data['id']);
+        if(!$formId or !$formId->getIsTemplate()) {
+            http_response_code(404);
+            exit();
+        }
+        $template = TemplateModel::getByFormId($this->data['id']);
+        TemplateModel::delete($template);
+        $this->success();
+    }
 }
