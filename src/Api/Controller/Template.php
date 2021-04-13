@@ -25,13 +25,22 @@ class Template extends Controller {
         $this->success();
     }
     protected function delete() {
-        $formId = FormModel::getWithMemberId($this->userId, $this->data['id']);
-        if(!$formId or !$formId->getIsTemplate()) {
+        $form = FormModel::getWithMemberId($this->userId, $this->data['id']);
+        if(!$form or !$form->getIsTemplate()) {
             http_response_code(404);
             exit();
         }
         $template = TemplateModel::getByFormId($this->data['id']);
         TemplateModel::delete($template);
+        $this->success();
+    }
+    protected function put() {
+        $form = FormModel::getWithMemberId($this->userId, $this->data['id']);
+        if(!$form or !$form->getIsTemplate()) {
+            http_response_code(404);
+            exit();
+        }
+        FormModel::update($form, $this->data);
         $this->success();
     }
 }

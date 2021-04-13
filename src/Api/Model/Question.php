@@ -1,6 +1,8 @@
 <?php
 
 namespace Yuforms\Api\Model;
+use Yuforms\Api\Model\FormComponent as FormComponentModel;
+use Yuforms\Api\Model\Option as OptionModel;
 
 class Question {
     public static function get($id) {
@@ -20,5 +22,17 @@ class Question {
         $question->setText($text);
         $question->save();
         return $question;
+    }
+    public static function update($question, $obj) {
+        $question->setText($obj['questionText']);
+        $formComponent = FormComponentModel::get($question->getFormComponentId());
+        if($formComponent->getHasOptions()) {
+            $qId = $question->getId();
+            OptionModel::deleteByQuestionId($qId);
+            foreach($obj['options'] as $i=>$opt) {
+                OptionModel::create($qId, $i, $opt['text']);
+            }
+        }
+        $question->save();
     }
 }

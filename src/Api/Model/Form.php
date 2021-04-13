@@ -6,6 +6,7 @@ use Yuforms\Api\Model\Question as QuestionModel;
 use Yuforms\Api\Model\Option as OptionModel;
 use Yuforms\Api\Model\FormItem as FormItemModel;
 use Yuforms\Api\Model\Submit as SubmitModel;
+use Yuforms\Api\Other\Time;
 
 class Form {
     public static function getWithMemberId($memberId, $formId) {
@@ -63,5 +64,19 @@ class Form {
         $form->setIsTemplate($isTemplate);
         $form->save();
         return $form;
+    }
+    public static function update($form, $obj) {
+        $form->setName($obj['formTitle']);
+        $form->setLastEditDateTime(Time::current());
+        // NOT COMPLETED
+        foreach($obj['questions'] as $que) {
+            $formItem = FormItemModel::getWithFormIdQuestionId($form->getId(), $que['id']);
+            if(!$formItem) {
+                continue;
+            }
+            $question = QuestionModel::get($que['id']);
+            QuestionModel::update($question, $que);
+        }
+        $form->save();
     }
 }

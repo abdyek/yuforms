@@ -35,7 +35,7 @@ class Option {
         $option = new \Option;
         $option->setQuestionId($questionId);
         $option->setValue($value);
-        $option->setText($value);
+        $option->setText($text);
         $option->save();
         return $option;
     }

@@ -396,7 +396,33 @@ class Controller {
                         ]
                     ],
                 ]
-            ]
+            ],
+            'PUT'=>[
+                'authorization'=>['member'],
+                'required'=>[
+                    'id'=>[
+                        'type'=>'int',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>11
+                        ]
+                    ],
+                    'formTitle'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>256
+                        ]
+                    ],
+                    'questions'=>[
+                        'type'=>'arr',
+                        'limits'=>[
+                            'min'=>0,
+                            'max'=>50  // actually there isn't top limit, I can change it
+                        ]
+                    ]
+                ]
+            ],
         ],
     ];
 }
