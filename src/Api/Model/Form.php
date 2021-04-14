@@ -68,15 +68,7 @@ class Form {
     public static function update($form, $obj) {
         $form->setName($obj['formTitle']);
         $form->setLastEditDateTime(Time::current());
-        // NOT COMPLETED
-        foreach($obj['questions'] as $que) {
-            $formItem = FormItemModel::getWithFormIdQuestionId($form->getId(), $que['id']);
-            if(!$formItem) {
-                continue;
-            }
-            $question = QuestionModel::get($que['id']);
-            QuestionModel::update($question, $que);
-        }
+        QuestionModel::updateAll($form, $obj['questions']);
         $form->save();
     }
 }

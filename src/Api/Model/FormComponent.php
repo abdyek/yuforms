@@ -15,4 +15,7 @@ class FormComponent {
             'hasOptions'=>$fc->getHasOptions(),
         ];
     }
+    public static function getByName($name) {
+        return \FormComponentQuery::create()->findOneByFormComponentName($name);
+    }
 }

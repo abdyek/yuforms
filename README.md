@@ -42,7 +42,7 @@ if the requirements look like poor for you don't worry. There is more idea in my
 | Autumn | Final | Manage Options of Form Access | Manage options of form access. It means which user types can access the form. | :x: | :x: |
 | Spring | Midterm | Save as Template | Save form as template to share again anytime | :heavy_check_mark: | :x: |
 | Spring | Midterm | 2FA | Two factor authentication for account security | :x: | :x: |
-| Spring | Midterm | Edit Template | Edit template | :x: | :x: |
+| Spring | Midterm | Edit Template | Edit template | :heavy_check_mark: | :x: |
 | Spring | Midterm | Delete Template | Delete template | :heavy_check_mark: | :x: |
 | Spring | Midterm | Share Template | Share template other people | :x: | :x: |
 | Spring | Midterm | Edit Answer | Edit answer submitted | :heavy_check_mark: | :x: |
