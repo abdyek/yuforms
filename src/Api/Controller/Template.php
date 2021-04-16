@@ -43,4 +43,11 @@ class Template extends Controller {
         FormModel::update($form, $this->data);
         $this->success();
     }
+    protected function patch() {
+        $form = FormModel::getWithMemberId($this->userId, $this->data['id']);
+        $template = TemplateModel::getByFormId($form->getId());
+        $template->setIsPublic($this->data['public']);
+        $template->save();
+        $this->success();
+    }
 }

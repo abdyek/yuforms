@@ -44,7 +44,7 @@ if the requirements look like poor for you don't worry. There is more idea in my
 | Spring | Midterm | 2FA | Two factor authentication for account security | :x: | :x: |
 | Spring | Midterm | Edit Template | Edit template | :heavy_check_mark: | :x: |
 | Spring | Midterm | Delete Template | Delete template | :heavy_check_mark: | :x: |
-| Spring | Midterm | Share Template | Share template other people | :x: | :x: |
+| Spring | Midterm | Share Template | Share template other people | :heavy_check_mark: | :x: |
 | Spring | Midterm | Edit Answer | Edit answer submitted | :heavy_check_mark: | :x: |
 | Spring | Midterm | Freeze Account | Freeze account | :x: | :x: |
 | Spring | Final | Delete Answer | Delete answer by admin | :x: | :x: |
