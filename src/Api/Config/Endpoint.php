@@ -2,8 +2,8 @@
 
 namespace Yuforms\Api\Config;
 
-class Controller {
-    const CONTROLLER = [
+class Endpoint {
+    const ENDPOINT = [
         'Example'=>[
             'POST'=>[
                 'authorization'=>['guest', 'member', 'root'],

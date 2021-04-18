@@ -3,7 +3,8 @@
 require 'vendor/autoload.php';
 require 'generated-conf/config.php';
 
-// website
+// for api and website
+use Yuforms\Api\Core\Endpoint;
 use Yuforms\WebSite\Core\Controller as WebSiteController;
 
 // router
@@ -14,14 +15,14 @@ use Symfony\Component\HttpFoundation\Response;
 $router = new Router;
 
 // api
-$router->any('api/:string', function($controller) {
-    $className = ucfirst($controller);
-    $filePath = __DIR__ . '/src/Api/Controller/' . $className . '.php';
+$router->any('api/:string', function($endpoint) {
+    $endpoint = ucfirst($endpoint);
+    $filePath = __DIR__ . '/src/Api/Endpoint/'.$endpoint. '.php';
     if(file_exists($filePath)) {
-        $class = 'Yuforms\Api\Controller\\' . $className;
-        new $class;
+        $class = 'Yuforms\Api\Endpoint\\'.$endpoint;
+        new $class($endpoint);
     } else {
-        http_response_code(404);
+        new Endpoint($endpoint);
     }
 });
 

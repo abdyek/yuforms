@@ -3,7 +3,7 @@ namespace Yuforms\WebSite\Core;
 
 use Yuforms\WebSite\Core\View;
 use Yuforms\WebSite\Config;
-use Yuforms\Api\Core\Controller as ApiController;
+use Yuforms\Api\Core\Endpoint as ApiEndpoint;
 
 class Controller {
     public function __construct($slug) {
@@ -21,7 +21,7 @@ class Controller {
         }
     }
     private function detectAuthorization() {
-        $autho = ApiController::detectAuthorization();
+        $autho = ApiEnpoint::detectAuthorization();
         $this->who = $autho['who'];
     }
     private function go() {

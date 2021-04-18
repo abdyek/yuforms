@@ -7,11 +7,7 @@ use Yuforms\Api\Other\Time;
 
 class Example extends Controller {
     protected function post() {
-        $formComponent = new \FormComponent();
-        $formComponent->setTitle('Mahmut');
-        $formComponent->setFormComponentName('mahmut');
-        $formComponent->save();
-        echo $formComponent->getId();
+        $this->response($this->data);
     }
     protected function get() {
         $this->response($this->data);
