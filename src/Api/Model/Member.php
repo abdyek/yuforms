@@ -11,5 +11,8 @@ class Member {
         }
         return $member;
     }
+    public static function getByEmail($email) {
+        return \MemberQuery::create()->findOneByEmail($email);
+    }
 }
 

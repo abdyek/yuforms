@@ -8,6 +8,7 @@
         <column name="password_hash" type="varchar" size="60" required="true"/>
         <column name="activation_code" type="varchar" size="6" required="true"/>
         <column name="recovery_code" type="varchar" size="10" required="false"/>
+        <column name="have_to_2fa" type="boolean" required="true" defaultValue="false" />
         <column name="sign_up_date_time" type="timestamp" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
     </table>
     <table name="form">
@@ -109,6 +110,17 @@
         <column name="is_public" type="boolean" required="true" defaultValue="false"/>
         <foreign-key foreignTable="form">
             <reference local="form_id" foreign="id" />
+        </foreign-key>
+    </table>
+    <table name="authentication_code">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="member_id" type="integer" required="true"/>
+        <column name="type" type="varchar" size="20" required="true"/>
+        <column name="code" type="varchar" size="10" required="true"/>
+        <column name="trial_count" type="integer" required="true" defaultValue="1" />
+        <column name="date_time" type="timestamp" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
+        <foreign-key foreignTable="member">
+            <reference local="member_id" foreign="id" />
         </foreign-key>
     </table>
 </database>

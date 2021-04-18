@@ -28,6 +28,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMemberQuery orderByPasswordHash($order = Criteria::ASC) Order by the password_hash column
  * @method     ChildMemberQuery orderByActivationCode($order = Criteria::ASC) Order by the activation_code column
  * @method     ChildMemberQuery orderByRecoveryCode($order = Criteria::ASC) Order by the recovery_code column
+ * @method     ChildMemberQuery orderByHaveTo2fa($order = Criteria::ASC) Order by the have_to_2fa column
  * @method     ChildMemberQuery orderBySignUpDateTime($order = Criteria::ASC) Order by the sign_up_date_time column
  *
  * @method     ChildMemberQuery groupById() Group by the id column
@@ -38,6 +39,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMemberQuery groupByPasswordHash() Group by the password_hash column
  * @method     ChildMemberQuery groupByActivationCode() Group by the activation_code column
  * @method     ChildMemberQuery groupByRecoveryCode() Group by the recovery_code column
+ * @method     ChildMemberQuery groupByHaveTo2fa() Group by the have_to_2fa column
  * @method     ChildMemberQuery groupBySignUpDateTime() Group by the sign_up_date_time column
  *
  * @method     ChildMemberQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -68,7 +70,17 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMemberQuery rightJoinWithSubmit() Adds a RIGHT JOIN clause and with to the query using the Submit relation
  * @method     ChildMemberQuery innerJoinWithSubmit() Adds a INNER JOIN clause and with to the query using the Submit relation
  *
- * @method     \FormQuery|\SubmitQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     ChildMemberQuery leftJoinAuthenticationCode($relationAlias = null) Adds a LEFT JOIN clause to the query using the AuthenticationCode relation
+ * @method     ChildMemberQuery rightJoinAuthenticationCode($relationAlias = null) Adds a RIGHT JOIN clause to the query using the AuthenticationCode relation
+ * @method     ChildMemberQuery innerJoinAuthenticationCode($relationAlias = null) Adds a INNER JOIN clause to the query using the AuthenticationCode relation
+ *
+ * @method     ChildMemberQuery joinWithAuthenticationCode($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the AuthenticationCode relation
+ *
+ * @method     ChildMemberQuery leftJoinWithAuthenticationCode() Adds a LEFT JOIN clause and with to the query using the AuthenticationCode relation
+ * @method     ChildMemberQuery rightJoinWithAuthenticationCode() Adds a RIGHT JOIN clause and with to the query using the AuthenticationCode relation
+ * @method     ChildMemberQuery innerJoinWithAuthenticationCode() Adds a INNER JOIN clause and with to the query using the AuthenticationCode relation
+ *
+ * @method     \FormQuery|\SubmitQuery|\AuthenticationCodeQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildMember|null findOne(ConnectionInterface $con = null) Return the first ChildMember matching the query
  * @method     ChildMember findOneOrCreate(ConnectionInterface $con = null) Return the first ChildMember matching the query, or a new ChildMember object populated from the query conditions when no match is found
@@ -81,6 +93,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMember|null findOneByPasswordHash(string $password_hash) Return the first ChildMember filtered by the password_hash column
  * @method     ChildMember|null findOneByActivationCode(string $activation_code) Return the first ChildMember filtered by the activation_code column
  * @method     ChildMember|null findOneByRecoveryCode(string $recovery_code) Return the first ChildMember filtered by the recovery_code column
+ * @method     ChildMember|null findOneByHaveTo2fa(boolean $have_to_2fa) Return the first ChildMember filtered by the have_to_2fa column
  * @method     ChildMember|null findOneBySignUpDateTime(string $sign_up_date_time) Return the first ChildMember filtered by the sign_up_date_time column *
 
  * @method     ChildMember requirePk($key, ConnectionInterface $con = null) Return the ChildMember by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -94,6 +107,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMember requireOneByPasswordHash(string $password_hash) Return the first ChildMember filtered by the password_hash column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildMember requireOneByActivationCode(string $activation_code) Return the first ChildMember filtered by the activation_code column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildMember requireOneByRecoveryCode(string $recovery_code) Return the first ChildMember filtered by the recovery_code column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildMember requireOneByHaveTo2fa(boolean $have_to_2fa) Return the first ChildMember filtered by the have_to_2fa column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildMember requireOneBySignUpDateTime(string $sign_up_date_time) Return the first ChildMember filtered by the sign_up_date_time column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildMember[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildMember objects based on current ModelCriteria
@@ -105,6 +119,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMember[]|ObjectCollection findByPasswordHash(string $password_hash) Return ChildMember objects filtered by the password_hash column
  * @method     ChildMember[]|ObjectCollection findByActivationCode(string $activation_code) Return ChildMember objects filtered by the activation_code column
  * @method     ChildMember[]|ObjectCollection findByRecoveryCode(string $recovery_code) Return ChildMember objects filtered by the recovery_code column
+ * @method     ChildMember[]|ObjectCollection findByHaveTo2fa(boolean $have_to_2fa) Return ChildMember objects filtered by the have_to_2fa column
  * @method     ChildMember[]|ObjectCollection findBySignUpDateTime(string $sign_up_date_time) Return ChildMember objects filtered by the sign_up_date_time column
  * @method     ChildMember[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
@@ -204,7 +219,7 @@ abstract class MemberQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, email, first_name, last_name, confirmed_email, password_hash, activation_code, recovery_code, sign_up_date_time FROM member WHERE id = :p0';
+        $sql = 'SELECT id, email, first_name, last_name, confirmed_email, password_hash, activation_code, recovery_code, have_to_2fa, sign_up_date_time FROM member WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -513,6 +528,33 @@ abstract class MemberQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the have_to_2fa column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByHaveTo2fa(true); // WHERE have_to_2fa = true
+     * $query->filterByHaveTo2fa('yes'); // WHERE have_to_2fa = true
+     * </code>
+     *
+     * @param     boolean|string $haveTo2fa The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildMemberQuery The current query, for fluid interface
+     */
+    public function filterByHaveTo2fa($haveTo2fa = null, $comparison = null)
+    {
+        if (is_string($haveTo2fa)) {
+            $haveTo2fa = in_array(strtolower($haveTo2fa), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+
+        return $this->addUsingAlias(MemberTableMap::COL_HAVE_TO_2FA, $haveTo2fa, $comparison);
+    }
+
+    /**
      * Filter the query on the sign_up_date_time column
      *
      * Example usage:
@@ -744,6 +786,105 @@ abstract class MemberQuery extends ModelCriteria
         ?string $joinType = Criteria::LEFT_JOIN
     ) {
         $relatedQuery = $this->useSubmitQuery(
+            $relationAlias,
+            $joinType
+        );
+        $callable($relatedQuery);
+        $relatedQuery->endUse();
+
+        return $this;
+    }
+
+    /**
+     * Filter the query by a related \AuthenticationCode object
+     *
+     * @param \AuthenticationCode|ObjectCollection $authenticationCode the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildMemberQuery The current query, for fluid interface
+     */
+    public function filterByAuthenticationCode($authenticationCode, $comparison = null)
+    {
+        if ($authenticationCode instanceof \AuthenticationCode) {
+            return $this
+                ->addUsingAlias(MemberTableMap::COL_ID, $authenticationCode->getMemberId(), $comparison);
+        } elseif ($authenticationCode instanceof ObjectCollection) {
+            return $this
+                ->useAuthenticationCodeQuery()
+                ->filterByPrimaryKeys($authenticationCode->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByAuthenticationCode() only accepts arguments of type \AuthenticationCode or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the AuthenticationCode relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildMemberQuery The current query, for fluid interface
+     */
+    public function joinAuthenticationCode($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('AuthenticationCode');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'AuthenticationCode');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the AuthenticationCode relation AuthenticationCode object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \AuthenticationCodeQuery A secondary query class using the current class as primary query
+     */
+    public function useAuthenticationCodeQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinAuthenticationCode($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'AuthenticationCode', '\AuthenticationCodeQuery');
+    }
+
+    /**
+     * Use the AuthenticationCode relation AuthenticationCode object
+     *
+     * @param callable(\AuthenticationCodeQuery):\AuthenticationCodeQuery $callable A function working on the related query
+     *
+     * @param string|null $relationAlias optional alias for the relation
+     *
+     * @param string|null $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this
+     */
+    public function withAuthenticationCodeQuery(
+        callable $callable,
+        string $relationAlias = null,
+        ?string $joinType = Criteria::INNER_JOIN
+    ) {
+        $relatedQuery = $this->useAuthenticationCodeQuery(
             $relationAlias,
             $joinType
         );

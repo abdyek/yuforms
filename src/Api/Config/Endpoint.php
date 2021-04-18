@@ -129,6 +129,25 @@ class Endpoint {
                         ]
                     ]
                 ]
+            ],
+            'PATCH'=>[
+                'authorization'=>['guest'],
+                'required'=>[
+                    'email'=>[
+                        'type'=>'email',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>255
+                        ]
+                    ],
+                    'authenticationCode'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>0,
+                            'max'=>10
+                        ]
+                    ]
+                ]
             ]
         ],
         'ForgotMyPassword'=>[

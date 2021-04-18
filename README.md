@@ -41,7 +41,7 @@ if the requirements look like poor for you don't worry. There is more idea in my
 | Autumn | Final | Submit Form | Submit form to transfer info by form inputs | :heavy_check_mark: | :x: |
 | Autumn | Final | Manage Options of Form Access | Manage options of form access. It means which user types can access the form. | :heavy_check_mark: | :x: |
 | Spring | Midterm | Save as Template | Save form as template to share again anytime | :heavy_check_mark: | :x: |
-| Spring | Midterm | 2FA | Two factor authentication for account security | :x: | :x: |
+| Spring | Midterm | 2FA | Two factor authentication for account security | :heavy_check_mark: | :x: |
 | Spring | Midterm | Edit Template | Edit template | :heavy_check_mark: | :x: |
 | Spring | Midterm | Delete Template | Delete template | :heavy_check_mark: | :x: |
 | Spring | Midterm | Share Template | Share template other people | :heavy_check_mark: | :x: |

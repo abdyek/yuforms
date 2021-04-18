@@ -19,6 +19,7 @@ CREATE TABLE `member`
     `password_hash` VARCHAR(60) NOT NULL,
     `activation_code` VARCHAR(6) NOT NULL,
     `recovery_code` VARCHAR(10),
+    `have_to_2fa` TINYINT(1) DEFAULT 0 NOT NULL,
     `sign_up_date_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
@@ -186,6 +187,27 @@ CREATE TABLE `template`
     CONSTRAINT `template_fk_ee8551`
         FOREIGN KEY (`form_id`)
         REFERENCES `form` (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- authentication_code
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `authentication_code`;
+
+CREATE TABLE `authentication_code`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `member_id` INTEGER NOT NULL,
+    `type` VARCHAR(20) NOT NULL,
+    `code` VARCHAR(10) NOT NULL,
+    `trial_count` INTEGER DEFAULT 0 NOT NULL,
+    `date_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    INDEX `authentication_code_fi_672062` (`member_id`),
+    CONSTRAINT `authentication_code_fk_672062`
+        FOREIGN KEY (`member_id`)
+        REFERENCES `member` (`id`)
 ) ENGINE=InnoDB;
 
 # This restores the fkey checks, after having unset them earlier

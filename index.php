@@ -3,9 +3,11 @@
 require 'vendor/autoload.php';
 require 'generated-conf/config.php';
 
-// for api and website
 use Yuforms\Api\Core\Endpoint;
 use Yuforms\WebSite\Core\Controller as WebSiteController;
+use Yuforms\Api\Config\Config;
+
+date_default_timezone_set(Config::TIMEZONE);
 
 // router
 use Buki\Router\Router;

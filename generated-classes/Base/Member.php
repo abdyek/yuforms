@@ -2,6 +2,8 @@
 
 namespace Base;
 
+use \AuthenticationCode as ChildAuthenticationCode;
+use \AuthenticationCodeQuery as ChildAuthenticationCodeQuery;
 use \Form as ChildForm;
 use \FormQuery as ChildFormQuery;
 use \Member as ChildMember;
@@ -11,6 +13,7 @@ use \SubmitQuery as ChildSubmitQuery;
 use \DateTime;
 use \Exception;
 use \PDO;
+use Map\AuthenticationCodeTableMap;
 use Map\FormTableMap;
 use Map\MemberTableMap;
 use Map\SubmitTableMap;
@@ -126,6 +129,14 @@ abstract class Member implements ActiveRecordInterface
     protected $recovery_code;
 
     /**
+     * The value for the have_to_2fa field.
+     *
+     * Note: this column has a database default value of: false
+     * @var        boolean
+     */
+    protected $have_to_2fa;
+
+    /**
      * The value for the sign_up_date_time field.
      *
      * Note: this column has a database default value of: (expression) CURRENT_TIMESTAMP
@@ -144,6 +155,12 @@ abstract class Member implements ActiveRecordInterface
      */
     protected $collSubmits;
     protected $collSubmitsPartial;
+
+    /**
+     * @var        ObjectCollection|ChildAuthenticationCode[] Collection to store aggregation of ChildAuthenticationCode objects.
+     */
+    protected $collAuthenticationCodes;
+    protected $collAuthenticationCodesPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -166,6 +183,12 @@ abstract class Member implements ActiveRecordInterface
     protected $submitsScheduledForDeletion = null;
 
     /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildAuthenticationCode[]
+     */
+    protected $authenticationCodesScheduledForDeletion = null;
+
+    /**
      * Applies default values to this object.
      * This method should be called from the object's constructor (or
      * equivalent initialization method).
@@ -173,6 +196,7 @@ abstract class Member implements ActiveRecordInterface
      */
     public function applyDefaultValues()
     {
+        $this->have_to_2fa = false;
     }
 
     /**
@@ -494,6 +518,26 @@ abstract class Member implements ActiveRecordInterface
     }
 
     /**
+     * Get the [have_to_2fa] column value.
+     *
+     * @return boolean
+     */
+    public function getHaveTo2fa()
+    {
+        return $this->have_to_2fa;
+    }
+
+    /**
+     * Get the [have_to_2fa] column value.
+     *
+     * @return boolean
+     */
+    public function isHaveTo2fa()
+    {
+        return $this->getHaveTo2fa();
+    }
+
+    /**
      * Get the [optionally formatted] temporal [sign_up_date_time] column value.
      *
      *
@@ -684,6 +728,34 @@ abstract class Member implements ActiveRecordInterface
     } // setRecoveryCode()
 
     /**
+     * Sets the value of the [have_to_2fa] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param  boolean|integer|string $v The new value
+     * @return $this|\Member The current object (for fluent API support)
+     */
+    public function setHaveTo2fa($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->have_to_2fa !== $v) {
+            $this->have_to_2fa = $v;
+            $this->modifiedColumns[MemberTableMap::COL_HAVE_TO_2FA] = true;
+        }
+
+        return $this;
+    } // setHaveTo2fa()
+
+    /**
      * Sets the value of [sign_up_date_time] column to a normalized version of the date/time value specified.
      *
      * @param  string|integer|\DateTimeInterface $v string, integer (timestamp), or \DateTimeInterface value.
@@ -713,6 +785,10 @@ abstract class Member implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->have_to_2fa !== false) {
+                return false;
+            }
+
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -763,7 +839,10 @@ abstract class Member implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : MemberTableMap::translateFieldName('RecoveryCode', TableMap::TYPE_PHPNAME, $indexType)];
             $this->recovery_code = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : MemberTableMap::translateFieldName('SignUpDateTime', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : MemberTableMap::translateFieldName('HaveTo2fa', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->have_to_2fa = (null !== $col) ? (boolean) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : MemberTableMap::translateFieldName('SignUpDateTime', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -776,7 +855,7 @@ abstract class Member implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 9; // 9 = MemberTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 10; // 10 = MemberTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Member'), 0, $e);
@@ -840,6 +919,8 @@ abstract class Member implements ActiveRecordInterface
             $this->collForms = null;
 
             $this->collSubmits = null;
+
+            $this->collAuthenticationCodes = null;
 
         } // if (deep)
     }
@@ -990,6 +1071,23 @@ abstract class Member implements ActiveRecordInterface
                 }
             }
 
+            if ($this->authenticationCodesScheduledForDeletion !== null) {
+                if (!$this->authenticationCodesScheduledForDeletion->isEmpty()) {
+                    \AuthenticationCodeQuery::create()
+                        ->filterByPrimaryKeys($this->authenticationCodesScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->authenticationCodesScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collAuthenticationCodes !== null) {
+                foreach ($this->collAuthenticationCodes as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             $this->alreadyInSave = false;
 
         }
@@ -1040,6 +1138,9 @@ abstract class Member implements ActiveRecordInterface
         if ($this->isColumnModified(MemberTableMap::COL_RECOVERY_CODE)) {
             $modifiedColumns[':p' . $index++]  = 'recovery_code';
         }
+        if ($this->isColumnModified(MemberTableMap::COL_HAVE_TO_2FA)) {
+            $modifiedColumns[':p' . $index++]  = 'have_to_2fa';
+        }
         if ($this->isColumnModified(MemberTableMap::COL_SIGN_UP_DATE_TIME)) {
             $modifiedColumns[':p' . $index++]  = 'sign_up_date_time';
         }
@@ -1077,6 +1178,9 @@ abstract class Member implements ActiveRecordInterface
                         break;
                     case 'recovery_code':
                         $stmt->bindValue($identifier, $this->recovery_code, PDO::PARAM_STR);
+                        break;
+                    case 'have_to_2fa':
+                        $stmt->bindValue($identifier, (int) $this->have_to_2fa, PDO::PARAM_INT);
                         break;
                     case 'sign_up_date_time':
                         $stmt->bindValue($identifier, $this->sign_up_date_time ? $this->sign_up_date_time->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -1168,6 +1272,9 @@ abstract class Member implements ActiveRecordInterface
                 return $this->getRecoveryCode();
                 break;
             case 8:
+                return $this->getHaveTo2fa();
+                break;
+            case 9:
                 return $this->getSignUpDateTime();
                 break;
             default:
@@ -1208,10 +1315,11 @@ abstract class Member implements ActiveRecordInterface
             $keys[5] => $this->getPasswordHash(),
             $keys[6] => $this->getActivationCode(),
             $keys[7] => $this->getRecoveryCode(),
-            $keys[8] => $this->getSignUpDateTime(),
+            $keys[8] => $this->getHaveTo2fa(),
+            $keys[9] => $this->getSignUpDateTime(),
         );
-        if ($result[$keys[8]] instanceof \DateTimeInterface) {
-            $result[$keys[8]] = $result[$keys[8]]->format('Y-m-d H:i:s.u');
+        if ($result[$keys[9]] instanceof \DateTimeInterface) {
+            $result[$keys[9]] = $result[$keys[9]]->format('Y-m-d H:i:s.u');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1249,6 +1357,21 @@ abstract class Member implements ActiveRecordInterface
                 }
 
                 $result[$key] = $this->collSubmits->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collAuthenticationCodes) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'authenticationCodes';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'authentication_codes';
+                        break;
+                    default:
+                        $key = 'AuthenticationCodes';
+                }
+
+                $result[$key] = $this->collAuthenticationCodes->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1309,6 +1432,9 @@ abstract class Member implements ActiveRecordInterface
                 $this->setRecoveryCode($value);
                 break;
             case 8:
+                $this->setHaveTo2fa($value);
+                break;
+            case 9:
                 $this->setSignUpDateTime($value);
                 break;
         } // switch()
@@ -1362,7 +1488,10 @@ abstract class Member implements ActiveRecordInterface
             $this->setRecoveryCode($arr[$keys[7]]);
         }
         if (array_key_exists($keys[8], $arr)) {
-            $this->setSignUpDateTime($arr[$keys[8]]);
+            $this->setHaveTo2fa($arr[$keys[8]]);
+        }
+        if (array_key_exists($keys[9], $arr)) {
+            $this->setSignUpDateTime($arr[$keys[9]]);
         }
 
         return $this;
@@ -1430,6 +1559,9 @@ abstract class Member implements ActiveRecordInterface
         }
         if ($this->isColumnModified(MemberTableMap::COL_RECOVERY_CODE)) {
             $criteria->add(MemberTableMap::COL_RECOVERY_CODE, $this->recovery_code);
+        }
+        if ($this->isColumnModified(MemberTableMap::COL_HAVE_TO_2FA)) {
+            $criteria->add(MemberTableMap::COL_HAVE_TO_2FA, $this->have_to_2fa);
         }
         if ($this->isColumnModified(MemberTableMap::COL_SIGN_UP_DATE_TIME)) {
             $criteria->add(MemberTableMap::COL_SIGN_UP_DATE_TIME, $this->sign_up_date_time);
@@ -1527,6 +1659,7 @@ abstract class Member implements ActiveRecordInterface
         $copyObj->setPasswordHash($this->getPasswordHash());
         $copyObj->setActivationCode($this->getActivationCode());
         $copyObj->setRecoveryCode($this->getRecoveryCode());
+        $copyObj->setHaveTo2fa($this->getHaveTo2fa());
         $copyObj->setSignUpDateTime($this->getSignUpDateTime());
 
         if ($deepCopy) {
@@ -1543,6 +1676,12 @@ abstract class Member implements ActiveRecordInterface
             foreach ($this->getSubmits() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addSubmit($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getAuthenticationCodes() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addAuthenticationCode($relObj->copy($deepCopy));
                 }
             }
 
@@ -1593,6 +1732,10 @@ abstract class Member implements ActiveRecordInterface
         }
         if ('Submit' === $relationName) {
             $this->initSubmits();
+            return;
+        }
+        if ('AuthenticationCode' === $relationName) {
+            $this->initAuthenticationCodes();
             return;
         }
     }
@@ -2116,6 +2259,240 @@ abstract class Member implements ActiveRecordInterface
     }
 
     /**
+     * Clears out the collAuthenticationCodes collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addAuthenticationCodes()
+     */
+    public function clearAuthenticationCodes()
+    {
+        $this->collAuthenticationCodes = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collAuthenticationCodes collection loaded partially.
+     */
+    public function resetPartialAuthenticationCodes($v = true)
+    {
+        $this->collAuthenticationCodesPartial = $v;
+    }
+
+    /**
+     * Initializes the collAuthenticationCodes collection.
+     *
+     * By default this just sets the collAuthenticationCodes collection to an empty array (like clearcollAuthenticationCodes());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initAuthenticationCodes($overrideExisting = true)
+    {
+        if (null !== $this->collAuthenticationCodes && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = AuthenticationCodeTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collAuthenticationCodes = new $collectionClassName;
+        $this->collAuthenticationCodes->setModel('\AuthenticationCode');
+    }
+
+    /**
+     * Gets an array of ChildAuthenticationCode objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildMember is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildAuthenticationCode[] List of ChildAuthenticationCode objects
+     * @throws PropelException
+     */
+    public function getAuthenticationCodes(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collAuthenticationCodesPartial && !$this->isNew();
+        if (null === $this->collAuthenticationCodes || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collAuthenticationCodes) {
+                    $this->initAuthenticationCodes();
+                } else {
+                    $collectionClassName = AuthenticationCodeTableMap::getTableMap()->getCollectionClassName();
+
+                    $collAuthenticationCodes = new $collectionClassName;
+                    $collAuthenticationCodes->setModel('\AuthenticationCode');
+
+                    return $collAuthenticationCodes;
+                }
+            } else {
+                $collAuthenticationCodes = ChildAuthenticationCodeQuery::create(null, $criteria)
+                    ->filterByMember($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collAuthenticationCodesPartial && count($collAuthenticationCodes)) {
+                        $this->initAuthenticationCodes(false);
+
+                        foreach ($collAuthenticationCodes as $obj) {
+                            if (false == $this->collAuthenticationCodes->contains($obj)) {
+                                $this->collAuthenticationCodes->append($obj);
+                            }
+                        }
+
+                        $this->collAuthenticationCodesPartial = true;
+                    }
+
+                    return $collAuthenticationCodes;
+                }
+
+                if ($partial && $this->collAuthenticationCodes) {
+                    foreach ($this->collAuthenticationCodes as $obj) {
+                        if ($obj->isNew()) {
+                            $collAuthenticationCodes[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collAuthenticationCodes = $collAuthenticationCodes;
+                $this->collAuthenticationCodesPartial = false;
+            }
+        }
+
+        return $this->collAuthenticationCodes;
+    }
+
+    /**
+     * Sets a collection of ChildAuthenticationCode objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $authenticationCodes A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildMember The current object (for fluent API support)
+     */
+    public function setAuthenticationCodes(Collection $authenticationCodes, ConnectionInterface $con = null)
+    {
+        /** @var ChildAuthenticationCode[] $authenticationCodesToDelete */
+        $authenticationCodesToDelete = $this->getAuthenticationCodes(new Criteria(), $con)->diff($authenticationCodes);
+
+
+        $this->authenticationCodesScheduledForDeletion = $authenticationCodesToDelete;
+
+        foreach ($authenticationCodesToDelete as $authenticationCodeRemoved) {
+            $authenticationCodeRemoved->setMember(null);
+        }
+
+        $this->collAuthenticationCodes = null;
+        foreach ($authenticationCodes as $authenticationCode) {
+            $this->addAuthenticationCode($authenticationCode);
+        }
+
+        $this->collAuthenticationCodes = $authenticationCodes;
+        $this->collAuthenticationCodesPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related AuthenticationCode objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related AuthenticationCode objects.
+     * @throws PropelException
+     */
+    public function countAuthenticationCodes(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collAuthenticationCodesPartial && !$this->isNew();
+        if (null === $this->collAuthenticationCodes || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collAuthenticationCodes) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getAuthenticationCodes());
+            }
+
+            $query = ChildAuthenticationCodeQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByMember($this)
+                ->count($con);
+        }
+
+        return count($this->collAuthenticationCodes);
+    }
+
+    /**
+     * Method called to associate a ChildAuthenticationCode object to this object
+     * through the ChildAuthenticationCode foreign key attribute.
+     *
+     * @param  ChildAuthenticationCode $l ChildAuthenticationCode
+     * @return $this|\Member The current object (for fluent API support)
+     */
+    public function addAuthenticationCode(ChildAuthenticationCode $l)
+    {
+        if ($this->collAuthenticationCodes === null) {
+            $this->initAuthenticationCodes();
+            $this->collAuthenticationCodesPartial = true;
+        }
+
+        if (!$this->collAuthenticationCodes->contains($l)) {
+            $this->doAddAuthenticationCode($l);
+
+            if ($this->authenticationCodesScheduledForDeletion and $this->authenticationCodesScheduledForDeletion->contains($l)) {
+                $this->authenticationCodesScheduledForDeletion->remove($this->authenticationCodesScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildAuthenticationCode $authenticationCode The ChildAuthenticationCode object to add.
+     */
+    protected function doAddAuthenticationCode(ChildAuthenticationCode $authenticationCode)
+    {
+        $this->collAuthenticationCodes[]= $authenticationCode;
+        $authenticationCode->setMember($this);
+    }
+
+    /**
+     * @param  ChildAuthenticationCode $authenticationCode The ChildAuthenticationCode object to remove.
+     * @return $this|ChildMember The current object (for fluent API support)
+     */
+    public function removeAuthenticationCode(ChildAuthenticationCode $authenticationCode)
+    {
+        if ($this->getAuthenticationCodes()->contains($authenticationCode)) {
+            $pos = $this->collAuthenticationCodes->search($authenticationCode);
+            $this->collAuthenticationCodes->remove($pos);
+            if (null === $this->authenticationCodesScheduledForDeletion) {
+                $this->authenticationCodesScheduledForDeletion = clone $this->collAuthenticationCodes;
+                $this->authenticationCodesScheduledForDeletion->clear();
+            }
+            $this->authenticationCodesScheduledForDeletion[]= clone $authenticationCode;
+            $authenticationCode->setMember(null);
+        }
+
+        return $this;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
@@ -2130,6 +2507,7 @@ abstract class Member implements ActiveRecordInterface
         $this->password_hash = null;
         $this->activation_code = null;
         $this->recovery_code = null;
+        $this->have_to_2fa = null;
         $this->sign_up_date_time = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
@@ -2160,10 +2538,16 @@ abstract class Member implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collAuthenticationCodes) {
+                foreach ($this->collAuthenticationCodes as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
         $this->collForms = null;
         $this->collSubmits = null;
+        $this->collAuthenticationCodes = null;
     }
 
     /**
