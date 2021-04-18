@@ -11,6 +11,7 @@ class Controller {
         $this->data = $obj['data'];
         $this->who = $obj['who'];
         $this->userId = $obj['userId'];
+        $this->silence = isset($obj['silence'])?$obj['silence']:false;
     }
     private function run() {
         if($this->method==='POST') {
@@ -25,12 +26,14 @@ class Controller {
             $this->delete();
         }
     }
-    protected function response($data) {
+    public function response($data) {
+        if($this->silence)
+            return
         header("Access-Control-Allow-Origin: *");
         header("Content-Type: application/json; charset=UTF-8");
         echo json_encode($data);
     }
-    protected function success() {
+    public function success() {
         $this->response(['state'=>'success']);
     }
 }

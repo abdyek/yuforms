@@ -46,4 +46,23 @@ class Share extends Controller {
         $this->availableShare->setStopDateTime(Time::current());
         $this->availableShare->save();
     }
+    protected function put() {
+        new self([
+            'method'=>'DELETE',
+            'data'=>[
+                'id'=>$this->data['id']
+            ],
+            'who'=>$this->who,
+            'userId'=>$this->userId,
+            'silence'=>true
+        ]);
+        new self([
+            'method'=>'POST',
+            'data'=>$this->data,
+            'who'=>$this->who,
+            'userId'=>$this->userId,
+            'silence'=>true
+        ]);
+        $this->success();
+    }
 }

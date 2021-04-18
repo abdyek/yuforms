@@ -307,6 +307,25 @@ class Endpoint {
                     ]
                 ]
             ],
+            'PUT'=>[
+                'authorization'=>['member'],
+                'required'=>[
+                    'id'=>[
+                        'type'=>'int',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>11
+                        ]
+                    ],
+                    'onlyMember'=>[
+                        'type'=>'int',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>1
+                        ]
+                    ]
+                ]
+            ]
         ],
         'Submit'=>[
             'GET'=>[

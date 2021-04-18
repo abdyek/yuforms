@@ -12,4 +12,7 @@ class Example extends Controller {
     protected function get() {
         $this->response($this->data);
     }
+    protected function delete() {
+        echo 'this is delete';
+    }
 }

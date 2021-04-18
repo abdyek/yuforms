@@ -16,7 +16,7 @@ class Endpoint {
         $this->checkAuthorization();
         $this->setData();
         $this->checkRequiredWrapper();
-        $this->controllerHandler();
+        $this->handleController();
     }
     private function setConfig() {
         $this->config = EndpointConfig::ENDPOINT[$this->endpoint];
@@ -133,7 +133,7 @@ class Endpoint {
     private function emailPatternCheck($email) {
         return filter_var($email, FILTER_VALIDATE_EMAIL);
     }
-    protected function controllerHandler() {
+    protected function handleController() {
         $class = 'Yuforms\Api\Controller\\'.$this->endpoint;
         new $class([
             'method'=>$this->method,
