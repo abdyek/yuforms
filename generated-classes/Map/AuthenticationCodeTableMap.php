@@ -211,7 +211,7 @@ class AuthenticationCodeTableMap extends TableMap
         $this->addForeignKey('member_id', 'MemberId', 'INTEGER', 'member', 'id', true, null, null);
         $this->addColumn('type', 'Type', 'VARCHAR', true, 20, null);
         $this->addColumn('code', 'Code', 'VARCHAR', true, 10, null);
-        $this->addColumn('trial_count', 'TrialCount', 'INTEGER', true, null, 0);
+        $this->addColumn('trial_count', 'TrialCount', 'INTEGER', true, null, 1);
         $this->addColumn('date_time', 'DateTime', 'TIMESTAMP', true, null, 'CURRENT_TIMESTAMP');
     } // initialize()
 

@@ -201,7 +201,7 @@ CREATE TABLE `authentication_code`
     `member_id` INTEGER NOT NULL,
     `type` VARCHAR(20) NOT NULL,
     `code` VARCHAR(10) NOT NULL,
-    `trial_count` INTEGER DEFAULT 0 NOT NULL,
+    `trial_count` INTEGER DEFAULT 1 NOT NULL,
     `date_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     INDEX `authentication_code_fi_672062` (`member_id`),

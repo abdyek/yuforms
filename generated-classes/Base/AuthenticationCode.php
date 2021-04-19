@@ -94,7 +94,7 @@ abstract class AuthenticationCode implements ActiveRecordInterface
     /**
      * The value for the trial_count field.
      *
-     * Note: this column has a database default value of: 0
+     * Note: this column has a database default value of: 1
      * @var        int
      */
     protected $trial_count;
@@ -128,7 +128,7 @@ abstract class AuthenticationCode implements ActiveRecordInterface
      */
     public function applyDefaultValues()
     {
-        $this->trial_count = 0;
+        $this->trial_count = 1;
     }
 
     /**
@@ -565,7 +565,7 @@ abstract class AuthenticationCode implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->trial_count !== 0) {
+            if ($this->trial_count !== 1) {
                 return false;
             }
 

@@ -10,7 +10,7 @@ class Endpoint {
                     /*
                 'required'=>[
                     'name'=>[
-                        'type'=>'str', // str, arr, int, email
+                        'type'=>'str', // str, arr, int, email, bool
                         'limits'=>[
                             'min'=>0,
                             'max'=>10
@@ -43,6 +43,11 @@ class Endpoint {
             ],
             'GET'=>[
                 'authorization'=>['guest', 'member', 'root'],
+                'required'=>[
+                    'isBoolean'=>[
+                        'type'=>'bool'
+                    ]
+                ]
             ],
             'PUT'=>[
                 'authorization'=>['guest', 'member', 'root'],
@@ -306,11 +311,7 @@ class Endpoint {
                         ]
                     ],
                     'onlyMember'=>[
-                        'type'=>'int',
-                        'limits'=>[
-                            'min'=>1,
-                            'max'=>1
-                        ]
+                        'type'=>'bool',
                     ]
                 ]
             ],
@@ -337,11 +338,7 @@ class Endpoint {
                         ]
                     ],
                     'onlyMember'=>[
-                        'type'=>'int',
-                        'limits'=>[
-                            'min'=>1,
-                            'max'=>1
-                        ]
+                        'type'=>'bool',
                     ]
                 ]
             ]
@@ -472,11 +469,7 @@ class Endpoint {
                         ]
                     ],
                     'public'=>[
-                        'type'=>'int',
-                        'limits'=>[
-                            'min'=>1,
-                            'max'=>1
-                        ]
+                        'type'=>'bool',
                     ]
                 ]
             ]
