@@ -10,45 +10,15 @@ use Yuforms\Api\Model\Share as ShareModel;
 class Form extends Controller {
     protected function post() {
         $this->member = MemberModel::get($this->userId);
-        $this->createForm();
-        $this->addQuestions();
-    }
-    private function createForm() {
-        $this->form = new \Form();
-        $this->form->setMember($this->member);
-        $this->form->setName($this->data['formTitle']);
-        $this->form->setCreateDateTime(Time::current());
-        $this->form->save();
-        $id = $this->form->getId();
+        $this->form = FormModel::create([
+            'memberId'=>$this->userId,
+            'name'=>$this->data['formTitle']
+        ]);
         $this->response([
-            'formId'=>$id,
+            'formId'=>$this->form->getId(),
             'formSlug'=>'slug will be here'
         ]);
-    }
-    private function addQuestions() {
-        foreach($this->data['questions'] as $key=>$q) {
-            $question = new \Question();
-            $question->setText($q['questionText']);
-            $formComponent = \FormComponentQuery::create()->filterByFormComponentName($q['formComponentType'])->findOne();
-            $formComponentId = $formComponent->getId();
-            $question->setFormComponentId($formComponentId);
-            $question->save();
-            $formItem = new \FormItem();
-            $formItem->setQuestionId($question->getId());
-            $formItem->setFormId($this->form->getId());
-            $formItem->save();
-            if($formComponent->getHasOptions()) {
-                foreach(array_values($q['options']) as $id=>$o) {
-                    if(isset($o['value'])) { // for last option, temporary solution, I will fix it side of client as best practice
-                        $option = new \Option();
-                        $option->setText($o['value']);  // client side value is not equal database value
-                        $option->setValue($id);
-                        $option->setQuestionId($question->getId());
-                        $option->save();
-                    }
-                }
-            }
-        }
+        FormModel::addQuestions($this->form, $this->data['questions']);
     }
     protected function get() {
         $this->formOwner = false;
@@ -131,36 +101,8 @@ class Form extends Controller {
         }
         $this->member = MemberModel::get($this->userId);
         $this->form = FormModel::getWithMemberId($this->userId, $this->data['id']);
-        $this->updateForm(); 
-        $this->updateQuestions();
+        FormModel::update($this->form, $this->data);
         $this->success();
-    }
-    private function updateForm() {
-        $this->form->setName($this->data['formTitle']);
-        $this->form->save();
-    }
-    private function updateQuestions() {
-        foreach($this->data['questions'] as $que) {
-            $formItem = \FormItemQuery::create()->filterByFormId($this->form->getId())->findOneByQuestionId($que['id']);
-            if(!$formItem) {
-                continue;
-            }
-            $question = \QuestionQuery::create()->findPk($formItem->getQuestionId());
-            $question->setText($que['questionText']);
-            $question->save();
-            $formComponent = \FormComponentQuery::create()->findPk($question->getFormComponentId());
-            if($formComponent->getHasOptions()) {
-                $questionId = $question->getId();
-                foreach($que['options'] as $ops) {
-                    $option = \OptionQuery::create()->filterByQuestionId($questionId)->findPk($ops['id']);
-                    if(!$option) {
-                        continue;
-                    }
-                    $option->setText($ops['text']);
-                    $option->save();
-                }
-            }
-        }
     }
     protected function delete() {
         $form = formModel::get($this->data['id']);

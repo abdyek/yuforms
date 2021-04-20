@@ -6,6 +6,7 @@ use Yuforms\Api\Model\Question as QuestionModel;
 use Yuforms\Api\Model\Option as OptionModel;
 use Yuforms\Api\Model\FormItem as FormItemModel;
 use Yuforms\Api\Model\Submit as SubmitModel;
+use Yuforms\Api\Model\FormComponent as FormComponentModel;
 use Yuforms\Api\Other\Time;
 
 class Form {
@@ -70,5 +71,20 @@ class Form {
         $form->setLastEditDateTime(Time::current());
         QuestionModel::updateAll($form, $obj['questions']);
         $form->save();
+    }
+    public static function addQuestions($form, $questions) {
+        foreach($questions as $key=>$que) {
+            $formComponent = FormComponentModel::getByName($que['formComponentType']);
+            if(!$formComponent) {
+                continue;
+            }
+            $question = QuestionModel::create($formComponent->getId(), $que['questionText']);
+            FormItemModel::create($form->getId(), $question->getId());
+            if($formComponent->getHasOptions()) {
+                foreach($que['options'] as $i=>$opt) {
+                    OptionModel::create($question->getId(), $i, $opt['value']);
+                }
+            }
+        }
     }
 }
