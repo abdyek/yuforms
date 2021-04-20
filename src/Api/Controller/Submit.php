@@ -22,7 +22,7 @@ class Submit extends Controller {
         ]);
     }
     private function prepareModels() {
-        $this->form = FormModel::get($this->data['id']);
+        $this->form = FormModel::get($this->data['formId']);
         $this->share = ShareModel::getUnfinished($this->form->getId());
         if(!$this->share or ($this->share->getOnlyMember() and $this->who==='guest')) {
             http_response_code(404);

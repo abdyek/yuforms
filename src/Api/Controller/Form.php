@@ -5,6 +5,7 @@ use Yuforms\Api\Core\Controller;
 use Yuforms\Api\Other\Time;
 use Yuforms\Api\Model\Member as MemberModel;
 use Yuforms\Api\Model\Form as FormModel;
+use Yuforms\Api\Model\Share as ShareModel;
 
 class Form extends Controller {
     protected function post() {
@@ -20,7 +21,8 @@ class Form extends Controller {
         $this->form->save();
         $id = $this->form->getId();
         $this->response([
-            'formSlug'=>$id
+            'formId'=>$id,
+            'formSlug'=>'slug will be here'
         ]);
     }
     private function addQuestions() {
@@ -122,6 +124,11 @@ class Form extends Controller {
         return $optionsArr;
     }
     public function put() {
+        $share = ShareModel::getUnfinished($this->data['id']);
+        if($share) {
+            http_response_code(422);
+            exit();
+        }
         $this->member = MemberModel::get($this->userId);
         $this->form = FormModel::getWithMemberId($this->userId, $this->data['id']);
         $this->updateForm(); 

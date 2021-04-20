@@ -23,7 +23,7 @@ class Share extends Controller {
     }
     private function prepareModels() {
         $this->member = MemberModel::get($this->userId);
-        $this->form = FormModel::getWithMemberId($this->member->getId(), $this->data['id']);
+        $this->form = FormModel::getWithMemberId($this->member->getId(), $this->data['formId']);
         $this->availableShare = ShareModel::getUnfinished($this->form->getId());
     }
     private function addNewShare() {
@@ -50,7 +50,7 @@ class Share extends Controller {
         new self([
             'method'=>'DELETE',
             'data'=>[
-                'id'=>$this->data['id']
+                'formId'=>$this->data['formId']
             ],
             'who'=>$this->who,
             'userId'=>$this->userId,

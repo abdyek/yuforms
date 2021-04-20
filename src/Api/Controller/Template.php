@@ -7,10 +7,10 @@ use Yuforms\Api\Model\Form as FormModel;
 
 class Template extends Controller {
     protected function post() {
-        $form = FormModel::getWithMemberId($this->userId, $this->data['id']);
+        $form = FormModel::getWithMemberId($this->userId, $this->data['formId']);
         if(!$form) {
-            $template = TemplateModel::getPublic($this->data['id']);
-            $form = ($template)?FormModel::get($this->data['id']):false;
+            $template = TemplateModel::getByFormId($this->data['formId']);
+            $form = ($template->getIsPublic())?FormModel::get($this->data['formId']):false;
         }
         if(!$form) {
             http_response_code(404);
@@ -25,17 +25,17 @@ class Template extends Controller {
         $this->success();
     }
     protected function delete() {
-        $form = FormModel::getWithMemberId($this->userId, $this->data['id']);
+        $form = FormModel::getWithMemberId($this->userId, $this->data['formId']);
         if(!$form or !$form->getIsTemplate()) {
             http_response_code(404);
             exit();
         }
-        $template = TemplateModel::getByFormId($this->data['id']);
+        $template = TemplateModel::getByFormId($this->data['formId']);
         TemplateModel::delete($template);
         $this->success();
     }
     protected function put() {
-        $form = FormModel::getWithMemberId($this->userId, $this->data['id']);
+        $form = FormModel::getWithMemberId($this->userId, $this->data['formId']);
         if(!$form or !$form->getIsTemplate()) {
             http_response_code(404);
             exit();
@@ -44,7 +44,7 @@ class Template extends Controller {
         $this->success();
     }
     protected function patch() {
-        $form = FormModel::getWithMemberId($this->userId, $this->data['id']);
+        $form = FormModel::getWithMemberId($this->userId, $this->data['formId']);
         $template = TemplateModel::getByFormId($form->getId());
         $template->setIsPublic($this->data['public']);
         $template->save();

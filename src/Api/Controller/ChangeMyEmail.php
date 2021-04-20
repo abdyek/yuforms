@@ -33,7 +33,7 @@ class ChangeMyEmail extends Controller {
         Mail::sendActivationCode($this->data['newEmail'], $this->activationCode);
         $this->response([
             'state'=>'success',
-            'message'=>'your password changed'
+            'message'=>'your email changed'
         ]);
     }
 }
