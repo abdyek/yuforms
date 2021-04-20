@@ -246,12 +246,11 @@ class Endpoint {
             'POST'=>[
                 'authorization'=>['member'],
             ],
-            /* these codes will changed by myself
             'GET'=>[
                 'authorization'=>['member'],
                 'required'=>[
                     'id'=>[
-                        'type'=>'str',
+                        'type'=>'int',
                         'limits'=>[
                             'min'=>1,
                             'max'=>11,
@@ -259,7 +258,6 @@ class Endpoint {
                     ]
                 ]
             ],
-             */
             'PUT'=>[
                 'authorization'=>['member'],
                 'required'=>[

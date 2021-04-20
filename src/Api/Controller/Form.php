@@ -6,6 +6,7 @@ use Yuforms\Api\Other\Time;
 use Yuforms\Api\Model\Member as MemberModel;
 use Yuforms\Api\Model\Form as FormModel;
 use Yuforms\Api\Model\Share as ShareModel;
+use Yuforms\Api\Model\Question as QuestionModel;
 
 class Form extends Controller {
     protected function post() {
@@ -21,23 +22,14 @@ class Form extends Controller {
         FormModel::addQuestions($this->form, $this->data['questions']);
     }
     protected function get() {
-        $this->formOwner = false;
-        if(!$this->checkFormAccessibility()) {
-            http_response_code(403);
+        $form = FormModel::getWithMemberId($this->userId, $this->data['id']);
+        if(!$form) {
+            http_response_code(404);
             exit();
         }
-        //$this->checkOwner();
-        //$this->checkShared();
         $this->response([
-            'form'=>[
-                'id'=>$this->form->getId(),
-                'name'=>$this->form->getName(),
-                'createdDateTime'=>$this->form->getLastEditDateTime(),
-                'memberId'=>$this->form->getMemberId(),
-                'owner'=>$this->checkOwner(),
-                'sharingNow'=>$this->checkShared()
-            ],
-            'questions'=>$this->getQuestions()
+            'form'=>FormModel::getInfoArrWithShareInfo($form),
+            'questions'=>QuestionModel::getsInfoArrByForm($form),
         ]);
     }
     private function checkFormAccessibility() {
@@ -54,44 +46,6 @@ class Form extends Controller {
                 return true;
             return ($this->form->getMemberId()==$this->userId)?true:false;
         }
-    }
-    private function checkOwner() {
-        return ($this->who=='member' and $this->userId==$this->form->getMemberId())?true:false;
-    }
-    private function checkShared() {
-        $share = \ShareQuery::create()->filterByStopDateTime(null)->filterByFormId($this->data['id'])->findOne();
-        return ($share)?true:false;
-    }
-    private function getQuestions() {
-        $questions = [];
-        $this->formItems = \FormItemQuery::create()->filterByFormId($this->form->getId())->find();
-        foreach($this->formItems as $item) {
-            $question = \QuestionQuery::create()->findPK($item->getQuestionId());
-            $formComponent = \FormComponentQuery::create()->findPK($question->getFormComponentId());
-            $questions[] = [
-                $item->getQuestionId() => [
-                    'id'=>$question->getId(),
-                    'text'=>$question->getText(),
-                    'formComponentType'=>$formComponent->getFormComponentName(),
-                    'options'=>($formComponent->getHasOptions())?$this->getOptions($question->getId()):null
-                ]
-            ];
-        }
-        return $questions;
-    }
-    private function getOptions($questionId) {
-        $optionsArr = [];
-        $options = \OptionQuery::create()->filterByQuestionId($questionId)->find();
-        foreach($options as $opt) {
-            $optionsArr[] = [
-                $opt->getId() => [
-                    'id'=>$opt->getId(),
-                    'value'=>$opt->getValue(),
-                    'text'=>$opt->getText()
-                ]
-            ];
-        }
-        return $optionsArr;
     }
     public function put() {
         $share = ShareModel::getUnfinished($this->data['id']);

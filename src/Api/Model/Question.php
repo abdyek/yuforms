@@ -76,4 +76,23 @@ class Question {
             }
         }
     }
+    public static function getInfoArr($question) {
+        $formComponent = FormComponentModel::get($question->getFormComponentId());
+        $formComponent->getHasOptions();
+        return [
+            'id'=>$question->getId(),
+            'questionText'=>$question->getText(),
+            'formComponent'=>FormComponentModel::getInfoArr($formComponent->getId()),
+            'options'=>($formComponent->getHasOptions())?OptionModel::getsInfoArrByQuestionId($question->getId()):null
+        ];
+    }
+    public static function getsInfoArrByForm($form) {
+        $formItems = FormItem::gets($form->getId());
+        $questions = [];
+        foreach($formItems as $fi) {
+            $question = self::get($fi->getQuestionId());
+            $questions[] = self::getInfoArr($question);
+        }
+        return $questions;
+    }
 }
