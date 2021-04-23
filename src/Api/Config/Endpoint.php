@@ -470,6 +470,18 @@ class Endpoint {
                         'type'=>'bool',
                     ]
                 ]
+            ],
+            'GET'=>[
+                'authorization'=>['member'],
+                'required'=>[
+                    'formId'=>[
+                        'type'=>'int',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>11
+                        ]
+                    ]
+                ]
             ]
         ],
     ];

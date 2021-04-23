@@ -1,5 +1,5 @@
 # Yuforms
-Yuforms is open source improvable form web application. This application is my final project to graduate from Suleyman Demirel University computer engineering/computer sciense.
+Yuforms is open source improvable form web application. This application is my final project to graduate from Suleyman Demirel University computer engineering/computer science. Not completed, under development..
 
 ## Installation on Localhost
 

@@ -23,7 +23,7 @@ class Form extends Controller {
     }
     protected function get() {
         $form = FormModel::getWithMemberId($this->userId, $this->data['id']);
-        if(!$form) {
+        if(!$form or $form->getIsTemplate()) {
             http_response_code(404);
             exit();
         }
