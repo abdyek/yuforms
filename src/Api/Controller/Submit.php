@@ -115,6 +115,7 @@ class Submit extends Controller {
             $this->userId = null;
             $this->ipAddress = $_SERVER['REMOTE_ADDR'];
         }
+        return true;
     }
     protected function put() {
         $this->prepareModels();
@@ -131,7 +132,7 @@ class Submit extends Controller {
         $this->success();
     }
     protected function update($ans) {
-        if($this->prepareModelsForAnswer($ans))
+        if(!$this->prepareModelsForAnswer($ans))
             return false;
         $formItemId = $this->formItem->getId();
         $submit = SubmitModel::getByFormItemId($formItemId);
