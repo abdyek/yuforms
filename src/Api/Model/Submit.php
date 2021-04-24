@@ -1,6 +1,7 @@
 <?php
 
 namespace Yuforms\Api\Model;
+use Yuforms\Api\Model\FormItem as FormItemModel;
 
 class Submit {
     public static function create($obj) {
@@ -40,10 +41,32 @@ class Submit {
     public static function getByFormItemId($formItemId) {
         return \SubmitQuery::create()->findOneByFormItemId($formItemId);
     }
+    public static function getsByShareIdMemberId($shareId, $memberId) {
+        return \SubmitQuery::create()->filterByMemberId($memberId)->findByShareId($shareId);
+    }
+    public static function getsByShareIdIpAddress($shareId, $ipAddress) {
+        return \SubmitQuery::create()->filterByIpAddress($ipAddress)->findByShareId($shareId);
+    }
     public static function updateSubmit($submit, $obj) {
         $submit->setResponse($obj['response']);
         $submit->setMultiResponse($obj['multiResponse']);
         $submit->save();
+    }
+    public static function getInfoArrWithQuestionId($submit) {
+        $formItem = FormItemModel::get($submit->getFormItemId());
+        return [
+            'id'=>$submit->getId(),
+            'questionId'=>$formItem->getQuestionId(),
+            'response'=>$submit->getResponse(),
+            'multiResponse'=>$submit->getMultiResponse()
+        ];
+    }
+    public static function getsInfoArr($submits) {
+        $submitsArr = [];
+        foreach($submits as $sub) {
+            $submitsArr[] = self::getInfoArrWithQuestionId($sub);
+        }
+        return $submitsArr;
     }
 }
 

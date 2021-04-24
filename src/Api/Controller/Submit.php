@@ -14,11 +14,12 @@ use Yuforms\Api\Model\Submit as SubmitModel;
 class Submit extends Controller {
     protected function get() {
         $this->prepareModels();
+        $submits = ($this->who==='guest')?SubmitModel::getsByShareIdIpAddress($this->share->getId(), $_SERVER['REMOTE_ADDR']):SubmitModel::getsByShareIdMemberId($this->share->getId(), $this->userId);
         $this->response([
-            'form'=>[
-                'title'=>$this->form->getName()
-            ],
-            'questions'=>$this->getQuestions()
+            'form'=>FormModel::getInfoArrWithShareInfo($this->form),
+            'questions'=>QuestionModel::getsInfoArrByForm($this->form),
+            'submitted'=>($submits->count())?true:false,
+            'submit'=>SubmitModel::getsInfoArr($submits)
         ]);
     }
     private function prepareModels() {
@@ -28,22 +29,6 @@ class Submit extends Controller {
             http_response_code(404);
             exit();
         }
-    }
-    private function getQuestions() {
-        $quesArr = [];
-        $formItems = FormItemModel::gets($this->form->getId());
-        foreach($formItems as $fi) {
-            $que = QuestionModel::get($fi->getQuestionId());
-            $formComponent = FormComponentModel::getInfoArr($que->getFormComponentId());
-            $options = ($formComponent['hasOptions'])?OptionModel::getsInfoArrByQuestionId($que->getId()):null;
-            $quesArr[] = [
-                'id'=>$que->getId(),
-                'text'=>$que->getText(),
-                'formComponent'=>$formComponent,
-                'options'=>$options,
-            ];
-        }
-        return $quesArr;
     }
     protected function post() {
         $this->prepareModels();
@@ -60,7 +45,7 @@ class Submit extends Controller {
         $this->success();
     }
     private function checkAvailable() {
-        if($this->share->getOnlyMember()) {
+        if($this->who==='member') {
             return SubmitModel::getCountByShareIdMemberId($this->share->getId(), $this->userId);
         } else {
             return SubmitModel::getCountByShareIdIpAddress($this->share->getId(), $_SERVER['REMOTE_ADDR']);
@@ -83,8 +68,8 @@ class Submit extends Controller {
                     'shareId'=>$this->share->getId(),
                     'response'=>$val,
                     'multiResponse'=>'1',
-                    'memberId'=>$this->userId,
-                    'ipAddress'=>$this->ipAddress
+                    'memberId'=>($this->who==='member')?$this->userId:null,
+                    'ipAddress'=>($this->who==='guest')?$_SERVER['REMOTE_ADDR']:null
                 ]);
             }
         } else {
@@ -93,8 +78,8 @@ class Submit extends Controller {
                 'shareId'=>$this->share->getId(),
                 'response'=>$ans['answer'],
                 'multiResponse'=>'0',
-                'memberId'=>$this->userId,
-                'ipAddress'=>$this->ipAddress
+                'memberId'=>($this->who==='member')?$this->userId:null,
+                'ipAddress'=>($this->who==='guest')?$_SERVER['REMOTE_ADDR']:null
             ]);
         }
     }
@@ -107,13 +92,6 @@ class Submit extends Controller {
         $this->formComponent = FormComponentModel::get($this->question->getFormComponentId());
         if(!$this->formItem) {
             return false;
-        }
-        if($this->share->getOnlyMember()) {
-            $this->userId = $this->userId;
-            $this->ipAddress = null;
-        } else {
-            $this->userId = null;
-            $this->ipAddress = $_SERVER['REMOTE_ADDR'];
         }
         return true;
     }
@@ -145,8 +123,8 @@ class Submit extends Controller {
                     'shareId'=>$this->share->getId(),
                     'response'=>$val,
                     'multiResponse'=>'1',
-                    'memberId'=>$this->userId,
-                    'ipAddress'=>$this->ipAddress
+                    'memberId'=>($this->who==='member')?$this->userId:null,
+                    'ipAddress'=>($this->who==='guest')?$_SERVER['REMOTE_ADDR']:null
                 ]);
             }
         } else {
