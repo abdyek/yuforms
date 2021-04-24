@@ -351,6 +351,13 @@ class Endpoint {
                             'min'=>1,
                             'max'=>11
                         ]
+                    ],
+                    'formSlug'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>100
+                        ]
                     ]
                 ]
             ],
@@ -362,6 +369,13 @@ class Endpoint {
                         'limits'=>[
                             'min'=>1,
                             'max'=>11
+                        ]
+                    ],
+                    'formSlug'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>100
                         ]
                     ],
                     'answers'=>[
@@ -381,6 +395,13 @@ class Endpoint {
                         'limits'=>[
                             'min'=>1,
                             'max'=>11
+                        ]
+                    ],
+                    'formSlug'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>1,
+                            'max'=>100
                         ]
                     ],
                     'answers'=>[

@@ -10,9 +10,11 @@ use Yuforms\Api\Model\Question as QuestionModel;
 use Yuforms\Api\Model\FormComponent as FormComponentModel;
 use Yuforms\Api\Model\Option as OptionModel;
 use Yuforms\Api\Model\Submit as SubmitModel;
+use Yuforms\Api\Other\Encryption;
 
 class Submit extends Controller {
     protected function get() {
+        $this->checkSlug();
         $this->prepareModels();
         $submits = ($this->who==='guest')?SubmitModel::getsByShareIdIpAddress($this->share->getId(), $_SERVER['REMOTE_ADDR']):SubmitModel::getsByShareIdMemberId($this->share->getId(), $this->userId);
         $this->response([
@@ -21,6 +23,12 @@ class Submit extends Controller {
             'submitted'=>($submits->count())?true:false,
             'submit'=>SubmitModel::getsInfoArr($submits)
         ]);
+    }
+    private function checkSlug() {
+        if(!Encryption::checkEncryptedSlug($this->data['formSlug'])) {
+            http_response_code(404);
+            exit();
+        }
     }
     private function prepareModels() {
         $this->form = FormModel::get($this->data['formId']);
@@ -31,6 +39,7 @@ class Submit extends Controller {
         }
     }
     protected function post() {
+        $this->checkSlug();
         $this->prepareModels();
         if($this->checkAvailable()) {
             http_response_code(422);
@@ -96,6 +105,7 @@ class Submit extends Controller {
         return true;
     }
     protected function put() {
+        $this->checkSlug();
         $this->prepareModels();
         if(!$this->checkAvailable()) {
             http_response_code(404);

@@ -7,6 +7,7 @@ use Yuforms\Api\Model\Member as MemberModel;
 use Yuforms\Api\Model\Form as FormModel;
 use Yuforms\Api\Model\Share as ShareModel;
 use Yuforms\Api\Model\Question as QuestionModel;
+use Yuforms\Api\Other\Encryption;
 
 class Form extends Controller {
     protected function post() {
@@ -15,9 +16,10 @@ class Form extends Controller {
             'memberId'=>$this->userId,
             'name'=>$this->data['formTitle']
         ]);
+        $formId = $this->form->getId();
         $this->response([
-            'formId'=>$this->form->getId(),
-            'formSlug'=>'slug will be here'
+            'formId'=>$formId,
+            'formSlug'=>Encryption::encryptSlug($formId)
         ]);
         FormModel::addQuestions($this->form, $this->data['questions']);
     }

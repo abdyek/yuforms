@@ -8,6 +8,7 @@ use Yuforms\Api\Model\FormItem as FormItemModel;
 use Yuforms\Api\Model\Submit as SubmitModel;
 use Yuforms\Api\Model\FormComponent as FormComponentModel;
 use Yuforms\Api\Other\Time;
+use Yuforms\Api\Other\Encryption;
 
 class Form {
     public static function getWithMemberId($memberId, $formId) {
@@ -50,6 +51,7 @@ class Form {
         $shareArr = ($share)?ShareModel::getInfoArr($share):null;
         return [
             'id'=>$form->getId(),
+            'slug'=>Encryption::encryptSlug($form->getId()),
             'name'=>$form->getName(),
             'createDateTime'=>$form->getCreateDateTime(),
             'lastEditDateTime'=>$form->getLastEditDateTime(),
