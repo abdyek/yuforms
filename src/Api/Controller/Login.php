@@ -90,14 +90,14 @@ class Login extends Controller {
         $trialCount = $authCode->getTrialCount();
         $dateTime = $authCode->getDateTime();
         $timestamp = $dateTime->getTimestamp();
-        if((time()-$timestamp)>Config::_2FA_VALIDITY_TIME) {
+        if((time()-$timestamp)>Config::VALIDITY_TIME) {
             http_response_code(401);
             $this->response([
                 'state'=>'fail',
                 'message'=>'timeout! you must login again'
             ]);
             $authCode->delete();
-        } elseif($trialCount>=Config::_2FA_TRIAL_MAX_COUNT) {
+        } elseif($trialCount>=Config::VALIDATION_TRIAL_MAX_COUNT) {
             http_response_code(401);
             $this->response([
                 'state'=>'fail',

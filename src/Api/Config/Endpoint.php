@@ -505,5 +505,34 @@ class Endpoint {
                 ]
             ]
         ],
+        'Manage2FA'=>[
+            'PATCH'=>[
+                'authorization'=>['member'],
+                'required'=>[
+                    'password'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>10,
+                            'max'=>50
+                        ]
+                    ]
+                ],
+            ],
+            'POST'=>[
+                'authorization'=>['member'],
+                'required'=>[
+                    'open'=>[
+                        'type'=>'bool',
+                    ],
+                    'authenticationCode'=>[
+                        'type'=>'str',
+                        'limits'=>[
+                            'min'=>0,
+                            'max'=>10
+                        ]
+                    ]
+                ]
+            ],
+        ],
     ];
 }

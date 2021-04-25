@@ -14,4 +14,11 @@ class Random {
         }
         return $code;
     }
+    public static function generateAllType($type=null) {
+        if($type==='2fa') {
+            return self::activationCode();
+        } else {
+            return self::recoveryCode();
+        }
+    }
 }

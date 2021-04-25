@@ -13,7 +13,7 @@ class AuthenticationCode {
         $authCode = new \AuthenticationCode();
         $authCode->setMemberId($obj['memberId']);
         $authCode->setType($obj['type']);
-        $authCode->setCode(Random::activationCode());
+        $authCode->setCode(Random::generateAllType($obj['type']));
         $authCode->save();
         return $authCode;
     }
