@@ -345,13 +345,6 @@ class Endpoint {
             'GET'=>[
                 'authorization'=>['guest', 'member'],
                 'required'=>[
-                    'formId'=>[
-                        'type'=>'int',
-                        'limits'=>[
-                            'min'=>1,
-                            'max'=>11
-                        ]
-                    ],
                     'formSlug'=>[
                         'type'=>'str',
                         'limits'=>[
@@ -364,13 +357,6 @@ class Endpoint {
             'POST'=>[
                 'authorization'=>['guest', 'member'],
                 'required'=>[
-                    'formId'=>[
-                        'type'=>'int',
-                        'limits'=>[
-                            'min'=>1,
-                            'max'=>11
-                        ]
-                    ],
                     'formSlug'=>[
                         'type'=>'str',
                         'limits'=>[
@@ -390,13 +376,6 @@ class Endpoint {
             'PUT'=>[
                 'authorization'=>['guest', 'member'],
                 'required'=>[
-                    'formId'=>[
-                        'type'=>'int',
-                        'limits'=>[
-                            'min'=>1,
-                            'max'=>11
-                        ]
-                    ],
                     'formSlug'=>[
                         'type'=>'str',
                         'limits'=>[

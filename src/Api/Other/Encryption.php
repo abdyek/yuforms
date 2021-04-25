@@ -19,4 +19,7 @@ class Encryption {
         $hash = self::encryptSlug($id);
         return ($encSlug===$hash);
     }
+    public static function getId($encSlug) {
+        return explode(EncryptionConfig::SEPARATOR, $encSlug, 2)[0];
+    }
 }

@@ -31,7 +31,8 @@ class Submit extends Controller {
         }
     }
     private function prepareModels() {
-        $this->form = FormModel::get($this->data['formId']);
+        $formId = Encryption::getId($this->data['formSlug']);
+        $this->form = FormModel::get($formId);
         $this->share = ShareModel::getUnfinished($this->form->getId());
         if(!$this->share or ($this->share->getOnlyMember() and $this->who==='guest')) {
             http_response_code(404);
