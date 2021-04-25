@@ -39,7 +39,7 @@ class Question {
     }
     public static function updateAll($form, $obj) {
         $dontDelete = [];
-        foreach($obj as $que) {
+        foreach($obj as $i=>$que) {
             if(!isset($que['id']) and isset($que['new'])) {
                 // adding new questions
                 $formComponent = FormComponentModel::getByName($que['formComponentType']);
@@ -47,11 +47,11 @@ class Question {
                     continue;
                 }
                 $newQuestion = self::create($formComponent->getId(), $que['questionText']);
-                $formItem = FormItemModel::create($form->getId(), $newQuestion->getId());
+                $formItem = FormItemModel::create($form->getId(), $newQuestion->getId(), $i);
                 if($formComponent->getHasOptions()) {
                     $options = $que['options'];
-                    foreach($options as $i=>$opt) {
-                        OptionModel::create($newQuestion->getId(), $i, $opt['value']);
+                    foreach($options as $j=>$opt) {
+                        OptionModel::create($newQuestion->getId(), $j, $opt['value']);
                     }
                 }
                 $dontDelete[] = $newQuestion->getId();
@@ -60,6 +60,7 @@ class Question {
                 if(!$formItem) {
                     continue;
                 }
+                FormItemModel::updateOrdinalNumber($formItem, $i);
                 $dontDelete[] = $que['id'];
                 $question = self::get($que['id']);
                 self::update($question, $que);
@@ -87,7 +88,7 @@ class Question {
         ];
     }
     public static function getsInfoArrByForm($form) {
-        $formItems = FormItem::gets($form->getId());
+        $formItems = FormItemModel::gets($form->getId());
         $questions = [];
         foreach($formItems as $fi) {
             $question = self::get($fi->getQuestionId());

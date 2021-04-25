@@ -29,10 +29,10 @@ class Template {
     }
     public static function copyToTemplate($template, $form) {        
         $formItems = FormItemModel::gets($form->getId());
-        foreach($formItems as $fi) {
+        foreach($formItems as $i=>$fi) {
             $question = QuestionModel::get($fi->getQuestionId());
             $newQuestion = QuestionModel::create($question->getFormComponentId(), $question->getText());
-            FormItemModel::create($template->getFormId(), $newQuestion->getId());
+            FormItemModel::create($template->getFormId(), $newQuestion->getId(), $i);
             $options = OptionModel::getsByQuestionId($question->getId());
             foreach($options as $opt) {
                 OptionModel::create($newQuestion->getId(), $opt->getValue(), $opt->getText());

@@ -65,6 +65,7 @@
 
         <column name="form_id" type="integer" required="true"/>
         <column name="question_id" type="integer" required="true"/>
+        <column name="ordinal_number" type="integer" required="true"/>
 
         <foreign-key foreignTable="form">
             <reference local="form_id" foreign="id" />

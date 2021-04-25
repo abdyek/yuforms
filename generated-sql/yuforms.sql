@@ -107,6 +107,7 @@ CREATE TABLE `form_item`
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `form_id` INTEGER NOT NULL,
     `question_id` INTEGER NOT NULL,
+    `ordinal_number` INTEGER NOT NULL,
     PRIMARY KEY (`id`),
     INDEX `form_item_fi_ee8551` (`form_id`),
     INDEX `form_item_fi_3ff0cc` (`question_id`),

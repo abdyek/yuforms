@@ -75,13 +75,13 @@ class Form {
         $form->save();
     }
     public static function addQuestions($form, $questions) {
-        foreach($questions as $key=>$que) {
+        foreach($questions as $i=>$que) {
             $formComponent = FormComponentModel::getByName($que['formComponentType']);
             if(!$formComponent) {
                 continue;
             }
             $question = QuestionModel::create($formComponent->getId(), $que['questionText']);
-            FormItemModel::create($form->getId(), $question->getId());
+            FormItemModel::create($form->getId(), $question->getId(), $i);
             if($formComponent->getHasOptions()) {
                 foreach($que['options'] as $i=>$opt) {
                     OptionModel::create($question->getId(), $i, $opt['value']);

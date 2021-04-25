@@ -90,6 +90,13 @@ abstract class FormItem implements ActiveRecordInterface
     protected $question_id;
 
     /**
+     * The value for the ordinal_number field.
+     *
+     * @var        int
+     */
+    protected $ordinal_number;
+
+    /**
      * @var        ChildForm
      */
     protected $aForm;
@@ -376,6 +383,16 @@ abstract class FormItem implements ActiveRecordInterface
     }
 
     /**
+     * Get the [ordinal_number] column value.
+     *
+     * @return int
+     */
+    public function getOrdinalNumber()
+    {
+        return $this->ordinal_number;
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v New value
@@ -444,6 +461,26 @@ abstract class FormItem implements ActiveRecordInterface
     } // setQuestionId()
 
     /**
+     * Set the value of [ordinal_number] column.
+     *
+     * @param int $v New value
+     * @return $this|\FormItem The current object (for fluent API support)
+     */
+    public function setOrdinalNumber($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->ordinal_number !== $v) {
+            $this->ordinal_number = $v;
+            $this->modifiedColumns[FormItemTableMap::COL_ORDINAL_NUMBER] = true;
+        }
+
+        return $this;
+    } // setOrdinalNumber()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -487,6 +524,9 @@ abstract class FormItem implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : FormItemTableMap::translateFieldName('QuestionId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->question_id = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : FormItemTableMap::translateFieldName('OrdinalNumber', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->ordinal_number = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -495,7 +535,7 @@ abstract class FormItem implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 3; // 3 = FormItemTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = FormItemTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\FormItem'), 0, $e);
@@ -751,6 +791,9 @@ abstract class FormItem implements ActiveRecordInterface
         if ($this->isColumnModified(FormItemTableMap::COL_QUESTION_ID)) {
             $modifiedColumns[':p' . $index++]  = 'question_id';
         }
+        if ($this->isColumnModified(FormItemTableMap::COL_ORDINAL_NUMBER)) {
+            $modifiedColumns[':p' . $index++]  = 'ordinal_number';
+        }
 
         $sql = sprintf(
             'INSERT INTO form_item (%s) VALUES (%s)',
@@ -770,6 +813,9 @@ abstract class FormItem implements ActiveRecordInterface
                         break;
                     case 'question_id':
                         $stmt->bindValue($identifier, $this->question_id, PDO::PARAM_INT);
+                        break;
+                    case 'ordinal_number':
+                        $stmt->bindValue($identifier, $this->ordinal_number, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -842,6 +888,9 @@ abstract class FormItem implements ActiveRecordInterface
             case 2:
                 return $this->getQuestionId();
                 break;
+            case 3:
+                return $this->getOrdinalNumber();
+                break;
             default:
                 return null;
                 break;
@@ -875,6 +924,7 @@ abstract class FormItem implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getFormId(),
             $keys[2] => $this->getQuestionId(),
+            $keys[3] => $this->getOrdinalNumber(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -970,6 +1020,9 @@ abstract class FormItem implements ActiveRecordInterface
             case 2:
                 $this->setQuestionId($value);
                 break;
+            case 3:
+                $this->setOrdinalNumber($value);
+                break;
         } // switch()
 
         return $this;
@@ -1004,6 +1057,9 @@ abstract class FormItem implements ActiveRecordInterface
         }
         if (array_key_exists($keys[2], $arr)) {
             $this->setQuestionId($arr[$keys[2]]);
+        }
+        if (array_key_exists($keys[3], $arr)) {
+            $this->setOrdinalNumber($arr[$keys[3]]);
         }
 
         return $this;
@@ -1056,6 +1112,9 @@ abstract class FormItem implements ActiveRecordInterface
         }
         if ($this->isColumnModified(FormItemTableMap::COL_QUESTION_ID)) {
             $criteria->add(FormItemTableMap::COL_QUESTION_ID, $this->question_id);
+        }
+        if ($this->isColumnModified(FormItemTableMap::COL_ORDINAL_NUMBER)) {
+            $criteria->add(FormItemTableMap::COL_ORDINAL_NUMBER, $this->ordinal_number);
         }
 
         return $criteria;
@@ -1145,6 +1204,7 @@ abstract class FormItem implements ActiveRecordInterface
     {
         $copyObj->setFormId($this->getFormId());
         $copyObj->setQuestionId($this->getQuestionId());
+        $copyObj->setOrdinalNumber($this->getOrdinalNumber());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1606,6 +1666,7 @@ abstract class FormItem implements ActiveRecordInterface
         $this->id = null;
         $this->form_id = null;
         $this->question_id = null;
+        $this->ordinal_number = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();

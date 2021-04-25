@@ -58,7 +58,7 @@ class FormItemTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 3;
+    const NUM_COLUMNS = 4;
 
     /**
      * The number of lazy-loaded columns
@@ -68,7 +68,7 @@ class FormItemTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 3;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /**
      * the column name for the id field
@@ -86,6 +86,11 @@ class FormItemTableMap extends TableMap
     const COL_QUESTION_ID = 'form_item.question_id';
 
     /**
+     * the column name for the ordinal_number field
+     */
+    const COL_ORDINAL_NUMBER = 'form_item.ordinal_number';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -97,11 +102,11 @@ class FormItemTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'FormId', 'QuestionId', ),
-        self::TYPE_CAMELNAME     => array('id', 'formId', 'questionId', ),
-        self::TYPE_COLNAME       => array(FormItemTableMap::COL_ID, FormItemTableMap::COL_FORM_ID, FormItemTableMap::COL_QUESTION_ID, ),
-        self::TYPE_FIELDNAME     => array('id', 'form_id', 'question_id', ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id', 'FormId', 'QuestionId', 'OrdinalNumber', ),
+        self::TYPE_CAMELNAME     => array('id', 'formId', 'questionId', 'ordinalNumber', ),
+        self::TYPE_COLNAME       => array(FormItemTableMap::COL_ID, FormItemTableMap::COL_FORM_ID, FormItemTableMap::COL_QUESTION_ID, FormItemTableMap::COL_ORDINAL_NUMBER, ),
+        self::TYPE_FIELDNAME     => array('id', 'form_id', 'question_id', 'ordinal_number', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -111,11 +116,11 @@ class FormItemTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'FormId' => 1, 'QuestionId' => 2, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'formId' => 1, 'questionId' => 2, ),
-        self::TYPE_COLNAME       => array(FormItemTableMap::COL_ID => 0, FormItemTableMap::COL_FORM_ID => 1, FormItemTableMap::COL_QUESTION_ID => 2, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'form_id' => 1, 'question_id' => 2, ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'FormId' => 1, 'QuestionId' => 2, 'OrdinalNumber' => 3, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'formId' => 1, 'questionId' => 2, 'ordinalNumber' => 3, ),
+        self::TYPE_COLNAME       => array(FormItemTableMap::COL_ID => 0, FormItemTableMap::COL_FORM_ID => 1, FormItemTableMap::COL_QUESTION_ID => 2, FormItemTableMap::COL_ORDINAL_NUMBER => 3, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'form_id' => 1, 'question_id' => 2, 'ordinal_number' => 3, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -149,6 +154,14 @@ class FormItemTableMap extends TableMap
         'COL_QUESTION_ID' => 'QUESTION_ID',
         'question_id' => 'QUESTION_ID',
         'form_item.question_id' => 'QUESTION_ID',
+        'OrdinalNumber' => 'ORDINAL_NUMBER',
+        'FormItem.OrdinalNumber' => 'ORDINAL_NUMBER',
+        'ordinalNumber' => 'ORDINAL_NUMBER',
+        'formItem.ordinalNumber' => 'ORDINAL_NUMBER',
+        'FormItemTableMap::COL_ORDINAL_NUMBER' => 'ORDINAL_NUMBER',
+        'COL_ORDINAL_NUMBER' => 'ORDINAL_NUMBER',
+        'ordinal_number' => 'ORDINAL_NUMBER',
+        'form_item.ordinal_number' => 'ORDINAL_NUMBER',
     ];
 
     /**
@@ -171,6 +184,7 @@ class FormItemTableMap extends TableMap
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addForeignKey('form_id', 'FormId', 'INTEGER', 'form', 'id', true, null, null);
         $this->addForeignKey('question_id', 'QuestionId', 'INTEGER', 'question', 'id', true, null, null);
+        $this->addColumn('ordinal_number', 'OrdinalNumber', 'INTEGER', true, null, null);
     } // initialize()
 
     /**
@@ -345,10 +359,12 @@ class FormItemTableMap extends TableMap
             $criteria->addSelectColumn(FormItemTableMap::COL_ID);
             $criteria->addSelectColumn(FormItemTableMap::COL_FORM_ID);
             $criteria->addSelectColumn(FormItemTableMap::COL_QUESTION_ID);
+            $criteria->addSelectColumn(FormItemTableMap::COL_ORDINAL_NUMBER);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.form_id');
             $criteria->addSelectColumn($alias . '.question_id');
+            $criteria->addSelectColumn($alias . '.ordinal_number');
         }
     }
 
@@ -369,10 +385,12 @@ class FormItemTableMap extends TableMap
             $criteria->removeSelectColumn(FormItemTableMap::COL_ID);
             $criteria->removeSelectColumn(FormItemTableMap::COL_FORM_ID);
             $criteria->removeSelectColumn(FormItemTableMap::COL_QUESTION_ID);
+            $criteria->removeSelectColumn(FormItemTableMap::COL_ORDINAL_NUMBER);
         } else {
             $criteria->removeSelectColumn($alias . '.id');
             $criteria->removeSelectColumn($alias . '.form_id');
             $criteria->removeSelectColumn($alias . '.question_id');
+            $criteria->removeSelectColumn($alias . '.ordinal_number');
         }
     }
 
