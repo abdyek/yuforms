@@ -5,6 +5,7 @@ use Yuforms\Api\Core\Controller;
 use Yuforms\Api\Model\Template as TemplateModel;
 use Yuforms\Api\Model\Form as FormModel;
 use Yuforms\Api\Model\Question as QuestionModel;
+use Yuforms\Api\Other\Encryption;
 
 class Template extends Controller {
     protected function post() {
@@ -23,7 +24,13 @@ class Template extends Controller {
             'isTemplate'=>true
         ]);
         TemplateModel::copyToTemplate($template, $form);
-        $this->success();
+        $this->response([
+            'state'=>'success',
+            'id'=>$template->getId(),
+            'formId'=>$template->getFormId(),
+            'formSlug'=>Encryption::encryptSlug($template->getFormId())
+            // ^ I am not sure it should be here
+        ]);
     }
     protected function delete() {
         $form = FormModel::getWithMemberId($this->userId, $this->data['formId']);

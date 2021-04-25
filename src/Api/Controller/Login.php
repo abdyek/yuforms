@@ -26,7 +26,8 @@ class Login extends Controller {
                     $this->manageToAdd2fa();
                     $this->response([
                         'state'=>'2fa',
-                        'message'=>'You have to verify authentication!'
+                        'message'=>'You have to verify authentication!',
+                        'validityTime'=>Config::VALIDITY_TIME
                     ]);
                 } else {
                     $this->login();
