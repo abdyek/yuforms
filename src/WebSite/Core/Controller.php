@@ -21,7 +21,7 @@ class Controller {
         }
     }
     private function detectAuthorization() {
-        $autho = ApiEnpoint::detectAuthorization();
+        $autho = ApiEndpoint::detectAuthorization();
         $this->who = $autho['who'];
     }
     private function go() {
