@@ -4,6 +4,7 @@ namespace Yuforms\Api\Core;
 use Yuforms\Api\Config\Endpoint as EndpointConfig;
 use Ahc\Jwt\JWT;
 use Yuforms\Api\Config\Jwt as JwtConfig;
+use Yuforms\Api\Core\Response;
 
 class Endpoint {
     public function __construct($endpoint) {
@@ -25,16 +26,14 @@ class Endpoint {
     }
     private function checkMethod() {
         if(!in_array($this->method, $this->supportedMethods)) {
-            http_response_code(403);
-            exit();
+            Response::error(403, null);
         }
         $methodArrayKeys = array_keys($this->config[$this->method]);
         $this->requiredFree = (in_array('required', $methodArrayKeys))?false:true;
     }
     private function checkAuthorization() {
         if(!in_array($this->who, $this->config[$this->method]['authorization'])) {
-            http_response_code(403);
-            exit();
+            Response::error(403, null);
         }
     }
     private function setData() {
@@ -68,8 +67,7 @@ class Endpoint {
         if(!$this->requiredFree) {
             $areYouOk = $this->checkRequired($this->data, $this->config[$this->method]['required']);
             if(!$areYouOk) {
-                http_response_code(400);
-                exit();
+                Response::error(400, null);
             }
         }
     }

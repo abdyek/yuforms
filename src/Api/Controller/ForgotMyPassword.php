@@ -22,12 +22,10 @@ class ForgotMyPassword extends Controller {
     protected function patch() {
         $member = \MemberQuery::create()->filterByRecoveryCode($this->data['code'])->findOneByEmail($this->data['email']);
         if(!$member) {
-            http_response_code(403);
-            $this->response([
+            $this->responseError(403, [
                 'state'=>'fail',
                 'message'=>'wrong code'
             ]);
-            exit();
         }
         $member->setRecoveryCode(null);
         $member->setPasswordHash(password_hash($this->data['newPassword'], PASSWORD_DEFAULT));

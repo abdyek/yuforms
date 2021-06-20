@@ -26,8 +26,7 @@ class Submit extends Controller {
     }
     private function checkSlug() {
         if(!Encryption::checkEncryptedSlug($this->data['formSlug'])) {
-            http_response_code(404);
-            exit();
+            $this->responseError(404);
         }
     }
     private function prepareModels() {
@@ -35,16 +34,14 @@ class Submit extends Controller {
         $this->form = FormModel::get($formId);
         $this->share = ShareModel::getUnfinished($this->form->getId());
         if(!$this->share or ($this->share->getOnlyMember() and $this->who==='guest')) {
-            http_response_code(404);
-            exit();
+            $this->responseError(404);
         }
     }
     protected function post() {
         $this->checkSlug();
         $this->prepareModels();
         if($this->checkAvailable()) {
-            http_response_code(422);
-            exit();
+            $this->responseError(422);
         }
         $answers = $this->data['answers'];
         foreach($answers as $ans) {
@@ -109,8 +106,7 @@ class Submit extends Controller {
         $this->checkSlug();
         $this->prepareModels();
         if(!$this->checkAvailable()) {
-            http_response_code(404);
-            exit();
+            $this->responseError(404);
         }
         $answers = $this->data['answers'];
         foreach($answers as $ans) {

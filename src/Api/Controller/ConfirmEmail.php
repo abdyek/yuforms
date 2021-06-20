@@ -7,12 +7,10 @@ class ConfirmEmail extends Controller {
     protected function post() {
         $member = \MemberQuery::create()->findOneByEmail($this->data['email']);
         if($member==null or $member->getConfirmedEmail()) {
-            http_response_code(404);
-            exit();
+            $this->responseError(404);
         }
         if($this->data['code']!=$member->getActivationCode()) {
-            http_response_code(401);
-            exit();
+            $this->responseError(401);
         }
         $member->setConfirmedEmail(true);
         $member->save();

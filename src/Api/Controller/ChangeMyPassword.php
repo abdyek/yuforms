@@ -7,12 +7,10 @@ class ChangeMyPassword extends Controller {
     protected function patch() {
         $this->member = \MemberQuery::create()->findPK($this->userId);
         if(!password_verify($this->data['password'], $this->member->getPasswordHash())) {
-            http_response_code(401);
-            $this->response([
+            $this->responseError(401, [
                 'state'=>'fail',
                 'message'=>'wrong password'
             ]);
-            exit();
         }
         $this->member->setPasswordHash(password_hash($this->data['newPassword'], PASSWORD_DEFAULT));
         $this->member->save();

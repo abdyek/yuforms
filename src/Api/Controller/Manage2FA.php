@@ -9,12 +9,10 @@ class Manage2FA extends Controller {
     protected function patch() {
         $member = MemberModel::get($this->userId);
         if(!password_verify($this->data['password'], $member->getPasswordHash())) {
-            http_response_code(401);
-            $this->response([
+            $this->responseError(401, [
                 'state'=>'fail',
                 'message'=>'wrong password'
             ]);
-            exit();
         }
         $this->generateAndSend();
         $this->success();
@@ -33,21 +31,18 @@ class Manage2FA extends Controller {
         // I should refactor here and Login::patch, because almost same code
         $code = AuthenticationCodeModel::getByMemberId($this->userId, 'manage2fa');
         if(!$code) {
-            http_response_code(404);
-            exit();
+            $this->responseError(404);
         }
         $trialCount = $code->getTrialCount();
         $dateTime = $code->getDateTime();
         $timestamp = $dateTime->getTimestamp();
         if((time()-$timestamp)>Config::VALIDITY_TIME) {
-            http_response_code(401);
-            $this->response([
+            $this->responseError(401, [
                 'state'=>'fail',
                 'message'=>'timeout! you must request again'
             ]);
         } elseif($trialCount>=Config::VALIDATION_TRIAL_MAX_COUNT) {
-            http_response_code(401);
-            $this->response([
+            $this->responseError(401, [
                 'state'=>'fail',
                 'message'=>'trial count is over! you must request again'
             ]);
@@ -55,8 +50,7 @@ class Manage2FA extends Controller {
             $code->delete();
             $this->set2faSetting();
         } else {
-            http_response_code(401);
-            $this->response([
+            $this->responseError(401, [
                 'state'=>'fail',
                 'message'=>'wrong code',
             ]);

@@ -11,12 +11,10 @@ class Share extends Controller {
     protected function post() {
         $this->prepareModels();
         if($this->availableShare) {
-            http_response_code(422);
-            exit();
+            $this->responseError(422);
         }
         if($this->form->getIsTemplate()) {
-            http_response_code(404);
-            exit();
+            $this->responseError(404);
         }
         $this->addNewShare();
         $this->success();
@@ -36,8 +34,7 @@ class Share extends Controller {
     protected function delete() {
         $this->prepareModels();
         if(!$this->availableShare) {
-            http_response_code(404);
-            exit();
+            $this->responseError(404);
         }
         $this->stopShare();
         $this->success();

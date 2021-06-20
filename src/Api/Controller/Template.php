@@ -15,8 +15,7 @@ class Template extends Controller {
             $form = ($template->getIsPublic())?FormModel::get($this->data['formId']):false;
         }
         if(!$form) {
-            http_response_code(404);
-            exit();
+            $this->responseError(404);
         }
         $template = TemplateModel::create([
             'memberId'=>$this->userId,
@@ -35,8 +34,7 @@ class Template extends Controller {
     protected function delete() {
         $form = FormModel::getWithMemberId($this->userId, $this->data['formId']);
         if(!$form or !$form->getIsTemplate()) {
-            http_response_code(404);
-            exit();
+            $this->responseError(404);
         }
         $template = TemplateModel::getByFormId($this->data['formId']);
         TemplateModel::delete($template);
@@ -45,8 +43,7 @@ class Template extends Controller {
     protected function put() {
         $form = FormModel::getWithMemberId($this->userId, $this->data['formId']);
         if(!$form or !$form->getIsTemplate()) {
-            http_response_code(404);
-            exit();
+            $this->responseError(404);
         }
         FormModel::update($form, $this->data);
         $this->success();
@@ -67,8 +64,7 @@ class Template extends Controller {
             }
         }
         if(!$form or !$form->getIsTemplate()) {
-            http_response_code(404);
-            exit();
+            $this->responseError(404);
         }
         $this->response([
             'form'=>FormModel::getInfoArrWithShareInfo($form),

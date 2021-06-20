@@ -26,8 +26,7 @@ class Form extends Controller {
     protected function get() {
         $form = FormModel::getWithMemberId($this->userId, $this->data['id']);
         if(!$form or $form->getIsTemplate()) {
-            http_response_code(404);
-            exit();
+            $this->responseError(404);
         }
         $this->response([
             'form'=>FormModel::getInfoArrWithShareInfo($form),
@@ -52,8 +51,7 @@ class Form extends Controller {
     public function put() {
         $share = ShareModel::getUnfinished($this->data['id']);
         if($share) {
-            http_response_code(422);
-            exit();
+            $this->responseError(422);
         }
         $this->member = MemberModel::get($this->userId);
         $this->form = FormModel::getWithMemberId($this->userId, $this->data['id']);
@@ -63,8 +61,7 @@ class Form extends Controller {
     protected function delete() {
         $form = formModel::get($this->data['id']);
         if($form->getMemberId()!=$this->userId or $form->getIsTemplate()) {
-            http_response_code(404);
-            exit();
+            $this->responseError(404);
         }
         FormModel::delete($this->data['id']);
         $this->success();

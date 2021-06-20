@@ -1,5 +1,6 @@
 <?php
 namespace Yuforms\Api\Core;
+use Yuforms\Api\Core\Response;
 
 class Controller {
     public function __construct($obj) {
@@ -27,11 +28,10 @@ class Controller {
         }
     }
     public function response($data) {
-        if($this->silence)
-            return
-        header("Access-Control-Allow-Origin: *");
-        header("Content-Type: application/json; charset=UTF-8");
-        echo json_encode($data);
+        Response::data($data);
+    }
+    public function responseError($errorCode, $data=null) {
+        Response::error($errorCode, $data);
     }
     public function success() {
         $this->response(['state'=>'success']);

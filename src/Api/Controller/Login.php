@@ -13,8 +13,7 @@ class Login extends Controller {
     protected function post() {
         $this->member = \MemberQuery::create()/*->filterByConfirmedEmail(true)*/->findOneByEmail($this->data['email']);
         if($this->member==null) {
-            http_response_code(401);
-            exit();
+            $this->responseError(401);
         }
         $this->tryToLogin();
     }
@@ -39,7 +38,7 @@ class Login extends Controller {
                 ]);
             }
         } else {
-            http_response_code(401);
+            $this->responseError(401);
         }
     }
     private function manageToAdd2fa() {
@@ -80,27 +79,23 @@ class Login extends Controller {
     protected function patch() {
         $this->member = MemberModel::getByEmail($this->data['email']);
         if(!$this->member) {
-            http_response_code(404);
-            exit();
+            $this->responseError(404);
         }
         $authCode = AuthenticationCodeModel::getByMemberId($this->member->getId(), '2fa');
         if(!$authCode) {
-            http_response_code(404);
-            exit();
+            $this->responseError(404);
         }
         $trialCount = $authCode->getTrialCount();
         $dateTime = $authCode->getDateTime();
         $timestamp = $dateTime->getTimestamp();
         if((time()-$timestamp)>Config::VALIDITY_TIME) {
-            http_response_code(401);
-            $this->response([
+            $this->responseError(401, [
                 'state'=>'fail',
                 'message'=>'timeout! you must login again'
             ]);
             $authCode->delete();
         } elseif($trialCount>=Config::VALIDATION_TRIAL_MAX_COUNT) {
-            http_response_code(401);
-            $this->response([
+            $this->responseError(401, [
                 'state'=>'fail',
                 'message'=>'trial count is over! you must login again',
             ]);
@@ -109,8 +104,7 @@ class Login extends Controller {
             $authCode->delete();
             $this->login();
         } else {
-            http_response_code(401);
-            $this->response([
+            $this->responseError(401, [
                 'state'=>'fail',
                 'message'=>'wrong code',
             ]);
