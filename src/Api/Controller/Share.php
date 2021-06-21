@@ -16,8 +16,12 @@ class Share extends Controller {
         if($this->form->getIsTemplate()) {
             $this->responseError(404);
         }
-        $this->addNewShare();
-        $this->success();
+        $newShare = $this->addNewShare();
+        $this->response([
+            'state'=>'success',
+            'stillShared'=>true,
+            'share'=>ShareModel::getInfoArr($newShare)
+        ]);
     }
     private function prepareModels() {
         $this->member = MemberModel::get($this->userId);
@@ -30,6 +34,7 @@ class Share extends Controller {
         $share->setOnlyMember($this->data['onlyMember']);
         $share->setFormId($this->form->getId());
         $share->save();
+        return $share;
     }
     protected function delete() {
         $this->prepareModels();
@@ -37,7 +42,11 @@ class Share extends Controller {
             $this->responseError(404);
         }
         $this->stopShare();
-        $this->success();
+        $this->response([
+            'state'=>'success',
+            'stillShared'=>false,
+            'share'=>null
+        ]);
     }
     private function stopShare() {
         $this->availableShare->setStopDateTime(Time::current());
