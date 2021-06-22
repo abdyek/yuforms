@@ -24,7 +24,11 @@ class Form extends Controller {
         FormModel::addQuestions($this->form, $this->data['questions']);
     }
     protected function get() {
-        $form = FormModel::getWithMemberId($this->userId, $this->data['id']);
+        if(!Encryption::checkEncryptedSlug($this->data['slug'])) {
+            $this->responseError(404);
+        }
+        $formId = Encryption::getId($this->data['slug']);
+        $form = FormModel::getWithMemberId($this->userId, $formId);
         if(!$form or $form->getIsTemplate()) {
             $this->responseError(404);
         }

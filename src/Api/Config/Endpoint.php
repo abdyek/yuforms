@@ -249,11 +249,11 @@ class Endpoint {
             'GET'=>[
                 'authorization'=>['member'],
                 'required'=>[
-                    'id'=>[
-                        'type'=>'int',
+                    'slug'=>[
+                        'type'=>'str',
                         'limits'=>[
                             'min'=>1,
-                            'max'=>11,
+                            'max'=>100
                         ]
                     ]
                 ]
