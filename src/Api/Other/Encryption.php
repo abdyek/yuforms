@@ -8,18 +8,17 @@ class Encryption {
         $string = EncryptionConfig::CONFUSER_FIRST . $hex . EncryptionConfig::CONFUSER_LAST;
         $hashedString = hash(EncryptionConfig::HASH_ALGO,$string);
         $shortHashedString = substr($hashedString, EncryptionConfig::STARTING_INDEX, EncryptionConfig::HASH_LEN);
-        return $hex . EncryptionConfig::SEPARATOR . $shortHashedString;
+        return $hex . $shortHashedString;
     }
     public static function checkEncryptedSlug($encSlug) {
-        $parts = explode(EncryptionConfig::SEPARATOR, $encSlug, 2);
-        if(count($parts)!==2) {
+        if(strlen($encSlug)<=EncryptionConfig::HASH_LEN) {
             return false;
         }
-        $id = hexdec($parts[0]);
+        $id = self::getId($encSlug);
         $hash = self::encryptSlug($id);
         return ($encSlug===$hash);
     }
     public static function getId($encSlug) {
-        return explode(EncryptionConfig::SEPARATOR, $encSlug, 2)[0];
+        return hexdec(substr($encSlug, 0, strlen($encSlug)-EncryptionConfig::HASH_LEN));
     }
 }

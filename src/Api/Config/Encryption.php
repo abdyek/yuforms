@@ -2,7 +2,6 @@
 namespace Yuforms\Api\Config;
 
 class Encryption {
-    const SEPARATOR = 't'; // must be different numbers and a,b,c,d,e,f
     const HASH_ALGO = 'sha256';
     const CONFUSER_FIRST = "*jY^cYHZa\].(-&&sR*/{9.&5d=dWE'W";
     const CONFUSER_LAST = "P>gg8_eJ+`C`nF.2F)6FD%e3rAC[),.m";
