@@ -54,6 +54,7 @@ class Login extends Controller {
         $this->response([
             'state'=>'success',
             'jwt'=>$this->token,
+            'who'=>'member',
             'id'=>$this->member->getId(),
             'email'=>$this->member->getEmail(),
             'firstName'=>$this->member->getFirstName(),

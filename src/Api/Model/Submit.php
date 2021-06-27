@@ -57,7 +57,7 @@ class Submit {
         return [
             'id'=>$submit->getId(),
             'questionId'=>$formItem->getQuestionId(),
-            'response'=>$submit->getResponse(),
+            'answer'=>$submit->getResponse(),
             'multiResponse'=>$submit->getMultiResponse()
         ];
     }

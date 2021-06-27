@@ -513,5 +513,10 @@ class Endpoint {
                 ]
             ],
         ],
+        'Me'=> [
+            'GET'=>[
+                'authorization'=>['guest', 'member', 'root'],
+            ]
+        ]
     ];
 }

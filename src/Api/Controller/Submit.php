@@ -21,7 +21,7 @@ class Submit extends Controller {
             'form'=>FormModel::getInfoArrWithShareInfo($this->form),
             'questions'=>QuestionModel::getsInfoArrByForm($this->form),
             'submitted'=>($submits->count())?true:false,
-            'submit'=>SubmitModel::getsInfoArr($submits)
+            'answers'=>SubmitModel::getsInfoArr($submits)
         ]);
     }
     private function checkSlug() {
