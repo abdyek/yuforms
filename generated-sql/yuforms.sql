@@ -162,8 +162,8 @@ DROP TABLE IF EXISTS `option`;
 CREATE TABLE `option`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `value` VARCHAR(256) NOT NULL,
     `text` VARCHAR(256) NOT NULL,
+    `ordinal_number` INTEGER NOT NULL,
     `question_id` INTEGER NOT NULL,
     PRIMARY KEY (`id`),
     INDEX `option_fi_3ff0cc` (`question_id`),

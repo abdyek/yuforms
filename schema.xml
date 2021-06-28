@@ -95,8 +95,8 @@
     </table>
     <table name="option">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
-        <column name="value" type="varchar" required="true" size="256" />
         <column name="text" type="varchar" required="true" size="256" />
+        <column name="ordinal_number" type="integer" required="true" />
 
         <column name="question_id" type="integer" required="true"/>
 

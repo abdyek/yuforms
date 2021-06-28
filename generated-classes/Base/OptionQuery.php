@@ -21,13 +21,13 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  * @method     ChildOptionQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     ChildOptionQuery orderByValue($order = Criteria::ASC) Order by the value column
  * @method     ChildOptionQuery orderByText($order = Criteria::ASC) Order by the text column
+ * @method     ChildOptionQuery orderByOrdinalNumber($order = Criteria::ASC) Order by the ordinal_number column
  * @method     ChildOptionQuery orderByQuestionId($order = Criteria::ASC) Order by the question_id column
  *
  * @method     ChildOptionQuery groupById() Group by the id column
- * @method     ChildOptionQuery groupByValue() Group by the value column
  * @method     ChildOptionQuery groupByText() Group by the text column
+ * @method     ChildOptionQuery groupByOrdinalNumber() Group by the ordinal_number column
  * @method     ChildOptionQuery groupByQuestionId() Group by the question_id column
  *
  * @method     ChildOptionQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -54,22 +54,22 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildOption findOneOrCreate(ConnectionInterface $con = null) Return the first ChildOption matching the query, or a new ChildOption object populated from the query conditions when no match is found
  *
  * @method     ChildOption|null findOneById(int $id) Return the first ChildOption filtered by the id column
- * @method     ChildOption|null findOneByValue(string $value) Return the first ChildOption filtered by the value column
  * @method     ChildOption|null findOneByText(string $text) Return the first ChildOption filtered by the text column
+ * @method     ChildOption|null findOneByOrdinalNumber(int $ordinal_number) Return the first ChildOption filtered by the ordinal_number column
  * @method     ChildOption|null findOneByQuestionId(int $question_id) Return the first ChildOption filtered by the question_id column *
 
  * @method     ChildOption requirePk($key, ConnectionInterface $con = null) Return the ChildOption by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildOption requireOne(ConnectionInterface $con = null) Return the first ChildOption matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildOption requireOneById(int $id) Return the first ChildOption filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildOption requireOneByValue(string $value) Return the first ChildOption filtered by the value column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildOption requireOneByText(string $text) Return the first ChildOption filtered by the text column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildOption requireOneByOrdinalNumber(int $ordinal_number) Return the first ChildOption filtered by the ordinal_number column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildOption requireOneByQuestionId(int $question_id) Return the first ChildOption filtered by the question_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildOption[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildOption objects based on current ModelCriteria
  * @method     ChildOption[]|ObjectCollection findById(int $id) Return ChildOption objects filtered by the id column
- * @method     ChildOption[]|ObjectCollection findByValue(string $value) Return ChildOption objects filtered by the value column
  * @method     ChildOption[]|ObjectCollection findByText(string $text) Return ChildOption objects filtered by the text column
+ * @method     ChildOption[]|ObjectCollection findByOrdinalNumber(int $ordinal_number) Return ChildOption objects filtered by the ordinal_number column
  * @method     ChildOption[]|ObjectCollection findByQuestionId(int $question_id) Return ChildOption objects filtered by the question_id column
  * @method     ChildOption[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
@@ -169,7 +169,7 @@ abstract class OptionQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, value, text, question_id FROM option WHERE id = :p0';
+        $sql = 'SELECT id, text, ordinal_number, question_id FROM option WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -301,31 +301,6 @@ abstract class OptionQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the value column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByValue('fooValue');   // WHERE value = 'fooValue'
-     * $query->filterByValue('%fooValue%', Criteria::LIKE); // WHERE value LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $value The value to use as filter.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildOptionQuery The current query, for fluid interface
-     */
-    public function filterByValue($value = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($value)) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(OptionTableMap::COL_VALUE, $value, $comparison);
-    }
-
-    /**
      * Filter the query on the text column
      *
      * Example usage:
@@ -348,6 +323,47 @@ abstract class OptionQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(OptionTableMap::COL_TEXT, $text, $comparison);
+    }
+
+    /**
+     * Filter the query on the ordinal_number column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByOrdinalNumber(1234); // WHERE ordinal_number = 1234
+     * $query->filterByOrdinalNumber(array(12, 34)); // WHERE ordinal_number IN (12, 34)
+     * $query->filterByOrdinalNumber(array('min' => 12)); // WHERE ordinal_number > 12
+     * </code>
+     *
+     * @param     mixed $ordinalNumber The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildOptionQuery The current query, for fluid interface
+     */
+    public function filterByOrdinalNumber($ordinalNumber = null, $comparison = null)
+    {
+        if (is_array($ordinalNumber)) {
+            $useMinMax = false;
+            if (isset($ordinalNumber['min'])) {
+                $this->addUsingAlias(OptionTableMap::COL_ORDINAL_NUMBER, $ordinalNumber['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($ordinalNumber['max'])) {
+                $this->addUsingAlias(OptionTableMap::COL_ORDINAL_NUMBER, $ordinalNumber['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(OptionTableMap::COL_ORDINAL_NUMBER, $ordinalNumber, $comparison);
     }
 
     /**

@@ -69,18 +69,18 @@ abstract class Option implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the value field.
-     *
-     * @var        string
-     */
-    protected $value;
-
-    /**
      * The value for the text field.
      *
      * @var        string
      */
     protected $text;
+
+    /**
+     * The value for the ordinal_number field.
+     *
+     * @var        int
+     */
+    protected $ordinal_number;
 
     /**
      * The value for the question_id field.
@@ -339,16 +339,6 @@ abstract class Option implements ActiveRecordInterface
     }
 
     /**
-     * Get the [value] column value.
-     *
-     * @return string
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-    /**
      * Get the [text] column value.
      *
      * @return string
@@ -356,6 +346,16 @@ abstract class Option implements ActiveRecordInterface
     public function getText()
     {
         return $this->text;
+    }
+
+    /**
+     * Get the [ordinal_number] column value.
+     *
+     * @return int
+     */
+    public function getOrdinalNumber()
+    {
+        return $this->ordinal_number;
     }
 
     /**
@@ -389,26 +389,6 @@ abstract class Option implements ActiveRecordInterface
     } // setId()
 
     /**
-     * Set the value of [value] column.
-     *
-     * @param string $v New value
-     * @return $this|\Option The current object (for fluent API support)
-     */
-    public function setValue($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->value !== $v) {
-            $this->value = $v;
-            $this->modifiedColumns[OptionTableMap::COL_VALUE] = true;
-        }
-
-        return $this;
-    } // setValue()
-
-    /**
      * Set the value of [text] column.
      *
      * @param string $v New value
@@ -427,6 +407,26 @@ abstract class Option implements ActiveRecordInterface
 
         return $this;
     } // setText()
+
+    /**
+     * Set the value of [ordinal_number] column.
+     *
+     * @param int $v New value
+     * @return $this|\Option The current object (for fluent API support)
+     */
+    public function setOrdinalNumber($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->ordinal_number !== $v) {
+            $this->ordinal_number = $v;
+            $this->modifiedColumns[OptionTableMap::COL_ORDINAL_NUMBER] = true;
+        }
+
+        return $this;
+    } // setOrdinalNumber()
 
     /**
      * Set the value of [question_id] column.
@@ -491,11 +491,11 @@ abstract class Option implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : OptionTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : OptionTableMap::translateFieldName('Value', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->value = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : OptionTableMap::translateFieldName('Text', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : OptionTableMap::translateFieldName('Text', TableMap::TYPE_PHPNAME, $indexType)];
             $this->text = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : OptionTableMap::translateFieldName('OrdinalNumber', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->ordinal_number = (null !== $col) ? (int) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : OptionTableMap::translateFieldName('QuestionId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->question_id = (null !== $col) ? (int) $col : null;
@@ -727,11 +727,11 @@ abstract class Option implements ActiveRecordInterface
         if ($this->isColumnModified(OptionTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(OptionTableMap::COL_VALUE)) {
-            $modifiedColumns[':p' . $index++]  = 'value';
-        }
         if ($this->isColumnModified(OptionTableMap::COL_TEXT)) {
             $modifiedColumns[':p' . $index++]  = 'text';
+        }
+        if ($this->isColumnModified(OptionTableMap::COL_ORDINAL_NUMBER)) {
+            $modifiedColumns[':p' . $index++]  = 'ordinal_number';
         }
         if ($this->isColumnModified(OptionTableMap::COL_QUESTION_ID)) {
             $modifiedColumns[':p' . $index++]  = 'question_id';
@@ -750,11 +750,11 @@ abstract class Option implements ActiveRecordInterface
                     case 'id':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'value':
-                        $stmt->bindValue($identifier, $this->value, PDO::PARAM_STR);
-                        break;
                     case 'text':
                         $stmt->bindValue($identifier, $this->text, PDO::PARAM_STR);
+                        break;
+                    case 'ordinal_number':
+                        $stmt->bindValue($identifier, $this->ordinal_number, PDO::PARAM_INT);
                         break;
                     case 'question_id':
                         $stmt->bindValue($identifier, $this->question_id, PDO::PARAM_INT);
@@ -825,10 +825,10 @@ abstract class Option implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getValue();
+                return $this->getText();
                 break;
             case 2:
-                return $this->getText();
+                return $this->getOrdinalNumber();
                 break;
             case 3:
                 return $this->getQuestionId();
@@ -864,8 +864,8 @@ abstract class Option implements ActiveRecordInterface
         $keys = OptionTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getValue(),
-            $keys[2] => $this->getText(),
+            $keys[1] => $this->getText(),
+            $keys[2] => $this->getOrdinalNumber(),
             $keys[3] => $this->getQuestionId(),
         );
         $virtualColumns = $this->virtualColumns;
@@ -927,10 +927,10 @@ abstract class Option implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setValue($value);
+                $this->setText($value);
                 break;
             case 2:
-                $this->setText($value);
+                $this->setOrdinalNumber($value);
                 break;
             case 3:
                 $this->setQuestionId($value);
@@ -965,10 +965,10 @@ abstract class Option implements ActiveRecordInterface
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setValue($arr[$keys[1]]);
+            $this->setText($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setText($arr[$keys[2]]);
+            $this->setOrdinalNumber($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
             $this->setQuestionId($arr[$keys[3]]);
@@ -1019,11 +1019,11 @@ abstract class Option implements ActiveRecordInterface
         if ($this->isColumnModified(OptionTableMap::COL_ID)) {
             $criteria->add(OptionTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(OptionTableMap::COL_VALUE)) {
-            $criteria->add(OptionTableMap::COL_VALUE, $this->value);
-        }
         if ($this->isColumnModified(OptionTableMap::COL_TEXT)) {
             $criteria->add(OptionTableMap::COL_TEXT, $this->text);
+        }
+        if ($this->isColumnModified(OptionTableMap::COL_ORDINAL_NUMBER)) {
+            $criteria->add(OptionTableMap::COL_ORDINAL_NUMBER, $this->ordinal_number);
         }
         if ($this->isColumnModified(OptionTableMap::COL_QUESTION_ID)) {
             $criteria->add(OptionTableMap::COL_QUESTION_ID, $this->question_id);
@@ -1114,8 +1114,8 @@ abstract class Option implements ActiveRecordInterface
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setValue($this->getValue());
         $copyObj->setText($this->getText());
+        $copyObj->setOrdinalNumber($this->getOrdinalNumber());
         $copyObj->setQuestionId($this->getQuestionId());
         if ($makeNew) {
             $copyObj->setNew(true);
@@ -1207,8 +1207,8 @@ abstract class Option implements ActiveRecordInterface
             $this->aQuestion->removeOption($this);
         }
         $this->id = null;
-        $this->value = null;
         $this->text = null;
+        $this->ordinal_number = null;
         $this->question_id = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();

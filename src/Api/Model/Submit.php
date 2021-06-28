@@ -63,8 +63,21 @@ class Submit {
     }
     public static function getsInfoArr($submits) {
         $submitsArr = [];
+        $questions = [];
         foreach($submits as $sub) {
-            $submitsArr[] = self::getInfoArrWithQuestionId($sub);
+            $arr = self::getInfoArrWithQuestionId($sub);
+            if($arr['multiResponse']===true) {
+                if(isset($questions[$arr['questionId']])) {
+                    $questions[$arr['questionId']]['answer'] .= '-'.$arr['answer'];
+                } else {
+                    $questions[$arr['questionId']] = $arr;
+                }
+            } else {
+                $submitsArr[] = $arr;
+            }
+        }
+        foreach($questions as $que) {
+            $submitsArr[] = $que;
         }
         return $submitsArr;
     }

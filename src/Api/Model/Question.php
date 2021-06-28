@@ -30,10 +30,7 @@ class Question {
         $formComponent = FormComponentModel::get($question->getFormComponentId());
         if($formComponent->getHasOptions()) {
             $qId = $question->getId();
-            OptionModel::deleteByQuestionId($qId);
-            foreach($obj['options'] as $i=>$opt) {
-                OptionModel::create($qId, $i, $opt['value']);
-            }
+            OptionModel::updateAll($qId, $obj['options']);
         }
         $question->save();
     }

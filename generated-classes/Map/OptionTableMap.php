@@ -76,14 +76,14 @@ class OptionTableMap extends TableMap
     const COL_ID = 'option.id';
 
     /**
-     * the column name for the value field
-     */
-    const COL_VALUE = 'option.value';
-
-    /**
      * the column name for the text field
      */
     const COL_TEXT = 'option.text';
+
+    /**
+     * the column name for the ordinal_number field
+     */
+    const COL_ORDINAL_NUMBER = 'option.ordinal_number';
 
     /**
      * the column name for the question_id field
@@ -102,10 +102,10 @@ class OptionTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Value', 'Text', 'QuestionId', ),
-        self::TYPE_CAMELNAME     => array('id', 'value', 'text', 'questionId', ),
-        self::TYPE_COLNAME       => array(OptionTableMap::COL_ID, OptionTableMap::COL_VALUE, OptionTableMap::COL_TEXT, OptionTableMap::COL_QUESTION_ID, ),
-        self::TYPE_FIELDNAME     => array('id', 'value', 'text', 'question_id', ),
+        self::TYPE_PHPNAME       => array('Id', 'Text', 'OrdinalNumber', 'QuestionId', ),
+        self::TYPE_CAMELNAME     => array('id', 'text', 'ordinalNumber', 'questionId', ),
+        self::TYPE_COLNAME       => array(OptionTableMap::COL_ID, OptionTableMap::COL_TEXT, OptionTableMap::COL_ORDINAL_NUMBER, OptionTableMap::COL_QUESTION_ID, ),
+        self::TYPE_FIELDNAME     => array('id', 'text', 'ordinal_number', 'question_id', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
@@ -116,10 +116,10 @@ class OptionTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Value' => 1, 'Text' => 2, 'QuestionId' => 3, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'value' => 1, 'text' => 2, 'questionId' => 3, ),
-        self::TYPE_COLNAME       => array(OptionTableMap::COL_ID => 0, OptionTableMap::COL_VALUE => 1, OptionTableMap::COL_TEXT => 2, OptionTableMap::COL_QUESTION_ID => 3, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'value' => 1, 'text' => 2, 'question_id' => 3, ),
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Text' => 1, 'OrdinalNumber' => 2, 'QuestionId' => 3, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'text' => 1, 'ordinalNumber' => 2, 'questionId' => 3, ),
+        self::TYPE_COLNAME       => array(OptionTableMap::COL_ID => 0, OptionTableMap::COL_TEXT => 1, OptionTableMap::COL_ORDINAL_NUMBER => 2, OptionTableMap::COL_QUESTION_ID => 3, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'text' => 1, 'ordinal_number' => 2, 'question_id' => 3, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
@@ -138,14 +138,6 @@ class OptionTableMap extends TableMap
         'COL_ID' => 'ID',
         'id' => 'ID',
         'option.id' => 'ID',
-        'Value' => 'VALUE',
-        'Option.Value' => 'VALUE',
-        'value' => 'VALUE',
-        'option.value' => 'VALUE',
-        'OptionTableMap::COL_VALUE' => 'VALUE',
-        'COL_VALUE' => 'VALUE',
-        'value' => 'VALUE',
-        'option.value' => 'VALUE',
         'Text' => 'TEXT',
         'Option.Text' => 'TEXT',
         'text' => 'TEXT',
@@ -154,6 +146,14 @@ class OptionTableMap extends TableMap
         'COL_TEXT' => 'TEXT',
         'text' => 'TEXT',
         'option.text' => 'TEXT',
+        'OrdinalNumber' => 'ORDINAL_NUMBER',
+        'Option.OrdinalNumber' => 'ORDINAL_NUMBER',
+        'ordinalNumber' => 'ORDINAL_NUMBER',
+        'option.ordinalNumber' => 'ORDINAL_NUMBER',
+        'OptionTableMap::COL_ORDINAL_NUMBER' => 'ORDINAL_NUMBER',
+        'COL_ORDINAL_NUMBER' => 'ORDINAL_NUMBER',
+        'ordinal_number' => 'ORDINAL_NUMBER',
+        'option.ordinal_number' => 'ORDINAL_NUMBER',
         'QuestionId' => 'QUESTION_ID',
         'Option.QuestionId' => 'QUESTION_ID',
         'questionId' => 'QUESTION_ID',
@@ -182,8 +182,8 @@ class OptionTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('value', 'Value', 'VARCHAR', true, 256, null);
         $this->addColumn('text', 'Text', 'VARCHAR', true, 256, null);
+        $this->addColumn('ordinal_number', 'OrdinalNumber', 'INTEGER', true, null, null);
         $this->addForeignKey('question_id', 'QuestionId', 'INTEGER', 'question', 'id', true, null, null);
     } // initialize()
 
@@ -343,13 +343,13 @@ class OptionTableMap extends TableMap
     {
         if (null === $alias) {
             $criteria->addSelectColumn(OptionTableMap::COL_ID);
-            $criteria->addSelectColumn(OptionTableMap::COL_VALUE);
             $criteria->addSelectColumn(OptionTableMap::COL_TEXT);
+            $criteria->addSelectColumn(OptionTableMap::COL_ORDINAL_NUMBER);
             $criteria->addSelectColumn(OptionTableMap::COL_QUESTION_ID);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.value');
             $criteria->addSelectColumn($alias . '.text');
+            $criteria->addSelectColumn($alias . '.ordinal_number');
             $criteria->addSelectColumn($alias . '.question_id');
         }
     }
@@ -369,13 +369,13 @@ class OptionTableMap extends TableMap
     {
         if (null === $alias) {
             $criteria->removeSelectColumn(OptionTableMap::COL_ID);
-            $criteria->removeSelectColumn(OptionTableMap::COL_VALUE);
             $criteria->removeSelectColumn(OptionTableMap::COL_TEXT);
+            $criteria->removeSelectColumn(OptionTableMap::COL_ORDINAL_NUMBER);
             $criteria->removeSelectColumn(OptionTableMap::COL_QUESTION_ID);
         } else {
             $criteria->removeSelectColumn($alias . '.id');
-            $criteria->removeSelectColumn($alias . '.value');
             $criteria->removeSelectColumn($alias . '.text');
+            $criteria->removeSelectColumn($alias . '.ordinal_number');
             $criteria->removeSelectColumn($alias . '.question_id');
         }
     }

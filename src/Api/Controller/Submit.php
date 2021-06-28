@@ -66,7 +66,7 @@ class Submit extends Controller {
             $values = explode('-', $ans['answer']);
             foreach($values as $val) {
                 if($this->formComponent->getHasOptions()) {
-                    if(!OptionModel::isThereValue($this->question->getId(), $val)) {
+                    if(!OptionModel::hasQuestion($this->question->getId(), $val)/*OptionModel::isThereValue($this->question->getId(), $val)*/) {
                         continue;
                     }
                 }

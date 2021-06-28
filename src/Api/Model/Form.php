@@ -84,7 +84,7 @@ class Form {
             FormItemModel::create($form->getId(), $question->getId(), $i);
             if($formComponent->getHasOptions()) {
                 foreach($que['options'] as $i=>$opt) {
-                    OptionModel::create($question->getId(), $i, $opt['value']);
+                    OptionModel::create($question->getId(), $opt['value'], $i);
                 }
             }
         }
