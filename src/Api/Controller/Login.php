@@ -55,10 +55,7 @@ class Login extends Controller {
             'state'=>'success',
             'jwt'=>$this->token,
             'who'=>'member',
-            'id'=>$this->member->getId(),
-            'email'=>$this->member->getEmail(),
-            'firstName'=>$this->member->getFirstName(),
-            'lastName'=>$this->member->getLastName()
+            'info'=> MemberModel::getInfoArrById($this->member->getId()),
         ]);
     }
     private function setToken($userId) {

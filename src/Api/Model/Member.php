@@ -14,5 +14,16 @@ class Member {
     public static function getByEmail($email) {
         return \MemberQuery::create()->findOneByEmail($email);
     }
+    public static function getInfoArrById($memberId) {
+        $member = self::get($memberId);
+        return [
+            'id'=>$member->getId(),
+            'email'=>$member->getEmail(),
+            'firstName'=>$member->getFirstName(),
+            'lastName'=>$member->getLastName(),
+            'confirmedEmail'=>$member->getConfirmedEmail(),
+            'haveTo2fa'=>$member->getHaveTo2fa()
+        ];
+    }
 }
 

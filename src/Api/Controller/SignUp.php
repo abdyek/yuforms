@@ -16,8 +16,7 @@ class SignUp extends Controller {
     private function uniqueEmailCheck() {
         $query = \MemberQuery::create()->findOneByEmail($this->data['email']);
         if($query) {
-            $this->response(['error'=>'available email']);
-            exit();
+            $this->responseError(422);
         }
     }
     private function add() {
