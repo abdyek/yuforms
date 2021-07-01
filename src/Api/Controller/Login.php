@@ -87,27 +87,30 @@ class Login extends Controller {
         $dateTime = $authCode->getDateTime();
         $timestamp = $dateTime->getTimestamp();
         if((time()-$timestamp)>Config::VALIDITY_TIME) {
+            $authCode->delete();
             $this->responseError(401, [
                 'state'=>'fail',
+                'reason'=>'timeout',
                 'message'=>'timeout! you must login again'
             ]);
-            $authCode->delete();
         } elseif($trialCount>=Config::VALIDATION_TRIAL_MAX_COUNT) {
+            $authCode->delete();
             $this->responseError(401, [
                 'state'=>'fail',
+                'reason'=>'trial',
                 'message'=>'trial count is over! you must login again',
             ]);
-            $authCode->delete();
         } elseif($authCode->getCode()==$this->data['authenticationCode']) {
             $authCode->delete();
             $this->login();
         } else {
-            $this->responseError(401, [
-                'state'=>'fail',
-                'message'=>'wrong code',
-            ]);
             $authCode->setTrialCount($trialCount+1);
             $authCode->save();
+            $this->responseError(401, [
+                'state'=>'fail',
+                'reason'=>'code',
+                'message'=>'wrong code',
+            ]);
         }
     }
 }

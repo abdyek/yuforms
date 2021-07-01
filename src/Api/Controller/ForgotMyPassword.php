@@ -22,7 +22,7 @@ class ForgotMyPassword extends Controller {
     protected function patch() {
         $member = \MemberQuery::create()->filterByRecoveryCode($this->data['code'])->findOneByEmail($this->data['email']);
         if(!$member) {
-            $this->responseError(403, [
+            $this->responseError(401, [
                 'state'=>'fail',
                 'message'=>'wrong code'
             ]);

@@ -28,7 +28,9 @@ class Controller {
         }
     }
     public function response($data) {
-        Response::data($data);
+        if($this->silence===false) {
+            Response::data($data);
+        }
     }
     public function responseError($errorCode, $data=null) {
         Response::error($errorCode, $data);

@@ -4,6 +4,7 @@ namespace Yuforms\Api\Controller;
 use Yuforms\Api\Core\Controller;
 use Yuforms\Api\Other\Mail;
 use Yuforms\Api\Other\Random;
+use Yuforms\Api\Controller\LogOut;
 
 class ChangeMyEmail extends Controller {
     protected function patch() {
@@ -27,6 +28,13 @@ class ChangeMyEmail extends Controller {
         $this->member->setActivationCode($this->activationCode);
         $this->member->save();
         Mail::sendActivationCode($this->data['newEmail'], $this->activationCode);
+        new LogOut([
+            'method'=>'POST',
+            'data'=>[],
+            'who'=>$this->who,
+            'userId'=>$this->userId,
+            'silence'=>true
+        ]);
         $this->response([
             'state'=>'success',
             'message'=>'your email changed'

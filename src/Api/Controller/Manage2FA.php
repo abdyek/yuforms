@@ -39,23 +39,26 @@ class Manage2FA extends Controller {
         if((time()-$timestamp)>Config::VALIDITY_TIME) {
             $this->responseError(401, [
                 'state'=>'fail',
+                'reason'=>'timeout',
                 'message'=>'timeout! you must request again'
             ]);
         } elseif($trialCount>=Config::VALIDATION_TRIAL_MAX_COUNT) {
             $this->responseError(401, [
                 'state'=>'fail',
+                'reason'=>'trial',
                 'message'=>'trial count is over! you must request again'
             ]);
         } elseif($code->getCode()==$this->data['authenticationCode']) {
             $code->delete();
             $this->set2faSetting();
         } else {
+            $code->setTrialCount(++$trialCount);
+            $code->save();
             $this->responseError(401, [
                 'state'=>'fail',
+                'reason'=>'code',
                 'message'=>'wrong code',
             ]);
-            $code->setTrialCount($trialCount+1);
-            $code->save();
         }
     }
     protected function set2faSetting() {

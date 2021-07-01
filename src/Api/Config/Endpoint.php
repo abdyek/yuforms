@@ -181,8 +181,8 @@ class Endpoint {
                     'code'=>[
                         'type'=>'str',
                         'limits'=>[
-                            'min'=>10,
-                            'max'=>10
+                            'min'=>0,
+                            'max'=>50
                         ]
                     ],
                     'newPassword'=>[
@@ -223,7 +223,7 @@ class Endpoint {
                     'password'=>[
                         'type'=>'str',
                         'limits'=>[
-                            'min'=>10,
+                            'min'=>0,
                             'max'=>50
                         ]
                     ],
@@ -507,7 +507,7 @@ class Endpoint {
                         'type'=>'str',
                         'limits'=>[
                             'min'=>0,
-                            'max'=>10
+                            'max'=>50
                         ]
                     ]
                 ]
