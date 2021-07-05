@@ -14,8 +14,20 @@ class Share {
         return [
             'id'=>$share->getId(),
             'startDateTime'=>$share->getStartDateTime(),
+            'stopDateTime'=>$share->getStopDateTime(),
             'onlyMember'=>$share->getOnlyMember(),
             'submitCount'=>$share->getSubmitCount()
         ];
+    }
+    public static function getsInfoArrByForm($form) {
+        $sharesArr = [];
+        $shares = \ShareQuery::create()->orderByStartDateTime('desc')->findByFormId($form->getId());
+        foreach($shares as $share) {
+            $sharesArr[] = self::getInfoArr($share);
+        }
+        return $sharesArr;
+    }
+    public static function get($id) {
+        return \ShareQuery::create()->findPk($id);
     }
 }

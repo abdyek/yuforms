@@ -35,6 +35,7 @@ class Form extends Controller {
         $this->response([
             'form'=>FormModel::getInfoArrWithShareInfo($form),
             'questions'=>QuestionModel::getsInfoArrByForm($form),
+            'shares'=>ShareModel::getsInfoArrByForm($form)
         ]);
     }
     private function checkFormAccessibility() {

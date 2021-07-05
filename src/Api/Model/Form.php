@@ -44,7 +44,7 @@ class Form {
         }
     }
     public static function getsByMemberId($memberId) {
-        return \FormQuery::create()->findByMemberId($memberId);
+        return \FormQuery::create()->filterByIsTemplate(false)->findByMemberId($memberId);
     }
     public static function getInfoArrWithShareInfo($form) {
         $share = ShareModel::getUnfinished($form->getId());

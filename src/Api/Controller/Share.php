@@ -5,9 +5,30 @@ use Yuforms\Api\Core\Controller;
 use Yuforms\Api\Model\Member as MemberModel;
 use Yuforms\Api\Model\Form as FormModel;
 use Yuforms\Api\Model\Share as ShareModel;
+//use Yuforms\Api\Model\Submit as SubmitModel;
 use Yuforms\Api\Other\Time;
 
 class Share extends Controller {
+    /*
+    protected function get() {
+        $share = ShareModel::get($this->data['id']);
+        if(!$share) {
+            $this->responseError(404);
+        }
+        $form = FormModel::get($share->getFormId());
+        if(!$form) {
+            $this->responseError(404);
+        }
+        if($this->userId!==$form->getMemberId()) {
+            $this->responseError(404);
+        }
+        $submits = SubmitModel::getsByShareId($share->getId());
+        $this->response([
+            'state'=>'success',
+            'share'=>ShareModel::getInfoArr($share),
+            'answers'=>SubmitModel::getsInfoArrByShareIdGroupedUser($share->getId())
+        ]);
+    }*/
     protected function post() {
         $this->prepareModels();
         if($this->availableShare) {

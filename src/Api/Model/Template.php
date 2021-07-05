@@ -34,8 +34,8 @@ class Template {
             $newQuestion = QuestionModel::create($question->getFormComponentId(), $question->getText());
             FormItemModel::create($template->getFormId(), $newQuestion->getId(), $i);
             $options = OptionModel::getsByQuestionId($question->getId());
-            foreach($options as $opt) {
-                OptionModel::create($newQuestion->getId(), $opt->getValue(), $opt->getText());
+            foreach($options as $key=>$opt) {
+                OptionModel::create($newQuestion->getId(), $opt->getText(), $key);
             }
         }
     }

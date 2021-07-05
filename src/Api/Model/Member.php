@@ -25,5 +25,11 @@ class Member {
             'haveTo2fa'=>$member->getHaveTo2fa()
         ];
     }
+    public static function getInfoArrLimitedById($memberId) {
+        $memberArr = self::getInfoArrById($memberId);
+        $memberArr['confirmedEmail'] = null;
+        $memberArr['haveTo2fa'] = null;
+        return $memberArr;
+    }
 }
 

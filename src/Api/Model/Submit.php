@@ -2,6 +2,7 @@
 
 namespace Yuforms\Api\Model;
 use Yuforms\Api\Model\FormItem as FormItemModel;
+use Yuforms\Api\Model\Member as MemberModel;
 
 class Submit {
     public static function create($obj) {
@@ -47,6 +48,9 @@ class Submit {
     public static function getsByShareIdIpAddress($shareId, $ipAddress) {
         return \SubmitQuery::create()->filterByIpAddress($ipAddress)->findByShareId($shareId);
     }
+    public static function getsByShareId($shareId) {
+        return \SubmitQuery::create()->findByShareId($shareId);
+    }
     public static function updateSubmit($submit, $obj) {
         $submit->setResponse($obj['response']);
         $submit->setMultiResponse($obj['multiResponse']);
@@ -80,6 +84,47 @@ class Submit {
             $submitsArr[] = $que;
         }
         return $submitsArr;
+    }
+    public static function getsInfoArrByShareIdGroupedUser($shareId) {
+        $users = [];
+        $submits = self::getsByShareId($shareId);
+        $questions = [];
+        $isMember = [];
+        foreach($submits as $sub) {
+            $memberId = $sub->getMemberId();
+            $ipAddress = $sub->getIpAddress();
+            if($memberId!==null) {
+                $user = $memberId;
+                $isMember[$user] = true;
+            } else {
+                $user = $ipAddress;
+                $isMember[$user] = false;
+            }
+            if(!isset($users[$user])) {
+                $users[$user] = [];
+            }
+            $arr = self::getInfoArrWithQuestionId($sub);
+            if($arr['multiResponse']===true) {
+                if(isset($questions[$arr['questionId']])) {
+                    $questions[$arr['questionId']]['answer'] .= '-'.$arr['answer'];
+                } else {
+                    $questions[$arr['questionId']] = $arr;
+                }
+            } else {
+                $users[$user][] = $arr;
+            }
+        }
+        foreach($questions as $que) {
+            $users[$user][] = $que;
+        }
+        $grouped = [];
+        foreach($users as $u=>$answers) {
+            $grouped[] = [
+                'user'=>($isMember[$u])?MemberModel::getInfoArrLimitedById($u):null,
+                'answers'=>$answers
+            ];
+        }
+        return $grouped;
     }
 }
 
