@@ -86,45 +86,52 @@ class Submit {
         return $submitsArr;
     }
     public static function getsInfoArrByShareIdGroupedUser($shareId) {
-        $users = [];
-        $submits = self::getsByShareId($shareId);
-        $questions = [];
-        $isMember = [];
-        foreach($submits as $sub) {
-            $memberId = $sub->getMemberId();
-            $ipAddress = $sub->getIpAddress();
-            if($memberId!==null) {
-                $user = $memberId;
-                $isMember[$user] = true;
-            } else {
-                $user = $ipAddress;
-                $isMember[$user] = false;
-            }
-            if(!isset($users[$user])) {
-                $users[$user] = [];
-            }
-            $arr = self::getInfoArrWithQuestionId($sub);
-            if($arr['multiResponse']===true) {
-                if(isset($questions[$arr['questionId']])) {
-                    $questions[$arr['questionId']]['answer'] .= '-'.$arr['answer'];
-                } else {
-                    $questions[$arr['questionId']] = $arr;
-                }
-            } else {
-                $users[$user][] = $arr;
-            }
-        }
-        foreach($questions as $que) {
-            $users[$user][] = $que;
-        }
-        $grouped = [];
-        foreach($users as $u=>$answers) {
-            $grouped[] = [
-                'user'=>($isMember[$u])?MemberModel::getInfoArrLimitedById($u):null,
+        $infoArr = [];
+        $memberIds = self::getMemberIdsByShareId($shareId);
+        $ipAddresses = self::getIpAddressesByShareId($shareId);
+        foreach($memberIds as $mId) {
+            $submits = self::getsByShareIdMemberId($shareId, $mId);
+            $answers = self::getsInfoArr($submits);
+            $infoArr[] = [
+                'userType'=>'member',
+                'info'=>MemberModel::getInfoArrLimitedById($mId),
                 'answers'=>$answers
             ];
         }
-        return $grouped;
+        foreach($ipAddresses as $ipA) {
+            $submits = self::getsByShareIdIpAddress($shareId, $ipA);
+            $answers = self::getsInfoArr($submits);
+            $infoArr[] = [
+                'userType'=>'anonymous',
+                'info'=>null,
+                'answers'=>$answers
+            ];
+        }
+        return $infoArr;
+    }
+    public static function getMemberIdsByShareId($shareId) {
+        // I am going to refactor this function using with Propel critaria after
+        $memberIds = [];
+        $submits = self::getsByShareId($shareId);
+        foreach($submits as $sub) {
+            $memberId = $sub->getMemberId();
+            if(in_array($memberId, $memberIds) or $memberId === null)
+                continue;
+            $memberIds[] = $memberId;
+        }
+        return $memberIds;
+    }
+    public static function getIpAddressesByShareId($shareId) {
+        // I am going to refactor this function using with Propel critaria after
+        $ipAddresses = [];
+        $submits = self::getsByShareId($shareId);
+        foreach($submits as $sub) {
+            $ipAddress = $sub->getIpAddress();
+            if(in_array($ipAddress, $ipAddresses) or $ipAddress === null) 
+                continue;
+            $ipAddresses[] = $ipAddress;
+        }
+        return $ipAddresses;
     }
 }
 
