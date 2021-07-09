@@ -10,7 +10,7 @@ class Endpoint {
                     /*
                 'required'=>[
                     'name'=>[
-                        'type'=>'str', // str, arr, int, email, bool
+                        'type'=>'str', // str, arr, int, email, bool, num
                         'limits'=>[
                             'min'=>0,
                             'max'=>10
@@ -302,7 +302,7 @@ class Endpoint {
                 'authorization'=>['member'],
                 'required'=>[
                     'id'=>[
-                        'type'=>'int',
+                        'type'=>'num',
                         'limits'=>[
                             'min'=>1,
                             'max'=>11

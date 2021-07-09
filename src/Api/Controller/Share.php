@@ -40,7 +40,8 @@ class Share extends Controller {
         $this->response([
             'state'=>'success',
             'stillShared'=>true,
-            'share'=>ShareModel::getInfoArr($newShare)
+            'share'=>ShareModel::getInfoArr($newShare),
+            'shares'=>ShareModel::getsInfoArrByForm($this->form)
         ]);
     }
     private function prepareModels() {
@@ -65,7 +66,8 @@ class Share extends Controller {
         $this->response([
             'state'=>'success',
             'stillShared'=>false,
-            'share'=>null
+            'share'=>null,
+            'shares'=>ShareModel::getsInfoArrByForm($this->form)
         ]);
     }
     private function stopShare() {

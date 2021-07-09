@@ -85,11 +85,12 @@ class Endpoint {
                     ($value['type']==='int' and is_int($data[$key])) or
                     ($value['type']==='arr' and is_array($data[$key])) or 
                     ($value['type']==='email' and $this->emailPatternCheck($data[$key])) or
-                    ($value['type']==='bool' and is_bool($data[$key]))
+                    ($value['type']==='bool' and is_bool($data[$key])) or
+                    ($value['type']==='num' and is_numeric($data[$key]))
                 ) {
                     if(!(
                         ($value['type']==='str' and (strlen($data[$key])>=$value['limits']['min'] and strlen($data[$key])<=$value['limits']['max'])) or
-                        ($value['type']==='int' and (strlen((string)$data[$key])>=$value['limits']['min'] and strlen((string)$data[$key])<=$value['limits']['max'])) or
+                        (($value['type']==='int' or $value['type']==='num') and (strlen((string)$data[$key])>=$value['limits']['min'] and strlen((string)$data[$key])<=$value['limits']['max'])) or
                         ($value['type']==='arr' and (count($data[$key])>=$value['limits']['min'] and count($data[$key])<=$value['limits']['max'])) or
                         ($value['type']==='email' and (strlen($data[$key])>=$value['limits']['min'] and strlen($data[$key])<=$value['limits']['max'])) or
                         ($value['type']==='bool') // there aren't boolean limit
