@@ -4,7 +4,6 @@ require 'vendor/autoload.php';
 require 'generated-conf/config.php';
 
 use Yuforms\Api\Core\Endpoint;
-use Yuforms\WebSite\Core\Controller as WebSiteController;
 use Yuforms\Api\Config\Config;
 
 date_default_timezone_set(Config::TIMEZONE);
@@ -26,11 +25,6 @@ $router->any('api/:string', function($endpoint) {
     } else {
         new Endpoint($endpoint);
     }
-});
-
-// WEBSITE
-$router->get('/:slug?', function($slug = 'index'){
-    new WebSiteController($slug);
 });
 
 $router->run();
